@@ -94,9 +94,9 @@ button{font:inherit}
   backdrop-filter:saturate(180%) blur(10px);
   border-bottom:1px solid var(--border);
 }
-.nav{display:flex;align-items:center;justify-content:space-between;height:96px;gap:24px}
+.nav{display:flex;align-items:center;justify-content:space-between;height:84px;gap:24px}
 .brand{display:flex;align-items:center;gap:10px;flex:none}
-.brand img{height:64px;width:auto}
+.brand img{height:56px;width:auto}
 /* El header y el hero deben pegarse al borde real del viewport en
    pantallas anchas -- pedido explícito, 2 rondas seguidas ("todo lo que
    desperdicias" / "casi al borde"): el .container centrado (1560px) deja
@@ -123,12 +123,12 @@ button{font:inherit}
 
 @media (max-width:960px){
   .nav-toggle{display:flex}
-  /* El logo a 64px (pensado para escritorio) + "Portal clientes" con
+  /* El logo grande (pensado para escritorio) + "Portal clientes" con
      texto + el botón hamburguesa no entran en un celular -- el toggle
      quedaba empujado fuera de la pantalla. Se achica el logo y el gap
      entre bloques solo en mobile. */
-  .nav{height:72px;gap:10px}
-  .brand img{height:38px}
+  .nav{height:64px;gap:10px}
+  .brand img{height:34px}
   /* position:absolute (no fixed) anclado al header, que ya es el
      containing block (sticky + backdrop-filter) -- "fixed" acá se
      posicionaba relativo al HEADER en vez del viewport, porque
@@ -137,7 +137,7 @@ button{font:inherit}
      navegador): el menú quedaba comprimido a los ~37px que le sobraban
      dentro del header en vez de cubrir la pantalla. */
   .nav-links{
-    position:absolute;top:100%;left:0;right:0;max-height:calc(100vh - 72px);
+    position:absolute;top:100%;left:0;right:0;max-height:calc(100vh - 64px);
     background:#fff;flex-direction:column;align-items:stretch;
     padding:18px;gap:4px;transform:translateY(-8px);opacity:0;pointer-events:none;
     transition:.2s ease;border-top:1px solid var(--border);overflow:auto;
@@ -178,7 +178,12 @@ button{font:inherit}
   .hero-photo::after{background:linear-gradient(180deg, rgba(7,22,39,.55) 0%, rgba(7,22,39,.82) 55%, var(--navy-950) 92%)}
 }
 .hero-inner{position:relative;z-index:2;max-width:640px}
-.hero .container{max-width:none;padding-left:clamp(20px,3vw,48px);padding-right:24px}
+/* margin:0 (no "0 auto" heredado de .container) -- .hero es display:flex,
+   así que el "auto" del margin quedaba centrando el bloque de texto como
+   ítem flex (le sobraba ancho a la derecha y flexbox lo repartía en
+   partes iguales a los 2 lados) -- por eso el padding de arriba solo NO
+   alcanzaba para pegar el texto al borde, seguía viéndose centrado. */
+.hero .container{max-width:none;margin:0;width:100%;padding-left:clamp(20px,3vw,48px);padding-right:24px}
 .hero-tag{
   display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
