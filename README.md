@@ -11,7 +11,8 @@ servicios.html         Servicios (Redes / Subestaciones / Medida / RETIE)
 proyectos.html         Portafolio de proyectos (con filtro por sector)
 nosotros.html           Misión, visión, valores y metodología
 contacto.html           Datos de contacto + formulario
-admin.html              Panel privado -- edita el contenido del Inicio y lo publica al repo
+portal-clientes.html    Portal de clientes -- PÚBLICO, aviso "en construcción" por ahora
+admin.html              Ingreso privado -- PARA EL EQUIPO, edita el contenido del Inicio y lo publica al repo
 assets/css/style.css    Estilos de todo el sitio
 assets/css/admin.css    Estilos propios del panel privado
 assets/js/main.js       Menú móvil, animaciones, filtro de proyectos y formulario
@@ -22,11 +23,16 @@ assets/data/content.json  Contenido editable del Inicio (foto, textos, tarjetas)
 assets/img/             Logo y demás imágenes
 ```
 
-## Panel privado (`admin.html`)
+## Dos portales -- no confundir
 
-Edita la foto de portada, el título/texto del hero y las tarjetas de
-servicio del Inicio, sin tocar código -- ver la sección **"Panel privado
-de edición"** más abajo para la clave y cómo generar el token de GitHub.
+- **"Portal clientes"** (botón del header, `portal-clientes.html`):
+  PÚBLICO, para que los clientes de DISMELEC consulten sus proyectos --
+  hoy es solo un aviso "en construcción", falta backend real.
+- **"Ingreso privado"** (enlace chico en el footer junto a Contacto,
+  `admin.html`): PRIVADO, solo para el equipo de DISMELEC -- edita la
+  foto de portada, título/texto del hero y tarjetas de servicio del
+  Inicio, sin tocar código. Ver la sección **"Panel privado de edición"**
+  más abajo para la clave y cómo generar el token de GitHub.
 
 ## Publicar en GitHub Pages
 
