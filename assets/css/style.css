@@ -94,7 +94,7 @@ button{font:inherit}
   backdrop-filter:saturate(180%) blur(10px);
   border-bottom:1px solid var(--border);
 }
-.nav{display:flex;align-items:center;justify-content:space-between;height:84px;gap:24px}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:24px}
 .brand{display:flex;align-items:center;gap:10px;flex:none}
 .brand img{height:56px;width:auto}
 /* El header y el hero deben pegarse al borde real del viewport en
@@ -151,8 +151,8 @@ button{font:inherit}
 .hero{
   position:relative;overflow:hidden;color:#fff;
   background:var(--navy-950);
-  padding:110px 0 130px;
-  min-height:600px;display:flex;align-items:center;
+  padding:64px 0 90px;
+  min-height:440px;display:flex;align-items:center;
 }
 /* Foto real de DISMELEC a pantalla completa por el lado derecho -- pedido
    explícito ("se está desperdiciando espacio a los laterales... te anexo
