@@ -24,7 +24,7 @@
   --shadow-sm:0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.05);
   --shadow-md:0 10px 30px rgba(11,33,56,.10);
   --shadow-lg:0 24px 60px rgba(11,33,56,.18);
-  --container:1200px;
+  --container:1320px;
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -138,21 +138,34 @@ button{font:inherit}
 /* ---------- Hero ---------- */
 .hero{
   position:relative;overflow:hidden;color:#fff;
-  background:
-    radial-gradient(1100px 520px at 82% -10%, rgba(74,154,240,.35), transparent 60%),
-    linear-gradient(115deg,var(--navy-950) 10%,var(--navy-800) 60%,var(--navy-700) 100%);
-  padding:96px 0 120px;
+  background:var(--navy-950);
+  padding:110px 0 130px;
+  min-height:600px;display:flex;align-items:center;
+}
+/* Foto real de DISMELEC a pantalla completa por el lado derecho -- pedido
+   explícito ("se está desperdiciando espacio a los laterales... te anexo
+   la foto como de portada que va de fondo"): a diferencia del SVG
+   anterior, la imagen sangra hasta el borde derecho del viewport, sin
+   quedar encajonada en el .container. */
+.hero-photo{
+  position:absolute;inset:0 0 0 34%;
+  background-size:cover;background-position:center 30%;
+}
+.hero-photo::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,
+    var(--navy-950) 0%, var(--navy-950) 8%,
+    rgba(7,22,39,.88) 22%, rgba(7,22,39,.45) 46%, rgba(7,22,39,.12) 66%, transparent 80%);
 }
 .hero::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
-  background-size:42px 42px;
-  mask-image:linear-gradient(180deg, transparent, #000 30%, #000 75%, transparent);
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(180deg, rgba(7,22,39,.15), transparent 18%, transparent 78%, rgba(7,22,39,.35));
 }
-.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
-@media (max-width:960px){.hero-grid{grid-template-columns:1fr}}
+@media (max-width:960px){
+  .hero-photo{inset:0}
+  .hero-photo::after{background:linear-gradient(180deg, rgba(7,22,39,.55) 0%, rgba(7,22,39,.82) 55%, var(--navy-950) 92%)}
+}
+.hero-inner{position:relative;z-index:2;max-width:640px}
 .hero-tag{
   display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
@@ -162,14 +175,11 @@ button{font:inherit}
 .hero h1{font-size:clamp(32px,4.6vw,52px);color:#fff;margin-bottom:20px;letter-spacing:-.01em}
 .hero p.lead{font-size:17.5px;color:#c9d7e6;max-width:560px;margin-bottom:34px}
 .hero-actions{display:flex;gap:14px;flex-wrap:wrap}
-.hero-art{position:relative;min-height:360px}
-.hero-art svg{width:100%;height:auto;filter:drop-shadow(0 20px 40px rgba(0,0,0,.35))}
 .hero-caption{
-  position:absolute;left:0;bottom:-6px;display:flex;align-items:center;gap:10px;
-  color:#dce8f6;font-size:13px;
+  position:relative;z-index:2;display:flex;align-items:center;gap:10px;
+  color:#dce8f6;font-size:13px;margin-top:40px;
 }
 .hero-caption .bar{width:26px;height:2px;background:var(--blue-400)}
-@media (max-width:960px){.hero-art{min-height:220px;margin-top:8px}}
 
 /* ---------- Tarjetas de valor (features) ---------- */
 .feature-strip{
