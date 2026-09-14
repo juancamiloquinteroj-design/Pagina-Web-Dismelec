@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyectos · DISMELEC Ingenieros SAS</title>
+<meta name="description" content="Portafolio de proyectos de ingeniería eléctrica de DISMELEC Ingenieros SAS en Colombia.">
+<link rel="icon" href="assets/img/logo-dismelec.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="brand"><img src="assets/img/logo-dismelec.png" alt="DISMELEC Ingenieros SAS"></a>
+    <nav class="nav-links">
+      <a href="index.html" data-page="index.html">Inicio</a>
+      <a href="servicios.html" data-page="servicios.html">Servicios</a>
+      <a href="proyectos.html" data-page="proyectos.html">Proyectos</a>
+      <a href="nosotros.html" data-page="nosotros.html">Nosotros</a>
+      <a href="contacto.html" data-page="contacto.html">Contacto</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="portal-clientes.html" class="btn-portal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 12a4 4 0 100-8 4 4 0 000 8z"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span>Portal clientes</span>
+      </a>
+      <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html">Inicio</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg><span>Proyectos</span></div>
+    <span class="eyebrow">Portafolio</span>
+    <h1>Proyectos que impulsan el desarrollo del país</h1>
+    <p>Una muestra de nuestro trabajo en redes, subestaciones, medida y legalización eléctrica en distintos sectores.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="filter-row reveal">
+      <button class="filter-btn active" data-filter="todos">Todos</button>
+      <button class="filter-btn" data-filter="industrial">Industrial</button>
+      <button class="filter-btn" data-filter="infraestructura">Infraestructura</button>
+      <button class="filter-btn" data-filter="comercial">Comercial</button>
+      <button class="filter-btn" data-filter="institucional">Institucional</button>
+    </div>
+
+    <div class="project-grid">
+      <a href="contacto.html" class="project-card reveal" id="subestacion-distribucion" data-sector="industrial">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="9" width="4" height="10"/><rect x="10" y="5" width="4" height="14"/><rect x="16" y="9" width="4" height="10"/><path d="M4 5h16"/></svg></div>
+        <div class="project-body"><h4>Subestación de distribución</h4><span>Sector industrial · Cundinamarca</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" id="redes-media-tension" data-sector="infraestructura">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20L10 4M20 20L14 4"/><path d="M4 10h16M4 15h16"/></svg></div>
+        <div class="project-body"><h4>Redes de media tensión</h4><span>Sector infraestructura · Antioquia</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" id="sistema-medida-comercial" data-sector="comercial">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path d="M12 12l4-4M7 13a5 5 0 0110 0"/></svg></div>
+        <div class="project-body"><h4>Sistema de medida</h4><span>Sector comercial · Bogotá</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" id="legalizacion-retie" data-sector="industrial">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg></div>
+        <div class="project-body"><h4>Legalización RETIE</h4><span>Sector industrial · Valle del Cauca</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" data-sector="institucional">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-8h6v8"/></svg></div>
+        <div class="project-body"><h4>Modernización eléctrica institucional</h4><span>Sector institucional · Huila</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" data-sector="infraestructura">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="5" r="2.1" fill="currentColor" stroke="none"/><circle cx="5" cy="19" r="2.1" fill="currentColor" stroke="none"/><circle cx="19" cy="19" r="2.1" fill="currentColor" stroke="none"/><path d="M12 7L6.3 17M12 7l5.7 10M7.2 19h9.6"/></svg></div>
+        <div class="project-body"><h4>Ampliación de red de transmisión</h4><span>Sector infraestructura · Tolima</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" data-sector="comercial">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="9" width="4" height="10"/><rect x="10" y="5" width="4" height="14"/><rect x="16" y="9" width="4" height="10"/><path d="M4 5h16"/></svg></div>
+        <div class="project-body"><h4>Subestación centro comercial</h4><span>Sector comercial · Neiva</span></div>
+      </a>
+      <a href="contacto.html" class="project-card reveal" data-sector="industrial">
+        <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path d="M12 12l4-4M7 13a5 5 0 0110 0"/></svg></div>
+        <div class="project-body"><h4>Telemedida para planta industrial</h4><span>Sector industrial · Huila</span></div>
+      </a>
+    </div>
+
+    <p class="form-note text-center" style="margin-top:32px">Imágenes de referencia -- cada proyecto se documenta con fotografía real durante la entrega. Escribinos si querés el detalle técnico de alguno.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="cta-band reveal">
+      <div>
+        <h3>Sumá tu proyecto a esta lista</h3>
+        <p>Contanos el alcance y te acompañamos desde el diseño hasta la puesta en servicio.</p>
+      </div>
+      <div class="cta-actions">
+        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none">Solicitar cotización</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="assets/img/logo-dismelec.png" alt="DISMELEC Ingenieros SAS" style="filter:brightness(0) invert(1)">
+        <p>Ingeniería eléctrica para la industria, la infraestructura y el desarrollo de Colombia.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navegación</h5>
+        <ul><li><a href="index.html">Inicio</a></li><li><a href="servicios.html">Servicios</a></li><li><a href="proyectos.html">Proyectos</a></li><li><a href="nosotros.html">Nosotros</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Servicios</h5>
+        <ul><li><a href="servicios.html#redes">Redes eléctricas</a></li><li><a href="servicios.html#subestaciones">Subestaciones</a></li><li><a href="servicios.html#medida">Sistemas de medida</a></li><li><a href="servicios.html#retie">RETIE y legalización</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contacto</h5>
+        <ul><li><a href="tel:+573000000000">+57 300 000 0000</a></li><li><a href="mailto:contacto@dismelecingenieros.com">contacto@dismelecingenieros.com</a></li><li><a href="contacto.html">Ver todos los medios</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year></span> DISMELEC Ingenieros SAS. Todos los derechos reservados.</span>
+      <span>Sitio en construcción -- contenido de referencia</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/573000000000" class="wa-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.7 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5.2.5.7 1.8.8 1.9.1.2.1.4 0 .6-.1.2-.1.3-.3.5l-.4.5c-.1.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.7-.1.3.1 1.7.8 2 .9.3.1.5.2.6.3.1.2.1.9-.1 1.6z"/></svg>
+</a>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
