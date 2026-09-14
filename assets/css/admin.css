@@ -1,0 +1,104 @@
+/* ============================================================
+   DISMELEC -- panel privado (admin.html). Reusa las variables de
+   style.css (colores, radios, sombras) -- este archivo solo agrega los
+   componentes propios del editor.
+   ============================================================ */
+
+/* [hidden] por sí solo NO alcanza acá -- .admin-gate/.admin-topbar
+   definen su propio "display" (flex), que como regla de autor le gana al
+   estilo por defecto del navegador para [hidden]. Bug real encontrado
+   probando: después de un login correcto, la pantalla de clave seguía
+   viéndose apilada arriba del panel. */
+[hidden]{display:none !important}
+
+.admin-shell{min-height:100vh;background:var(--bg-soft);padding-bottom:80px}
+.admin-topbar{
+  background:var(--navy-950);color:#fff;padding:16px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.admin-topbar .container{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.admin-topbar .brand-mini{display:flex;align-items:center;gap:10px;font-weight:700}
+.admin-topbar .brand-mini img{height:32px}
+.admin-topbar .muted{color:#9db6d2;font-size:12.5px}
+.admin-topbar-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+@media (max-width:640px){
+  .admin-topbar .muted{display:none}
+  .admin-topbar .brand-mini span{display:none}
+}
+
+.admin-gate{
+  min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.admin-gate-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-md);padding:36px;max-width:380px;width:100%;text-align:center;
+}
+.admin-gate-card .feature-icon{margin:0 auto 18px;width:56px;height:56px;border-radius:14px}
+.admin-gate-card h1{font-size:20px;margin-bottom:8px}
+.admin-gate-card p{color:var(--muted);font-size:13.5px;margin-bottom:22px}
+.admin-gate-card input{
+  width:100%;border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;
+  font:inherit;margin-bottom:14px;text-align:center;letter-spacing:.05em;
+}
+.admin-error{color:#c0392b;font-size:13px;font-weight:600;margin-top:10px;display:none}
+.admin-error.show{display:block}
+
+.admin-main{padding:32px 0}
+.admin-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px 28px;margin-bottom:24px;box-shadow:var(--shadow-sm);
+}
+.admin-card h2{font-size:16px;margin-bottom:4px}
+.admin-card .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+.admin-field{margin-bottom:16px}
+.admin-field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.admin-field input[type=text],
+.admin-field input[type=url],
+.admin-field input[type=password],
+.admin-field textarea,
+.admin-field select{
+  width:100%;border:1.5px solid var(--border);border-radius:9px;padding:11px 13px;
+  font:inherit;color:var(--ink);background:#fff;
+}
+.admin-field textarea{min-height:80px;resize:vertical}
+.admin-field .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
+
+.admin-photo-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.admin-photo-preview{
+  width:220px;height:130px;border-radius:10px;object-fit:cover;background:var(--bg-soft-2);
+  border:1px solid var(--border);flex:none;
+}
+
+.admin-card-item{
+  border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px;
+  position:relative;
+}
+.admin-card-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.admin-card-item-top strong{font-size:13px;color:var(--muted)}
+.admin-card-actions{display:flex;gap:6px}
+.admin-icon-btn{
+  width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--body);
+}
+.admin-icon-btn:hover{border-color:var(--blue-400);color:var(--blue-600)}
+.admin-icon-btn svg{width:15px;height:15px}
+.admin-icon-btn.danger:hover{border-color:#e0857a;color:#c0392b}
+
+.admin-icon-picker{display:flex;align-items:center;gap:10px}
+.admin-icon-picker .preview{
+  width:40px;height:40px;border-radius:9px;background:var(--blue-100);color:var(--blue-600);
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+.admin-icon-picker .preview svg{width:20px;height:20px}
+
+.admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px}
+.admin-status{font-size:13px;font-weight:600;min-height:18px}
+.admin-status.ok{color:var(--success)}
+.admin-status.err{color:#c0392b}
+.admin-status.busy{color:var(--blue-600)}
+
+.admin-token-note{
+  background:var(--blue-100);border:1px solid #bcdcfa;border-radius:10px;padding:14px 16px;
+  font-size:12.5px;color:#0d4c92;margin-bottom:18px;line-height:1.55;
+}
+.admin-token-note a{color:#0d4c92;text-decoration:underline}

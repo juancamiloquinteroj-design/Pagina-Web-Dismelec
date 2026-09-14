@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel privado · DISMELEC</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/logo-dismelec.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <!-- ==================== PANTALLA DE CLAVE ==================== -->
+  <div class="admin-gate" id="admin-gate">
+    <div class="admin-gate-card">
+      <div class="feature-icon" style="margin-inline:auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+      </div>
+      <h1>Panel privado</h1>
+      <p>Solo para el equipo de DISMELEC -- acá se edita el contenido del sitio.</p>
+      <input type="password" id="admin-password" placeholder="Clave de acceso" autocomplete="off">
+      <button type="button" class="btn btn-primary btn-block" id="admin-entrar">Entrar</button>
+      <div class="admin-error" id="admin-error">Clave incorrecta.</div>
+    </div>
+  </div>
+
+  <!-- ==================== PANEL (oculto hasta desbloquear) ==================== -->
+  <div id="admin-panel" hidden>
+
+    <div class="admin-topbar">
+      <div class="container">
+        <a href="index.html" class="brand-mini">
+          <img src="assets/img/logo-dismelec.png" alt="DISMELEC" style="filter:brightness(0) invert(1)">
+          <span>Panel privado</span>
+        </a>
+        <div class="admin-topbar-actions">
+          <span class="muted" id="admin-token-status">Sin token de GitHub configurado</span>
+          <button type="button" class="btn btn-outline btn-sm" id="admin-token-btn">Configurar token</button>
+          <a href="index.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.4)">Ver sitio</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container admin-main">
+
+      <!-- Paso del token, colapsado por default -->
+      <div class="admin-card" id="admin-token-card" style="display:none">
+        <h2>Token de GitHub</h2>
+        <p class="sub">Necesario para publicar cambios -- se guarda SOLO en este navegador, nunca se manda a ningún lado más que a GitHub.</p>
+        <div class="admin-token-note">
+          Generalo en <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a>
+          -- tipo "classic", marcá el permiso <strong>repo</strong> completo, sin fecha de vencimiento corta si querés no repetir esto seguido.
+          Pegalo acá abajo una sola vez.
+        </div>
+        <div class="admin-field">
+          <label>Personal Access Token</label>
+          <input type="password" id="admin-token-input" placeholder="ghp_...">
+        </div>
+        <button type="button" class="btn btn-primary" id="admin-token-guardar">Guardar token</button>
+      </div>
+
+      <!-- ---- Portada / Hero ---- -->
+      <div class="admin-card">
+        <h2>Portada (Inicio)</h2>
+        <p class="sub">Foto de fondo, título y texto del hero.</p>
+
+        <div class="admin-field">
+          <label>Foto de portada</label>
+          <div class="admin-photo-row">
+            <img id="admin-photo-preview" class="admin-photo-preview" src="assets/img/foto-portada.jpg" alt="Vista previa">
+            <div>
+              <input type="file" id="admin-photo-input" accept="image/*">
+              <div class="hint">JPG o PNG. Se sube como archivo nuevo al repo -- la foto vieja queda en el historial de GitHub por si hay que volver atrás.</div>
+            </div>
+          </div>
+        </div>
+        <div class="admin-field">
+          <label>Texto de la esquina (rótulo sobre la foto)</label>
+          <input type="text" id="admin-hero-tag" placeholder="Energía para un mejor mañana">
+        </div>
+        <div class="admin-field">
+          <label>Título principal</label>
+          <input type="text" id="admin-hero-title">
+        </div>
+        <div class="admin-field">
+          <label>Texto debajo del título</label>
+          <textarea id="admin-hero-lead"></textarea>
+        </div>
+      </div>
+
+      <!-- ---- Tarjetas ---- -->
+      <div class="admin-card">
+        <h2>Tarjetas de servicio</h2>
+        <p class="sub">Las 4 tarjetas debajo del hero en el Inicio -- podés editar, agregar, quitar y reordenar.</p>
+        <div id="admin-cards-list"></div>
+        <button type="button" class="btn btn-outline-dark btn-sm" id="admin-card-agregar">+ Agregar tarjeta</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="admin-toolbar">
+          <div>
+            <button type="button" class="btn btn-primary" id="admin-publicar">Publicar cambios</button>
+            <span class="admin-status" id="admin-status"></span>
+          </div>
+          <span class="hint">Publicar sube los cambios directo al repositorio -- el sitio se actualiza solo en 30-60 segundos.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<template id="admin-card-template">
+  <div class="admin-card-item" data-card>
+    <div class="admin-card-item-top">
+      <strong>Tarjeta</strong>
+      <div class="admin-card-actions">
+        <button type="button" class="admin-icon-btn" data-mover="up" title="Subir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        <button type="button" class="admin-icon-btn" data-mover="down" title="Bajar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button>
+        <button type="button" class="admin-icon-btn danger" data-mover="remove" title="Quitar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button>
+      </div>
+    </div>
+    <div class="admin-field">
+      <label>Ícono</label>
+      <div class="admin-icon-picker">
+        <div class="preview" data-icon-preview></div>
+        <select data-field="icon"></select>
+      </div>
+    </div>
+    <div class="admin-field">
+      <label>Título</label>
+      <input type="text" data-field="title">
+    </div>
+    <div class="admin-field">
+      <label>Descripción</label>
+      <textarea data-field="desc"></textarea>
+    </div>
+    <div class="admin-field" style="margin-bottom:0">
+      <label>Enlace (a qué página lleva)</label>
+      <input type="text" data-field="link" placeholder="servicios.html#redes">
+    </div>
+  </div>
+</template>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

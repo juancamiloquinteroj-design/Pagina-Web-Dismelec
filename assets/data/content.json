@@ -1,0 +1,34 @@
+{
+  "hero": {
+    "photo": "assets/img/foto-portada.jpg",
+    "tag": "Energía\npara un mejor mañana",
+    "title": "Ingeniería eléctrica que conecta grandes proyectos",
+    "lead": "Diseñamos, construimos y acompañamos soluciones eléctricas seguras, eficientes y confiables para la industria, la infraestructura y el desarrollo de Colombia."
+  },
+  "cards": [
+    {
+      "icon": "redes",
+      "title": "Redes eléctricas",
+      "desc": "Diseño, construcción y mantenimiento de redes de media y baja tensión.",
+      "link": "servicios.html#redes"
+    },
+    {
+      "icon": "subestaciones",
+      "title": "Subestaciones",
+      "desc": "Ingeniería, montaje y puesta en servicio de subestaciones de potencia y distribución.",
+      "link": "servicios.html#subestaciones"
+    },
+    {
+      "icon": "medida",
+      "title": "Sistemas de medida",
+      "desc": "Soluciones de medición comercial e industrial con altos estándares de precisión.",
+      "link": "servicios.html#medida"
+    },
+    {
+      "icon": "retie",
+      "title": "RETIE y legalización",
+      "desc": "Asesoría, diseños, pruebas y acompañamiento para cumplimiento normativo.",
+      "link": "servicios.html#retie"
+    }
+  ]
+}
