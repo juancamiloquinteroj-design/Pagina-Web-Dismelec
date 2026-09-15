@@ -234,24 +234,27 @@ button{font:inherit}
 @media (max-width:560px){.feature-strip{grid-template-columns:1fr}}
 .feature-card{
   background:#fff;border:1px solid var(--border);border-radius:var(--radius);
-  padding:22px 20px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:11px;
+  padding:16px 18px;box-shadow:var(--shadow-md);display:flex;align-items:flex-start;gap:13px;
   transition:.18s ease;
 }
 .feature-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--blue-400)}
 .feature-icon{
-  width:52px;height:52px;border-radius:12px;background:var(--blue-100);
+  width:42px;height:42px;border-radius:10px;background:var(--blue-100);
   display:flex;align-items:center;justify-content:center;color:var(--blue-600);flex:none;
   overflow:hidden;
 }
-.feature-icon svg{width:26px;height:26px}
+.feature-icon svg{width:21px;height:21px}
 /* Foto en vez de ícono -- ocupa el mismo cuadradito, no agranda la
    tarjeta (pedido explícito: "la imagen no ocupa tanto espacio"). */
 .feature-icon-img{width:100%;height:100%;object-fit:cover}
-.feature-card h3{font-size:17px;margin-bottom:2px}
-.feature-card p{font-size:14px;color:var(--muted);margin:0}
+/* Ícono a la izquierda, texto al lado -- no apilado (pedido explícito:
+   "va ícono y al lado el texto y son más pequeñas"). */
+.feature-body{display:flex;flex-direction:column;gap:3px;min-width:0}
+.feature-card h3{font-size:14.5px;margin:0}
+.feature-card p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.45}
 .feature-more{
-  margin-top:auto;display:inline-flex;align-items:center;gap:6px;color:var(--blue-600);
-  font-weight:700;font-size:13.5px;
+  margin-top:5px;display:inline-flex;align-items:center;gap:6px;color:var(--blue-600);
+  font-weight:700;font-size:12.5px;
 }
 .feature-card .feature-more svg{width:14px;height:14px;transition:.15s}
 .feature-card:hover .feature-more svg{transform:translateX(3px)}

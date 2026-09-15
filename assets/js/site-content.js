@@ -74,9 +74,11 @@ function _dmRenderIndex(datos, root) {
     cardsWrap.innerHTML = d.cards.map((c) => `
       <a href="${_dmEsc(c.link || '#')}" class="feature-card reveal in">
         <div class="feature-icon">${_dmIconoOFoto(c)}</div>
-        <h3>${_dmEsc(c.title || '')}</h3>
-        <p>${_dmEsc(c.desc || '')}</p>
-        <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+        <div class="feature-body">
+          <h3>${_dmEsc(c.title || '')}</h3>
+          <p>${_dmEsc(c.desc || '')}</p>
+          <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+        </div>
       </a>`).join('');
   }
 

@@ -809,9 +809,11 @@ function adminRenderPreview() {
     return `
     <div class="feature-card">
       <div class="feature-icon">${icono}</div>
-      <h3>${c.title || '(sin título)'}</h3>
-      <p>${c.desc || ''}</p>
-      <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+      <div class="feature-body">
+        <h3>${c.title || '(sin título)'}</h3>
+        <p>${c.desc || ''}</p>
+        <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div>
     </div>`;
   }).join('');
   adminActualizarVistasPrevias();
