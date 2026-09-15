@@ -158,7 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     ADMIN_USER = { uid: user.uid, email: user.email, nombre: perfil.nombre || user.email, rol: perfil.rol };
-    document.getElementById('admin-quien').textContent = `${ADMIN_USER.nombre} ·`;
+    document.getElementById('admin-quien').textContent = ADMIN_USER.nombre;
+    document.getElementById('admin-rol-label').textContent = ADMIN_USER.rol === 'admin' ? 'Administrador' : ADMIN_USER.rol;
+    document.getElementById('admin-avatar').textContent = _adminIniciales(ADMIN_USER.nombre);
+    document.getElementById('admin-saludo-nombre').textContent = ADMIN_USER.nombre;
     document.getElementById('admin-gate').hidden = true;
     document.getElementById('admin-panel').hidden = false;
     adminIniciarPanel();
@@ -184,8 +187,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('admin-crear-usuario').addEventListener('click', adminCrearUsuario);
 
+  // ---- accesos rápidos del Panel principal -- van al mismo módulo que
+  // el botón correspondiente del menú lateral ----
+  document.querySelectorAll('.admin-quicklink[data-ir]').forEach((btn) => {
+    btn.addEventListener('click', () => adminIrAModulo(btn.dataset.ir));
+  });
+
+  // ---- campanita de notificaciones -- no hay sistema de notificaciones
+  // real todavía, solo un mensaje fijo; se abre/cierra al clic y se
+  // cierra si se hace clic afuera ----
+  const notifBtn = document.getElementById('admin-notif-btn');
+  const notifDrop = document.getElementById('admin-notif-drop');
+  if (notifBtn && notifDrop) {
+    notifBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      notifDrop.hidden = !notifDrop.hidden;
+    });
+    document.addEventListener('click', () => { notifDrop.hidden = true; });
+  }
+
+  // ---- buscador del topbar -- filtra los botones del menú lateral por
+  // el texto visible, no busca dentro de cada módulo ----
+  const buscador = document.getElementById('admin-buscar-modulo');
+  if (buscador) {
+    buscador.addEventListener('input', () => {
+      const q = buscador.value.trim().toLowerCase();
+      document.querySelectorAll('.admin-sidebar-link').forEach((link) => {
+        link.style.display = !q || link.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  }
+
   adminSetupNav();
 });
+
+function _adminIniciales(nombre) {
+  const partes = (nombre || '').trim().split(/\s+/).filter(Boolean);
+  if (!partes.length) return '--';
+  return (partes[0][0] + (partes[1] ? partes[1][0] : '')).toUpperCase();
+}
 
 // ------------------------------------------------- módulos + pestañas
 // Menú lateral ("módulos") y las pestañas de adentro de cada uno -- pedido

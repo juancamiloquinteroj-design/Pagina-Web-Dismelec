@@ -61,25 +61,27 @@
 .auth-card .btn[disabled]{opacity:.6;cursor:default}
 
 /* ---------- Encabezado superior (franja blanca con el logo) -- usado
-   arriba del login y en el panel de portal-clientes.html una vez
-   adentro. ---------- */
+   arriba del login, en el panel de portal-clientes.html una vez adentro,
+   y también en el .admin-topbar del panel privado (admin.css reusa
+   .brand-mini-text ahí -- por eso estas reglas ya no van con el prefijo
+   ".auth-topbar", sino sueltas). ---------- */
 .auth-topbar{
   background:var(--surface);border-bottom:1px solid var(--border);padding:12px 0;flex:none;
 }
 .auth-topbar .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.auth-topbar .brand-mini{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
-.auth-topbar .brand-mini img{height:40px;width:auto;flex:none}
-.auth-topbar .brand-mini-text{display:flex;flex-direction:column;line-height:1.05;text-align:left}
-.auth-topbar .brand-mini-text strong{font-size:15px;letter-spacing:.01em;color:var(--ink)}
-.auth-topbar .brand-mini-text small{font-weight:600;color:var(--muted);font-size:10px;letter-spacing:.04em;margin-top:1px}
+.brand-mini{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+.brand-mini img{height:40px;width:auto;flex:none}
+.brand-mini-text{display:flex;flex-direction:column;line-height:1.05;text-align:left}
+.brand-mini-text strong{font-size:15px;letter-spacing:.01em;color:var(--ink)}
+.brand-mini-text small{font-weight:600;color:var(--muted);font-size:10px;letter-spacing:.04em;margin-top:1px}
 
 /* El logo tiene fondo transparente y el texto en tinta oscura -- en modo
    oscuro se pierde contra el fondo si no lleva una placa clara detrás.
-   Ojo: NO tocar el logo del .admin-topbar -- ese ya viene invertido a
-   blanco a propósito (inline style) para el fondo navy fijo del panel; si
-   heredara esta placa blanca, el ícono blanco quedaría invisible sobre
-   fondo blanco. */
-:root[data-theme="dark"] .auth-topbar .brand-mini img,
+   Antes esto excluía a propósito al .admin-topbar (era navy fijo con el
+   logo invertido a blanco inline) -- ahora que esa franja también es
+   clara/oscura según el tema (igual que auth-topbar), necesita la misma
+   placa. */
+:root[data-theme="dark"] .brand-mini img,
 :root[data-theme="dark"] .auth-logo{
   background:#fff;border-radius:8px;padding:4px 6px;
 }
