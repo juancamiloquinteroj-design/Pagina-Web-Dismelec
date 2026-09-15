@@ -315,21 +315,28 @@ button{font:inherit}
 
 /* ---------- Listas de servicios ---------- */
 .service-block{
-  display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:center;
-  padding:56px 0;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:center;
+  padding:36px 0;border-bottom:1px solid var(--border);
 }
 .service-block:last-child{border-bottom:0}
-.service-block:nth-child(even) .service-visual{order:2}
+/* El zigzag (imagen a la izquierda o derecha, alternado) ya lo resuelve
+   el orden real de los elementos en el HTML/JS -- acá NO hace falta
+   "order" por CSS; había una regla vieja (nth-child(even){order:2}) que
+   competía con ese orden real y lo anulaba, dejando la imagen siempre a
+   la derecha (bug real visto en captura, las 4 imágenes del mismo lado).
+   Solo queda la regla mobile: en pantalla angosta todo se apila. */
 @media (max-width:860px){
-  .service-block, .service-block:nth-child(even) .service-visual{grid-template-columns:1fr;order:0}
   .service-block{grid-template-columns:1fr}
 }
+/* Mas chica que antes -- pedido explicito ("las imagenes estan muy
+   grandes las quiero mas pequenas"), sigue en zigzag (par/impar cambia
+   de lado, ya existia con .nth-child(even) .service-visual{order:2}). */
 .service-visual{
-  aspect-ratio:4/3;border-radius:var(--radius);
+  aspect-ratio:4/3;max-width:260px;margin-inline:auto;border-radius:var(--radius);
   background:linear-gradient(150deg,var(--navy-900),var(--navy-700));
   display:flex;align-items:center;justify-content:center;color:#bcd6f7;position:relative;overflow:hidden;
 }
-.service-visual svg{width:34%;height:34%;color:#fff;position:relative;z-index:1}
+.service-visual svg{width:30%;height:30%;color:#fff;position:relative;z-index:1}
 .service-visual::after{
   content:"";position:absolute;inset:0;
   background-image:radial-gradient(circle at 25% 20%, rgba(74,154,240,.35), transparent 55%);
