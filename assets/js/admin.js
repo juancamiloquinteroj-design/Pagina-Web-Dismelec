@@ -304,6 +304,9 @@ async function adminIniciarPanel() {
   ['index', 'servicios', 'proyectos', 'nosotros', 'contacto'].forEach((p) => { if (!ADMIN_STATE[p]) ADMIN_STATE[p] = {}; });
   if (!ADMIN_STATE.index.hero) ADMIN_STATE.index.hero = {};
   if (!ADMIN_STATE.servicios.hero) ADMIN_STATE.servicios.hero = {};
+  if (!ADMIN_STATE.proyectos.hero) ADMIN_STATE.proyectos.hero = {};
+  if (!ADMIN_STATE.nosotros.hero) ADMIN_STATE.nosotros.hero = {};
+  if (!ADMIN_STATE.contacto.hero) ADMIN_STATE.contacto.hero = {};
   if (!Array.isArray(ADMIN_STATE.index.cards)) ADMIN_STATE.index.cards = [];
   if (!Array.isArray(ADMIN_STATE.index.stats)) ADMIN_STATE.index.stats = [];
   if (!Array.isArray(ADMIN_STATE.index.proyectosDestacados)) ADMIN_STATE.index.proyectosDestacados = [];
@@ -317,27 +320,36 @@ async function adminIniciarPanel() {
   document.getElementById('admin-hero-title').value = ADMIN_STATE.index.hero.title || '';
   document.getElementById('admin-hero-lead').value = ADMIN_STATE.index.hero.lead || '';
   if (ADMIN_STATE.index.hero.photo) document.getElementById('admin-photo-preview').src = ADMIN_STATE.index.hero.photo;
-  if (ADMIN_STATE.servicios.hero.photo) document.getElementById('admin-servicios-photo-preview').src = ADMIN_STATE.servicios.hero.photo;
+  ['servicios', 'proyectos', 'nosotros', 'contacto'].forEach((pagina) => {
+    const foto = ADMIN_STATE[pagina].hero.photo;
+    const preview = document.getElementById(`admin-${pagina}-photo-preview`);
+    if (foto && preview) preview.src = foto;
+  });
   adminCargarCamposSimples();
 
   if (!_adminListenersListos) {
     _adminListenersListos = true;
     document.getElementById('admin-photo-input').addEventListener('change', onAdminFotoElegida);
-    document.getElementById('admin-servicios-photo-input').addEventListener('change', (ev) => {
-      const file = ev.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        ADMIN_STATE.servicios.hero._nuevaFoto = { file, dataUrl: reader.result };
-        document.getElementById('admin-servicios-photo-preview').src = reader.result;
-        // Igual que con la foto del hero del Inicio -- la vista previa usa
-        // el dataURL directo, ADMIN_STATE.servicios.hero.photo recién se
-        // actualiza al publicar (ahí es cuando existe una URL real).
-        const prev = document.getElementById('admin-preview-servicios');
-        const foto = prev && prev.querySelector('.page-hero-photo');
-        if (foto) foto.style.backgroundImage = `url('${reader.result}')`;
-      };
-      reader.readAsDataURL(file);
+    // Foto de portada (.page-hero) de Servicios/Proyectos/Nosotros/Contacto
+    // -- mismo comportamiento en las 4: la vista previa usa el dataURL
+    // directo, ADMIN_STATE.<pagina>.hero.photo recién se actualiza al
+    // publicar (ahí es cuando existe una URL real).
+    ['servicios', 'proyectos', 'nosotros', 'contacto'].forEach((pagina) => {
+      const input = document.getElementById(`admin-${pagina}-photo-input`);
+      if (!input) return;
+      input.addEventListener('change', (ev) => {
+        const file = ev.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          ADMIN_STATE[pagina].hero._nuevaFoto = { file, dataUrl: reader.result };
+          document.getElementById(`admin-${pagina}-photo-preview`).src = reader.result;
+          const prev = document.getElementById(`admin-preview-${pagina}`);
+          const fotoEl = prev && prev.querySelector('.page-hero-photo');
+          if (fotoEl) fotoEl.style.backgroundImage = `url('${reader.result}')`;
+        };
+        reader.readAsDataURL(file);
+      });
     });
     document.getElementById('admin-card-agregar').addEventListener('click', () => {
       ADMIN_STATE.index.cards.push({ icon: 'rayo', title: 'Nueva tarjeta', desc: '', link: '' });
@@ -469,11 +481,14 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   proyectos: `
-    <section class="page-hero"><div class="container">
-      <span class="eyebrow" data-c="hero.eyebrow"></span>
-      <h1 data-c="hero.title"></h1>
-      <p data-c="hero.lead"></p>
-    </div></section>
+    <section class="page-hero">
+      <div class="page-hero-photo"></div>
+      <div class="container">
+        <span class="eyebrow" data-c="hero.eyebrow"></span>
+        <h1 data-c="hero.title"></h1>
+        <p data-c="hero.lead"></p>
+      </div>
+    </section>
     <section class="section"><div class="container">
       <div class="project-grid" id="proyectos-items"></div>
     </div></section>
@@ -484,11 +499,14 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   nosotros: `
-    <section class="page-hero"><div class="container">
-      <span class="eyebrow" data-c="hero.eyebrow"></span>
-      <h1 data-c="hero.title"></h1>
-      <p data-c="hero.lead"></p>
-    </div></section>
+    <section class="page-hero">
+      <div class="page-hero-photo"></div>
+      <div class="container">
+        <span class="eyebrow" data-c="hero.eyebrow"></span>
+        <h1 data-c="hero.title"></h1>
+        <p data-c="hero.lead"></p>
+      </div>
+    </section>
     <section class="section"><div class="container">
       <div class="values-grid" style="grid-template-columns:1fr 1fr">
         <div class="value-card">
@@ -513,11 +531,14 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   contacto: `
-    <section class="page-hero"><div class="container">
-      <span class="eyebrow" data-c="hero.eyebrow"></span>
-      <h1 data-c="hero.title"></h1>
-      <p data-c="hero.lead"></p>
-    </div></section>
+    <section class="page-hero">
+      <div class="page-hero-photo"></div>
+      <div class="container">
+        <span class="eyebrow" data-c="hero.eyebrow"></span>
+        <h1 data-c="hero.title"></h1>
+        <p data-c="hero.lead"></p>
+      </div>
+    </section>
     <section class="section"><div class="container">
       <div class="contact-card" style="max-width:420px">
         <div class="contact-item">
@@ -931,6 +952,9 @@ async function adminPublicar() {
     await adminSubirFotosPendientes(ADMIN_STATE.proyectos.items, 'proyecto', status, token);
     await adminSubirFotosPendientes(ADMIN_STATE.servicios.items, 'servicio', status, token);
     await adminSubirFotosPendientes([ADMIN_STATE.servicios.hero], 'portada-servicios', status, token);
+    await adminSubirFotosPendientes([ADMIN_STATE.proyectos.hero], 'portada-proyectos', status, token);
+    await adminSubirFotosPendientes([ADMIN_STATE.nosotros.hero], 'portada-nosotros', status, token);
+    await adminSubirFotosPendientes([ADMIN_STATE.contacto.hero], 'portada-contacto', status, token);
 
     status.textContent = 'Guardando cambios de contenido...';
     const contenido = JSON.stringify(ADMIN_STATE, null, 2);

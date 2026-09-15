@@ -453,6 +453,9 @@ button{font:inherit}
   background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
   background-size:42px 42px;
 }
+/* Con foto de fondo la cuadrícula decorativa queda encima de la imagen
+   y se ve como una rejilla sobre la foto -- se apaga en ese caso. */
+.page-hero.has-photo::after{display:none}
 .page-hero .container{position:relative;z-index:2}
 .page-hero .eyebrow{color:#8fc0f7}
 .page-hero .eyebrow::before{background:var(--blue-400)}

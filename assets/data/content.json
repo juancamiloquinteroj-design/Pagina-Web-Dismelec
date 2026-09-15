@@ -155,7 +155,8 @@
     "hero": {
       "eyebrow": "Portafolio",
       "title": "Proyectos que impulsan el desarrollo del país",
-      "lead": "Una muestra de nuestro trabajo en redes, subestaciones, medida y legalización eléctrica en distintos sectores."
+      "lead": "Una muestra de nuestro trabajo en redes, subestaciones, medida y legalización eléctrica en distintos sectores.",
+      "photo": "assets/img/foto-portada.jpg"
     },
     "items": [
       {
@@ -229,7 +230,8 @@
     "hero": {
       "eyebrow": "Quiénes somos",
       "title": "Un equipo de ingeniería comprometido con cada proyecto",
-      "lead": "Acompañamos a nuestros clientes desde el diagnóstico hasta la puesta en servicio, con soluciones eléctricas seguras, eficientes y ajustadas a la normativa vigente."
+      "lead": "Acompañamos a nuestros clientes desde el diagnóstico hasta la puesta en servicio, con soluciones eléctricas seguras, eficientes y ajustadas a la normativa vigente.",
+      "photo": "assets/img/foto-portada.jpg"
     },
     "mision": {
       "title": "Misión",
@@ -325,7 +327,8 @@
     "hero": {
       "eyebrow": "Hablemos",
       "title": "Cuentanos sobre tu proyecto",
-      "lead": "Respondemos en menos de 24 horas. Si es una emergencia eléctrica, llamanos directamente."
+      "lead": "Respondemos en menos de 24 horas. Si es una emergencia eléctrica, llamanos directamente.",
+      "photo": "assets/img/foto-portada.jpg"
     },
     "telefono": "+57 312 405 7646",
     "whatsapp": "573124057646",

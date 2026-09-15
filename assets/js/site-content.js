@@ -30,6 +30,23 @@ function _dmAplicarTextos(root, seccion) {
   });
 }
 
+// Portada secundaria (.page-hero) de Servicios/Proyectos/Nosotros/Contacto:
+// aplica los textos y, si hay foto de fondo, la pinta en .page-hero-photo
+// y marca la sección con .has-photo -- esa clase apaga la cuadrícula
+// decorativa (.page-hero::after), que solo tiene sentido sobre el
+// degradado liso; sobre una foto se veía como una rejilla encima de la
+// imagen.
+function _dmAplicarPageHero(root, d) {
+  root.querySelectorAll('.page-hero').forEach((h) => {
+    _dmAplicarTextos(h, d);
+    const foto = h.querySelector('.page-hero-photo');
+    if (foto && d.hero && d.hero.photo) {
+      foto.style.backgroundImage = `url('${d.hero.photo}')`;
+      h.classList.add('has-photo');
+    }
+  });
+}
+
 function _dmAplicarContacto(root, seccion) {
   if (!seccion) return;
   if (seccion.telefono) {
@@ -127,11 +144,7 @@ function _dmRenderServicios(datos, root) {
   const d = datos.servicios;
   if (!d) return;
 
-  root.querySelectorAll('.page-hero').forEach((h) => {
-    _dmAplicarTextos(h, d);
-    const foto = h.querySelector('.page-hero-photo');
-    if (foto && d.hero && d.hero.photo) foto.style.backgroundImage = `url('${d.hero.photo}')`;
-  });
+  _dmAplicarPageHero(root, d);
 
   const wrap = root.querySelector('#servicios-items');
   if (wrap && Array.isArray(d.items) && d.items.length) {
@@ -162,7 +175,7 @@ function _dmRenderProyectos(datos, root) {
   const d = datos.proyectos;
   if (!d) return;
 
-  root.querySelectorAll('.page-hero').forEach((h) => _dmAplicarTextos(h, d));
+  _dmAplicarPageHero(root, d);
 
   const wrap = root.querySelector('#proyectos-items');
   if (wrap && Array.isArray(d.items) && d.items.length) {
@@ -186,7 +199,7 @@ function _dmRenderNosotros(datos, root) {
   const d = datos.nosotros;
   if (!d) return;
 
-  root.querySelectorAll('.page-hero').forEach((h) => _dmAplicarTextos(h, d));
+  _dmAplicarPageHero(root, d);
 
   const misionEl = root.querySelector('[data-c="mision.title"]');
   const misionCard = misionEl && misionEl.closest('.value-card');
@@ -228,7 +241,7 @@ function _dmRenderContacto(datos, root) {
   const d = datos.contacto;
   if (!d) return;
 
-  root.querySelectorAll('.page-hero').forEach((h) => _dmAplicarTextos(h, d));
+  _dmAplicarPageHero(root, d);
   root.querySelectorAll('.contact-card').forEach((c) => {
     _dmAplicarTextos(c, d);
     _dmAplicarContacto(c, d);
