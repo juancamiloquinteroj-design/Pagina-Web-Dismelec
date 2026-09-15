@@ -2,21 +2,57 @@
   "index": {
     "hero": {
       "photo": "assets/img/foto-portada.jpg",
-      "tag": "Energía\npara un mejor mañana",
+      "tag": "Energía para un mejor mañana",
       "title": "Ingeniería eléctrica que conecta grandes proyectos",
       "lead": "Diseñamos, construimos y acompañamos soluciones eléctricas seguras, eficientes y confiables para la industria, la infraestructura y el desarrollo de Colombia."
     },
     "cards": [
-      { "icon": "redes", "title": "Redes eléctricas", "desc": "Diseño, construcción y mantenimiento de redes de media y baja tensión.", "link": "servicios.html#redes" },
-      { "icon": "subestaciones", "title": "Subestaciones", "desc": "Ingeniería, montaje y puesta en servicio de subestaciones de potencia y distribución.", "link": "servicios.html#subestaciones" },
-      { "icon": "medida", "title": "Sistemas de medida", "desc": "Soluciones de medición comercial e industrial con altos estándares de precisión.", "link": "servicios.html#medida" },
-      { "icon": "retie", "title": "RETIE y legalización", "desc": "Asesoría, diseños, pruebas y acompañamiento para cumplimiento normativo.", "link": "servicios.html#retie" }
+      {
+        "icon": "redes",
+        "title": "Redes eléctricas",
+        "desc": "Diseño, construcción y mantenimiento de redes de media y baja tensión.",
+        "link": "servicios.html#redes"
+      },
+      {
+        "icon": "redes",
+        "title": "Subestaciones",
+        "desc": "Ingeniería, montaje y puesta en servicio de subestaciones de potencia y distribución.",
+        "link": "servicios.html#subestaciones"
+      },
+      {
+        "icon": "medida",
+        "title": "Sistemas de medida",
+        "desc": "Soluciones de medición comercial e industrial con altos estándares de precisión.",
+        "link": "servicios.html#medida"
+      },
+      {
+        "icon": "retie",
+        "title": "RETIE y legalización",
+        "desc": "Asesoría, diseños, pruebas y acompañamiento para cumplimiento normativo.",
+        "link": "servicios.html#retie"
+      }
     ],
     "stats": [
-      { "icon": "equipo", "valor": "+100", "label": "Proyectos ejecutados" },
-      { "icon": "reloj", "valor": "+10 años", "label": "de experiencia" },
-      { "icon": "edificio", "valor": "Sectores", "label": "Industrial, comercial e institucional" },
-      { "icon": "mapa", "valor": "Cobertura nacional", "label": "Soluciones en toda Colombia" }
+      {
+        "icon": "equipo",
+        "valor": "+20",
+        "label": "Proyectos ejecutados"
+      },
+      {
+        "icon": "redes",
+        "valor": "+10 años",
+        "label": "de experiencia"
+      },
+      {
+        "icon": "edificio",
+        "valor": "Sectores",
+        "label": "Industrial, comercial e institucional"
+      },
+      {
+        "icon": "mapa",
+        "valor": "Cobertura nacional",
+        "label": "Soluciones en toda Colombia"
+      }
     ],
     "proyectosSeccion": {
       "eyebrow": "Portafolio",
@@ -24,10 +60,30 @@
       "desc": "Soluciones eléctricas que impulsan el desarrollo del país."
     },
     "proyectosDestacados": [
-      { "icon": "subestaciones", "title": "Subestación de distribución", "sub": "Sector industrial · Cundinamarca", "link": "proyectos.html#subestacion-distribucion" },
-      { "icon": "lineas", "title": "Redes de media tensión", "sub": "Sector infraestructura · Antioquia", "link": "proyectos.html#redes-media-tension" },
-      { "icon": "medida", "title": "Sistema de medida", "sub": "Sector comercial · Bogotá", "link": "proyectos.html#sistema-medida-comercial" },
-      { "icon": "retie", "title": "Legalización RETIE", "sub": "Sector industrial · Valle del Cauca", "link": "proyectos.html#legalizacion-retie" }
+      {
+        "icon": "subestaciones",
+        "title": "Subestación de distribución",
+        "sub": "Sector industrial · Cundinamarca",
+        "link": "proyectos.html#subestacion-distribucion"
+      },
+      {
+        "icon": "lineas",
+        "title": "Redes de media tensión",
+        "sub": "Sector infraestructura · Antioquia",
+        "link": "proyectos.html#redes-media-tension"
+      },
+      {
+        "icon": "medida",
+        "title": "Sistema de medida",
+        "sub": "Sector comercial · Bogotá",
+        "link": "proyectos.html#sistema-medida-comercial"
+      },
+      {
+        "icon": "retie",
+        "title": "Legalización RETIE",
+        "sub": "Sector industrial · Valle del Cauca",
+        "link": "proyectos.html#legalizacion-retie"
+      }
     ],
     "cta": {
       "title": "¿Tenés un proyecto eléctrico en mente?",
@@ -35,7 +91,6 @@
       "ctaText": "Solicitar cotización"
     }
   },
-
   "servicios": {
     "hero": {
       "eyebrow": "Lo que hacemos",
@@ -44,25 +99,37 @@
     },
     "items": [
       {
-        "icon": "redes", "numero": "01", "title": "Redes eléctricas", "anchor": "redes",
+        "icon": "redes",
+        "numero": "01",
+        "title": "Redes eléctricas",
+        "anchor": "redes",
         "desc": "Diseñamos, construimos y mantenemos redes de media y baja tensión aéreas y subterráneas, con criterios de confiabilidad, seguridad y cumplimiento normativo en cada tramo.",
         "checks": "Diseño y cálculo de redes MT/BT aéreas y subterráneas\nConstrucción, ampliación y repotenciación de circuitos\nMantenimiento preventivo y correctivo\nAtención de emergencias y reposición de servicio",
         "ctaText": "Cotizar este servicio"
       },
       {
-        "icon": "subestaciones", "numero": "02", "title": "Subestaciones", "anchor": "subestaciones",
+        "icon": "subestaciones",
+        "numero": "02",
+        "title": "Subestaciones",
+        "anchor": "subestaciones",
         "desc": "Ingeniería, montaje y puesta en servicio de subestaciones eléctricas de potencia y distribución, incluyendo protecciones, control y sistemas auxiliares.",
         "checks": "Ingeniería básica y de detalle\nMontaje electromecánico y de tableros de control\nPruebas, protecciones y puesta en servicio\nMantenimiento y modernización de subestaciones existentes",
         "ctaText": "Cotizar este servicio"
       },
       {
-        "icon": "medida", "numero": "03", "title": "Sistemas de medida", "anchor": "medida",
+        "icon": "medida",
+        "numero": "03",
+        "title": "Sistemas de medida",
+        "anchor": "medida",
         "desc": "Soluciones de medición comercial e industrial con altos estándares de precisión, desde el punto de medida hasta la integración con sistemas de telemedida.",
         "checks": "Instalación de medidores comerciales e industriales\nSistemas de telemedida y monitoreo remoto\nVerificación, calibración y diagnóstico de medida\nDetección y corrección de pérdidas técnicas",
         "ctaText": "Cotizar este servicio"
       },
       {
-        "icon": "retie", "numero": "04", "title": "RETIE y legalización", "anchor": "retie",
+        "icon": "retie",
+        "numero": "04",
+        "title": "RETIE y legalización",
+        "anchor": "retie",
         "desc": "Asesoría, diseños, pruebas y acompañamiento integral para que tus instalaciones eléctricas cumplan el Reglamento Técnico de Instalaciones Eléctricas.",
         "checks": "Diseños eléctricos conforme a RETIE/RETILAP\nAcompañamiento con organismos de certificación\nPruebas de puesta a tierra y protecciones\nTrámite de legalización ante el operador de red",
         "ctaText": "Cotizar este servicio"
@@ -74,7 +141,6 @@
       "ctaText": "Hablar con un ingeniero"
     }
   },
-
   "proyectos": {
     "hero": {
       "eyebrow": "Portafolio",
@@ -82,14 +148,66 @@
       "lead": "Una muestra de nuestro trabajo en redes, subestaciones, medida y legalización eléctrica en distintos sectores."
     },
     "items": [
-      { "icon": "subestaciones", "title": "Subestación de distribución", "sectorLabel": "Sector industrial", "ubicacion": "Cundinamarca", "filtro": "industrial", "anchor": "subestacion-distribucion" },
-      { "icon": "lineas", "title": "Redes de media tensión", "sectorLabel": "Sector infraestructura", "ubicacion": "Antioquia", "filtro": "infraestructura", "anchor": "redes-media-tension" },
-      { "icon": "medida", "title": "Sistema de medida", "sectorLabel": "Sector comercial", "ubicacion": "Bogotá", "filtro": "comercial", "anchor": "sistema-medida-comercial" },
-      { "icon": "retie", "title": "Legalización RETIE", "sectorLabel": "Sector industrial", "ubicacion": "Valle del Cauca", "filtro": "industrial", "anchor": "legalizacion-retie" },
-      { "icon": "edificio", "title": "Modernización eléctrica institucional", "sectorLabel": "Sector institucional", "ubicacion": "Huila", "filtro": "institucional" },
-      { "icon": "redes", "title": "Ampliación de red de transmisión", "sectorLabel": "Sector infraestructura", "ubicacion": "Tolima", "filtro": "infraestructura" },
-      { "icon": "subestaciones", "title": "Subestación centro comercial", "sectorLabel": "Sector comercial", "ubicacion": "Neiva", "filtro": "comercial" },
-      { "icon": "medida", "title": "Telemedida para planta industrial", "sectorLabel": "Sector industrial", "ubicacion": "Huila", "filtro": "industrial" }
+      {
+        "icon": "subestaciones",
+        "title": "Subestación de distribución",
+        "sectorLabel": "Sector industrial",
+        "ubicacion": "Cundinamarca",
+        "filtro": "industrial",
+        "anchor": "subestacion-distribucion"
+      },
+      {
+        "icon": "lineas",
+        "title": "Redes de media tensión",
+        "sectorLabel": "Sector infraestructura",
+        "ubicacion": "Antioquia",
+        "filtro": "infraestructura",
+        "anchor": "redes-media-tension"
+      },
+      {
+        "icon": "medida",
+        "title": "Sistema de medida",
+        "sectorLabel": "Sector comercial",
+        "ubicacion": "Bogotá",
+        "filtro": "comercial",
+        "anchor": "sistema-medida-comercial"
+      },
+      {
+        "icon": "retie",
+        "title": "Legalización RETIE",
+        "sectorLabel": "Sector industrial",
+        "ubicacion": "Valle del Cauca",
+        "filtro": "industrial",
+        "anchor": "legalizacion-retie"
+      },
+      {
+        "icon": "edificio",
+        "title": "Modernización eléctrica institucional",
+        "sectorLabel": "Sector institucional",
+        "ubicacion": "Huila",
+        "filtro": "institucional"
+      },
+      {
+        "icon": "redes",
+        "title": "Ampliación de red de transmisión",
+        "sectorLabel": "Sector infraestructura",
+        "ubicacion": "Tolima",
+        "filtro": "infraestructura"
+      },
+      {
+        "icon": "subestaciones",
+        "title": "Subestación centro comercial",
+        "sectorLabel": "Sector comercial",
+        "ubicacion": "Neiva",
+        "filtro": "comercial"
+      },
+      {
+        "icon": "medida",
+        "title": "Telemedida para planta industrial",
+        "sectorLabel": "Sector industrial",
+        "ubicacion": "Huila",
+        "filtro": "industrial"
+      }
     ],
     "cta": {
       "title": "Sumá tu proyecto a esta lista",
@@ -97,7 +215,6 @@
       "ctaText": "Solicitar cotización"
     }
   },
-
   "nosotros": {
     "hero": {
       "eyebrow": "Quiénes somos",
@@ -113,24 +230,80 @@
       "desc": "Ser un referente nacional en ingeniería eléctrica, reconocidos por la calidad de nuestros proyectos, el cumplimiento a nuestros clientes y nuestro aporte a un desarrollo energético más seguro y eficiente en Colombia."
     },
     "valores": [
-      { "icon": "escudo", "title": "Seguridad primero", "desc": "Cada actividad en campo sigue protocolos de seguridad eléctrica y trabajo en alturas, sin excepción." },
-      { "icon": "check", "title": "Calidad técnica", "desc": "Diseños y ejecuciones respaldados por normativa vigente y buenas prácticas de ingeniería." },
-      { "icon": "retie", "title": "Cumplimiento normativo", "desc": "Trabajamos alineados a RETIE, RETILAP y los estándares de cada operador de red." },
-      { "icon": "equipo", "title": "Compromiso con el cliente", "desc": "Acompañamiento cercano en cada etapa, con comunicación clara y plazos realistas." },
-      { "icon": "rayo", "title": "Eficiencia", "desc": "Soluciones que optimizan tiempos y recursos sin sacrificar calidad ni seguridad." },
-      { "icon": "reloj", "title": "Mejora continua", "desc": "Actualización constante en tecnologías y metodologías de la ingeniería eléctrica." }
+      {
+        "icon": "escudo",
+        "title": "Seguridad primero",
+        "desc": "Cada actividad en campo sigue protocolos de seguridad eléctrica y trabajo en alturas, sin excepción."
+      },
+      {
+        "icon": "check",
+        "title": "Calidad técnica",
+        "desc": "Diseños y ejecuciones respaldados por normativa vigente y buenas prácticas de ingeniería."
+      },
+      {
+        "icon": "retie",
+        "title": "Cumplimiento normativo",
+        "desc": "Trabajamos alineados a RETIE, RETILAP y los estándares de cada operador de red."
+      },
+      {
+        "icon": "equipo",
+        "title": "Compromiso con el cliente",
+        "desc": "Acompañamiento cercano en cada etapa, con comunicación clara y plazos realistas."
+      },
+      {
+        "icon": "rayo",
+        "title": "Eficiencia",
+        "desc": "Soluciones que optimizan tiempos y recursos sin sacrificar calidad ni seguridad."
+      },
+      {
+        "icon": "reloj",
+        "title": "Mejora continua",
+        "desc": "Actualización constante en tecnologías y metodologías de la ingeniería eléctrica."
+      }
     ],
     "timeline": [
-      { "numero": "01", "title": "Diagnóstico y visita técnica", "desc": "Evaluamos el sitio, los requerimientos y la normativa aplicable a tu proyecto." },
-      { "numero": "02", "title": "Diseño e ingeniería", "desc": "Desarrollamos los diseños eléctricos, cálculos y planos conforme a RETIE." },
-      { "numero": "03", "title": "Construcción y montaje", "desc": "Ejecutamos la obra con personal certificado y protocolos de seguridad estrictos." },
-      { "numero": "04", "title": "Pruebas, entrega y soporte", "desc": "Pruebas de puesta en servicio, legalización y acompañamiento posterior a la entrega." }
+      {
+        "numero": "01",
+        "title": "Diagnóstico y visita técnica",
+        "desc": "Evaluamos el sitio, los requerimientos y la normativa aplicable a tu proyecto."
+      },
+      {
+        "numero": "02",
+        "title": "Diseño e ingeniería",
+        "desc": "Desarrollamos los diseños eléctricos, cálculos y planos conforme a RETIE."
+      },
+      {
+        "numero": "03",
+        "title": "Construcción y montaje",
+        "desc": "Ejecutamos la obra con personal certificado y protocolos de seguridad estrictos."
+      },
+      {
+        "numero": "04",
+        "title": "Pruebas, entrega y soporte",
+        "desc": "Pruebas de puesta en servicio, legalización y acompañamiento posterior a la entrega."
+      }
     ],
     "stats": [
-      { "icon": "equipo", "valor": "+100", "label": "Proyectos ejecutados" },
-      { "icon": "reloj", "valor": "+10 años", "label": "de experiencia" },
-      { "icon": "edificio", "valor": "Sectores", "label": "Industrial, comercial e institucional" },
-      { "icon": "mapa", "valor": "Cobertura nacional", "label": "Soluciones en toda Colombia" }
+      {
+        "icon": "equipo",
+        "valor": "+100",
+        "label": "Proyectos ejecutados"
+      },
+      {
+        "icon": "reloj",
+        "valor": "+10 años",
+        "label": "de experiencia"
+      },
+      {
+        "icon": "edificio",
+        "valor": "Sectores",
+        "label": "Industrial, comercial e institucional"
+      },
+      {
+        "icon": "mapa",
+        "valor": "Cobertura nacional",
+        "label": "Soluciones en toda Colombia"
+      }
     ],
     "cta": {
       "title": "Conversemos sobre tu próximo proyecto",
@@ -138,18 +311,17 @@
       "ctaText": "Escribinos"
     }
   },
-
   "contacto": {
     "hero": {
       "eyebrow": "Hablemos",
-      "title": "Contanos sobre tu proyecto",
-      "lead": "Respondemos en menos de 24 horas hábiles. Si es una emergencia eléctrica, llamanos directamente."
+      "title": "Cuentanos sobre tu proyecto",
+      "lead": "Respondemos en menos de 24 horas. Si es una emergencia eléctrica, llamanos directamente."
     },
-    "telefono": "+57 300 000 0000",
-    "whatsapp": "573000000000",
-    "correo": "contacto@dismelecingenieros.com",
+    "telefono": "+57 312 405 7646",
+    "whatsapp": "573124057646",
+    "correo": "dismelecingenieros@gmail.com",
     "info": {
-      "oficina": "Colombia -- cobertura nacional",
+      "oficina": "Neiva, Huila - Colombia -- cobertura nacional",
       "horario": "Lunes a viernes, 8:00 a.m. -- 5:00 p.m."
     }
   }
