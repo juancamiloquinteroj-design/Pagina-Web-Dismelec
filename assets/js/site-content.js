@@ -33,10 +33,14 @@ function _dmAplicarTextos(root, seccion) {
 function _dmAplicarContacto(root, seccion) {
   if (!seccion) return;
   if (seccion.telefono) {
+    const telHref = 'tel:' + seccion.telefono.replace(/[^\d+]/g, '');
     root.querySelectorAll('a[data-c-tel]').forEach((a) => {
       a.textContent = seccion.telefono;
-      a.href = 'tel:' + seccion.telefono.replace(/[^\d+]/g, '');
+      a.href = telHref;
     });
+    // Botones con label propio (ej. "Llamar ahora") -- solo cambia el
+    // destino, no el texto visible.
+    root.querySelectorAll('a[data-c-tel-href]').forEach((a) => { a.href = telHref; });
   }
   if (seccion.correo) {
     root.querySelectorAll('a[data-c-correo]').forEach((a) => {
@@ -238,17 +242,20 @@ async function dismelecCargarContenido() {
     return;
   }
 
+  // El teléfono/WhatsApp/correo del pie de página y el botón flotante son
+  // los MISMOS en todas las páginas -- se aplican acá, antes del switch
+  // por página, para que editar el teléfono en Parametrización > Página
+  // Contacto se refleje en todos lados (antes solo pintaba en la propia
+  // página de Contacto; bug real reportado -- "si coloco el número en un
+  // solo lado no se actualiza en todo lado").
+  if (datos.contacto) _dmAplicarContacto(document, datos.contacto);
+
   const pagina = document.body.dataset.page || 'index';
   if (pagina === 'index') _dmRenderIndex(datos);
   else if (pagina === 'servicios') _dmRenderServicios(datos);
   else if (pagina === 'proyectos') _dmRenderProyectos(datos);
   else if (pagina === 'nosotros') _dmRenderNosotros(datos);
   else if (pagina === 'contacto') _dmRenderContacto(datos);
-
-  // El logo/WhatsApp del pie y el botón flotante son iguales en todas las
-  // páginas -- si algún día tienen datos propios en content.json se
-  // pintan acá también, pero por ahora quedan fijos (ver nota en la
-  // conversación sobre alcance).
 }
 
 function _dmEsc(s) {
