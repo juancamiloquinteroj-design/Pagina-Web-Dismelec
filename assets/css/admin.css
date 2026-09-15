@@ -12,7 +12,12 @@
    redundante a propósito -- cada hoja se tiene que bastar sola.) */
 [hidden]{display:none !important}
 
-.admin-shell{min-height:100vh;background:var(--bg-soft);padding-bottom:120px}
+.admin-shell{min-height:100vh;background:var(--bg-soft)}
+/* El padding-bottom para la barra flotante "Publicar cambios" solo aplica
+   una vez que el panel está desbloqueado -- si va en .admin-shell a
+   secas, también empuja la pantalla de login (que vive en el mismo
+   contenedor) y le mete scroll de sobra sin necesidad. */
+.admin-shell:has(#admin-panel:not([hidden])){padding-bottom:120px}
 .admin-topbar{
   background:var(--navy-950);color:#fff;padding:16px 0;
   display:flex;align-items:center;justify-content:space-between;
