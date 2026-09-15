@@ -109,6 +109,16 @@
 .admin-preview-strip{margin-top:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
 .admin-preview-strip .feature-card{box-shadow:none}
 
+/* Vista previa en vivo -- copia real de la sección de la página (mismas
+   clases de style.css), actualizada mientras se escribe. Se deshabilita
+   el click adentro (es una vista previa, no hay que poder navegar) y
+   queda en una caja con scroll propio para no estirar el panel entero. */
+.admin-live-preview{
+  border:1px solid var(--border);border-radius:12px;overflow:auto;max-height:620px;
+  pointer-events:none;background:var(--bg);
+}
+.admin-live-preview .site-header,.admin-live-preview .site-footer,.admin-live-preview .wa-float{display:none}
+
 /* position:fixed (no sticky) -- sticky DENTRO de la lista de tarjetas
    quedaba flotando a mitad de la lista al hacer scroll, tapando el
    título/descripción de la tarjeta que estuviera pasando por ahí en ese

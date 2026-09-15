@@ -89,6 +89,34 @@ function adminLeerCamposSimples() {
   });
 }
 
+// Además de leerse recién al publicar (arriba), cada campo simple
+// (incluidos los 3 del hero del Inicio, que van aparte) también
+// actualiza ADMIN_STATE y la vista previa EN VIVO, mientras se escribe --
+// pedido explícito ("como si fuera una copia de la página con edición de
+// campos"). Se cablea una sola vez (guardado por _adminListenersListos en
+// el llamador).
+function adminVincularCamposEnVivo() {
+  const camposHero = { 'hero-title': 'index.hero.title', 'hero-lead': 'index.hero.lead' };
+  Object.entries({ ...ADMIN_CAMPOS, ...camposHero }).forEach(([id, ruta]) => {
+    const el = document.getElementById('admin-' + id);
+    if (!el) return;
+    el.addEventListener('input', () => {
+      _adminSetRuta(ADMIN_STATE, ruta, el.value);
+      adminActualizarVistasPrevias();
+    });
+  });
+  // El "tag" de la esquina es texto con saltos de línea aplanados a
+  // espacios en la caja (ver adminIniciarPanel) -- no pasa por el mapa
+  // genérico de arriba porque necesita ese tratamiento especial.
+  const tagEl = document.getElementById('admin-hero-tag');
+  if (tagEl) {
+    tagEl.addEventListener('input', () => {
+      ADMIN_STATE.index.hero.tag = tagEl.value;
+      adminActualizarVistasPrevias();
+    });
+  }
+}
+
 // ---------------------------------------------------------------- login
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('admin-login-form');
@@ -294,10 +322,13 @@ async function adminIniciarPanel() {
     });
     document.getElementById('admin-publicar').addEventListener('click', adminPublicar);
     adminMontarTodasLasListas();
+    adminMontarVistasPrevias();
+    adminVincularCamposEnVivo();
   }
 
   adminRenderCards();
   Object.values(ADMIN_LISTAS).forEach((l) => l.render());
+  adminActualizarVistasPrevias();
   adminCargarUsuarios();
 }
 
@@ -362,6 +393,169 @@ function adminMontarTodasLasListas() {
   });
 }
 
+// ------------------------------------------------ vista previa en vivo
+// Pedido explícito: "que en el portal privado sea como la misma página
+// web... como si fuera una copia de la página web pero con edición de
+// campos". Cada tarjeta "Vista previa en vivo" del panel tiene adentro
+// una copia MUY reducida del HTML real de esa sección (mismas clases de
+// style.css) -- vacía al cargar, la llenan las mismas funciones
+// _dmRenderX(datos, root) de site-content.js que pintan el sitio real
+// (con un "root" propio en vez de document), así que nunca se desalinean.
+const ADMIN_ESQUELETOS = {
+  index: `
+    <section class="hero" style="min-height:260px">
+      <div class="hero-photo"></div>
+      <div class="hero-tag-corner"></div>
+      <div class="container"><div class="hero-inner">
+        <h1 data-c="hero.title"></h1>
+        <p class="lead" data-c="hero.lead"></p>
+      </div></div>
+    </section>
+    <div class="container" style="margin-top:24px"><div class="feature-strip"></div></div>
+    <section class="stats-bar section-tight" style="margin-top:32px">
+      <div class="container stats-grid" id="index-stats"></div>
+    </section>
+    <section class="section"><div class="container">
+      <div class="projects-head"><div class="section-head">
+        <span class="eyebrow" data-c="proyectosSeccion.eyebrow"></span>
+        <h2 data-c="proyectosSeccion.title"></h2>
+        <p data-c="proyectosSeccion.desc"></p>
+      </div></div>
+      <div class="project-grid" id="index-proyectos-destacados"></div>
+    </div></section>
+    <section class="section-tight"><div class="container">
+      <div class="cta-band">
+        <div><h3 data-c="cta.title"></h3><p data-c="cta.desc"></p></div>
+        <div class="cta-actions"><a href="#" class="btn btn-primary" data-c="cta.ctaText"></a></div>
+      </div>
+    </div></section>`,
+  servicios: `
+    <section class="page-hero"><div class="container">
+      <span class="eyebrow" data-c="hero.eyebrow"></span>
+      <h1 data-c="hero.title"></h1>
+      <p data-c="hero.lead"></p>
+    </div></section>
+    <section class="section"><div class="container" id="servicios-items"></div></section>
+    <section class="section-tight"><div class="container">
+      <div class="cta-band">
+        <div><h3 data-c="cta.title"></h3><p data-c="cta.desc"></p></div>
+        <div class="cta-actions"><a href="#" class="btn btn-primary" data-c="cta.ctaText"></a></div>
+      </div>
+    </div></section>`,
+  proyectos: `
+    <section class="page-hero"><div class="container">
+      <span class="eyebrow" data-c="hero.eyebrow"></span>
+      <h1 data-c="hero.title"></h1>
+      <p data-c="hero.lead"></p>
+    </div></section>
+    <section class="section"><div class="container">
+      <div class="project-grid" id="proyectos-items"></div>
+    </div></section>
+    <section class="section-tight"><div class="container">
+      <div class="cta-band">
+        <div><h3 data-c="cta.title"></h3><p data-c="cta.desc"></p></div>
+        <div class="cta-actions"><a href="#" class="btn btn-primary" data-c="cta.ctaText"></a></div>
+      </div>
+    </div></section>`,
+  nosotros: `
+    <section class="page-hero"><div class="container">
+      <span class="eyebrow" data-c="hero.eyebrow"></span>
+      <h1 data-c="hero.title"></h1>
+      <p data-c="hero.lead"></p>
+    </div></section>
+    <section class="section"><div class="container">
+      <div class="values-grid" style="grid-template-columns:1fr 1fr">
+        <div class="value-card">
+          <div class="feature-icon">${dismelecIconSvg('mapa')}</div>
+          <h3 data-c="mision.title"></h3><p data-c="mision.desc"></p>
+        </div>
+        <div class="value-card">
+          <div class="feature-icon">${dismelecIconSvg('rayo')}</div>
+          <h3 data-c="vision.title"></h3><p data-c="vision.desc"></p>
+        </div>
+      </div>
+    </div></section>
+    <section class="section" style="background:var(--bg-soft)">
+      <div class="container"><div class="values-grid" id="nosotros-valores"></div></div>
+    </section>
+    <section class="section"><div class="container"><div class="timeline" id="nosotros-timeline"></div></div></section>
+    <section class="stats-bar section-tight"><div class="container stats-grid" id="nosotros-stats"></div></section>
+    <section class="section-tight"><div class="container">
+      <div class="cta-band">
+        <div><h3 data-c="cta.title"></h3><p data-c="cta.desc"></p></div>
+        <div class="cta-actions"><a href="#" class="btn btn-primary" data-c="cta.ctaText"></a></div>
+      </div>
+    </div></section>`,
+  contacto: `
+    <section class="page-hero"><div class="container">
+      <span class="eyebrow" data-c="hero.eyebrow"></span>
+      <h1 data-c="hero.title"></h1>
+      <p data-c="hero.lead"></p>
+    </div></section>
+    <section class="section"><div class="container">
+      <div class="contact-card" style="max-width:420px">
+        <div class="contact-item">
+          <div class="feature-icon">${dismelecIconSvg('rayo')}</div>
+          <div><strong>Teléfono / WhatsApp</strong><a href="#" data-c-tel></a></div>
+        </div>
+        <div class="contact-item">
+          <div class="feature-icon">${dismelecIconSvg('check')}</div>
+          <div><strong>Correo electrónico</strong><a href="#" data-c-correo></a></div>
+        </div>
+        <div class="contact-item">
+          <div class="feature-icon">${dismelecIconSvg('mapa')}</div>
+          <div><strong>Oficina</strong><span data-c="info.oficina"></span></div>
+        </div>
+        <div class="contact-item">
+          <div class="feature-icon">${dismelecIconSvg('reloj')}</div>
+          <div><strong>Horario de atención</strong><span data-c="info.horario"></span></div>
+        </div>
+      </div>
+    </div></section>`,
+};
+
+// ids de los contenedores de vista previa que hay en admin.html -- "index"
+// tiene 2 copias (pestañas Portada e Inicio-mas), el resto 1 cada uno.
+const ADMIN_PREVIEW_IDS = {
+  index: ['admin-preview-index-a', 'admin-preview-index-b'],
+  servicios: ['admin-preview-servicios'],
+  proyectos: ['admin-preview-proyectos'],
+  nosotros: ['admin-preview-nosotros'],
+  contacto: ['admin-preview-contacto'],
+};
+
+function adminMontarVistasPrevias() {
+  Object.entries(ADMIN_PREVIEW_IDS).forEach(([pagina, ids]) => {
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = ADMIN_ESQUELETOS[pagina];
+    });
+  });
+}
+
+function adminActualizarVistasPrevias() {
+  ADMIN_PREVIEW_IDS.index.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) _dmRenderIndex(ADMIN_STATE, el);
+  });
+  ADMIN_PREVIEW_IDS.servicios.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) _dmRenderServicios(ADMIN_STATE, el);
+  });
+  ADMIN_PREVIEW_IDS.proyectos.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) _dmRenderProyectos(ADMIN_STATE, el);
+  });
+  ADMIN_PREVIEW_IDS.nosotros.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) _dmRenderNosotros(ADMIN_STATE, el);
+  });
+  ADMIN_PREVIEW_IDS.contacto.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) _dmRenderContacto(ADMIN_STATE, el);
+  });
+}
+
 // ------------------------------------------------- componente genérico de lista
 // Un solo lugar que sabe pintar filas editables (con selector de ícono
 // opcional), agregar, quitar y reordenar -- parametrizado por qué campos
@@ -391,6 +585,7 @@ function adminMontarLista(cfg) {
 
   function render() {
     wrap.innerHTML = cfg.getArr().map(fila).join('');
+    adminActualizarVistasPrevias();
   }
 
   wrap.addEventListener('input', (ev) => {
@@ -509,6 +704,13 @@ function onAdminFotoElegida(ev) {
   reader.onload = () => {
     ADMIN_NUEVA_FOTO = { file, dataUrl: reader.result };
     document.getElementById('admin-photo-preview').src = reader.result;
+    // La vista previa en vivo usa el dataURL directo -- ADMIN_STATE.index.hero.photo
+    // recién se actualiza al publicar (ahí es cuando existe una URL real).
+    ADMIN_PREVIEW_IDS.index.forEach((id) => {
+      const el = document.getElementById(id);
+      const foto = el && el.querySelector('.hero-photo');
+      if (foto) foto.style.backgroundImage = `url('${reader.result}')`;
+    });
   };
   reader.readAsDataURL(file);
 }
@@ -608,6 +810,7 @@ function adminRenderPreview() {
       <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
     </div>`;
   }).join('');
+  adminActualizarVistasPrevias();
 }
 
 function adminLeerFormularioHero() {
