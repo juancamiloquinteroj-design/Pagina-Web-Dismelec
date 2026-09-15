@@ -153,6 +153,13 @@
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm);
 }
+/* Para tarjetas cortas (portada, CTA, misión/visión...) lado a lado en
+   vez de apiladas -- pedido explícito ("hay que jugar con los espacios,
+   no hay que desperdiciar espacios"). Las tarjetas largas (listas,
+   vista previa) siguen a ancho completo, fuera de este grid. */
+.admin-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.admin-grid-2>.admin-card{margin-bottom:0}
+@media (max-width:900px){.admin-grid-2{grid-template-columns:1fr}}
 .admin-card h2{font-size:13.5px;margin-bottom:2px}
 .admin-card .sub{color:var(--muted);font-size:12px;margin-bottom:12px}
 .admin-field{margin-bottom:12px}
