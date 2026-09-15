@@ -453,14 +453,14 @@ button{font:inherit}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:22px;margin-bottom:10px}
 @media (max-width:860px){.footer-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.footer-grid{grid-template-columns:1fr}}
-.footer-brand img{height:38px;margin-bottom:12px}
+.footer-brand img{height:64px;margin-bottom:14px}
 .footer-ingreso{
   display:inline-flex;align-items:center;gap:6px;margin-top:14px;
   font-size:12px;color:#6d8099;
 }
 .footer-ingreso:hover{color:#9db6d2}
 .footer-ingreso svg{width:12px;height:12px}
-.footer-brand p{font-size:13.5px;color:#93a5ba;max-width:280px}
+.footer-brand p{font-size:14px;color:#93a5ba;max-width:280px}
 .footer-col h5{color:#fff;font-size:12px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:7px}
 .footer-col ul{display:flex;flex-direction:column;gap:3px}
 .footer-col a{font-size:13px;color:#a9bad0;line-height:1.3}
