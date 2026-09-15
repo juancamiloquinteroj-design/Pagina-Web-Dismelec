@@ -59,6 +59,7 @@ const ADMIN_CAMPOS = {
   'contacto-hero-lead': 'contacto.hero.lead',
   'contacto-telefono': 'contacto.telefono',
   'contacto-whatsapp': 'contacto.whatsapp',
+  'contacto-whatsappmensaje': 'contacto.whatsappMensaje',
   'contacto-correo': 'contacto.correo',
   'contacto-info-oficina': 'contacto.info.oficina',
   'contacto-info-horario': 'contacto.info.horario',

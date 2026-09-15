@@ -49,8 +49,9 @@ function _dmAplicarContacto(root, seccion) {
     });
   }
   if (seccion.whatsapp) {
+    const mensaje = seccion.whatsappMensaje ? '?text=' + encodeURIComponent(seccion.whatsappMensaje) : '';
     root.querySelectorAll('a[data-c-whatsapp]').forEach((a) => {
-      a.href = 'https://wa.me/' + seccion.whatsapp;
+      a.href = 'https://wa.me/' + seccion.whatsapp + mensaje;
     });
   }
 }
