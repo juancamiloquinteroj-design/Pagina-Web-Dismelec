@@ -242,8 +242,12 @@ button{font:inherit}
 .feature-icon{
   width:52px;height:52px;border-radius:12px;background:var(--blue-100);
   display:flex;align-items:center;justify-content:center;color:var(--blue-600);flex:none;
+  overflow:hidden;
 }
 .feature-icon svg{width:26px;height:26px}
+/* Foto en vez de ícono -- ocupa el mismo cuadradito, no agranda la
+   tarjeta (pedido explícito: "la imagen no ocupa tanto espacio"). */
+.feature-icon-img{width:100%;height:100%;object-fit:cover}
 .feature-card h3{font-size:17px;margin-bottom:2px}
 .feature-card p{font-size:14px;color:var(--muted);margin:0}
 .feature-more{
@@ -287,6 +291,9 @@ button{font:inherit}
   background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
   background-size:18px 18px;
 }
+/* Foto en vez de ícono -- llena el mismo recuadro 4:3, sin agrandar la
+   tarjeta. */
+.project-thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .project-body{padding:16px 18px 20px}
 .project-body h4{font-size:15px;margin-bottom:4px}
 .project-body span{font-size:12.5px;color:var(--muted)}

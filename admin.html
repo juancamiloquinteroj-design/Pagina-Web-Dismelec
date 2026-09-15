@@ -537,6 +537,15 @@
       </div>
     </div>
     <div class="admin-field">
+      <label>Foto (opcional, reemplaza el ícono)</label>
+      <div class="admin-icon-picker">
+        <img data-foto-preview style="width:44px;height:44px;object-fit:cover;border-radius:9px;flex:none" hidden>
+        <input type="file" accept="image/*" data-foto-input>
+        <button type="button" class="admin-icon-btn danger" data-foto-quitar title="Quitar foto" hidden>×</button>
+      </div>
+      <div class="hint">PNG o JPG. Si no subís nada, se usa el ícono de arriba.</div>
+    </div>
+    <div class="admin-field">
       <label>Título</label>
       <input type="text" data-field="title">
     </div>

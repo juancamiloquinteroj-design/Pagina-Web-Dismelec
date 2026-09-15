@@ -307,6 +307,7 @@ async function adminIniciarPanel() {
 // repetirla 7 veces con pequeñas variaciones.
 function adminMontarTodasLasListas() {
   const campoIcono = { key: 'icon', tipo: 'icon' };
+  const campoFoto = { key: 'photo', label: 'Foto (opcional, reemplaza el ícono)', tipo: 'foto' };
 
   ADMIN_LISTAS.indexStats = adminMontarLista({
     wrapId: 'admin-index-stats-list', addBtnId: 'admin-index-stats-agregar',
@@ -318,14 +319,14 @@ function adminMontarTodasLasListas() {
     wrapId: 'admin-index-destacados-list', addBtnId: 'admin-index-destacados-agregar',
     getArr: () => ADMIN_STATE.index.proyectosDestacados,
     nuevo: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sub: '', link: 'proyectos.html' }),
-    campos: [campoIcono, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sub', label: 'Subtítulo (sector · ubicación)', tipo: 'text' }, { key: 'link', label: 'Enlace', tipo: 'text' }],
+    campos: [campoIcono, campoFoto, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sub', label: 'Subtítulo (sector · ubicación)', tipo: 'text' }, { key: 'link', label: 'Enlace', tipo: 'text' }],
   });
   ADMIN_LISTAS.serviciosItems = adminMontarLista({
     wrapId: 'admin-servicios-items-list', addBtnId: 'admin-servicios-items-agregar',
     getArr: () => ADMIN_STATE.servicios.items,
     nuevo: () => ({ icon: 'rayo', numero: '0', title: 'Nuevo servicio', desc: '', checks: '', ctaText: 'Cotizar este servicio', anchor: '' }),
     campos: [
-      campoIcono, { key: 'numero', label: 'Número (01, 02...)', tipo: 'text' }, { key: 'title', label: 'Título', tipo: 'text' },
+      campoIcono, campoFoto, { key: 'numero', label: 'Número (01, 02...)', tipo: 'text' }, { key: 'title', label: 'Título', tipo: 'text' },
       { key: 'desc', label: 'Descripción', tipo: 'textarea' }, { key: 'checks', label: 'Lista de checks', tipo: 'lineas' },
       { key: 'ctaText', label: 'Texto del botón', tipo: 'text' }, { key: 'anchor', label: 'Ancla (para enlaces #ancla, sin espacios)', tipo: 'text' },
     ],
@@ -335,7 +336,7 @@ function adminMontarTodasLasListas() {
     getArr: () => ADMIN_STATE.proyectos.items,
     nuevo: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sectorLabel: '', ubicacion: '', filtro: 'todos', anchor: '' }),
     campos: [
-      campoIcono, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sectorLabel', label: 'Sector (ej: Sector industrial)', tipo: 'text' },
+      campoIcono, campoFoto, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sectorLabel', label: 'Sector (ej: Sector industrial)', tipo: 'text' },
       { key: 'ubicacion', label: 'Ubicación', tipo: 'text' },
       { key: 'filtro', label: 'Filtro (todos / industrial / infraestructura / comercial / institucional)', tipo: 'text' },
       { key: 'anchor', label: 'Ancla (opcional, sin espacios)', tipo: 'text' },
@@ -373,7 +374,7 @@ function adminMontarLista(cfg) {
   if (!wrap) return { render() {} };
 
   function fila(item, idx) {
-    const campos = cfg.campos.map((c) => _adminCampoHTML(c, item[c.key])).join('');
+    const campos = cfg.campos.map((c) => _adminCampoHTML(c, item[c.key], item)).join('');
     return `
       <div class="admin-card-item" data-idx="${idx}">
         <div class="admin-card-item-top">
@@ -407,7 +408,30 @@ function adminMontarLista(cfg) {
     const preview = filaEl.querySelector('[data-icon-preview]');
     if (preview) preview.innerHTML = dismelecIconSvg(ev.target.value);
   });
+  wrap.addEventListener('change', (ev) => {
+    if (ev.target.tagName !== 'INPUT' || ev.target.type !== 'file') return;
+    const key = ev.target.dataset.key;
+    const filaEl = ev.target.closest('[data-idx]');
+    const file = ev.target.files[0];
+    if (!key || !filaEl || !file) return;
+    const idx = Number(filaEl.dataset.idx);
+    const reader = new FileReader();
+    reader.onload = () => {
+      cfg.getArr()[idx]._nuevaFoto = { file, dataUrl: reader.result };
+      render();
+    };
+    reader.readAsDataURL(file);
+  });
   wrap.addEventListener('click', (ev) => {
+    const quitar = ev.target.closest('[data-accion-foto="quitar"]');
+    if (quitar) {
+      const filaEl = quitar.closest('[data-idx]');
+      const item = cfg.getArr()[Number(filaEl.dataset.idx)];
+      delete item._nuevaFoto;
+      delete item.photo;
+      render();
+      return;
+    }
     const btn = ev.target.closest('[data-accion]');
     if (!btn) return;
     const filaEl = btn.closest('[data-idx]');
@@ -436,8 +460,23 @@ function adminMontarLista(cfg) {
   return { render };
 }
 
-function _adminCampoHTML(campo, valor) {
+function _adminCampoHTML(campo, valor, item) {
   const val = valor === undefined || valor === null ? '' : valor;
+  if (campo.tipo === 'foto') {
+    const fotoUrl = (item && item._nuevaFoto && item._nuevaFoto.dataUrl) || val;
+    const previewHtml = fotoUrl
+      ? `<img src="${fotoUrl}" style="width:44px;height:44px;object-fit:cover;border-radius:9px;flex:none">`
+      : `<div class="preview" data-icon-preview>${dismelecIconSvg(item && item.icon)}</div>`;
+    return `<div class="admin-field">
+      <label>${campo.label}</label>
+      <div class="admin-icon-picker">
+        ${previewHtml}
+        <input type="file" accept="image/*" data-key="${campo.key}">
+        ${fotoUrl ? `<button type="button" class="admin-icon-btn danger" data-accion-foto="quitar" title="Quitar foto">×</button>` : ''}
+      </div>
+      <div class="hint">PNG o JPG. Si no subís nada, se usa el ícono de arriba.</div>
+    </div>`;
+  }
   if (campo.tipo === 'icon') {
     const opciones = Object.entries(window.DISMELEC_ICONS).map(([id, info]) =>
       `<option value="${id}" ${id === val ? 'selected' : ''}>${info.label}</option>`).join('');
@@ -494,6 +533,36 @@ function adminRenderCards() {
       adminRenderPreview();
     });
 
+    const fotoPreview = node.querySelector('[data-foto-preview]');
+    const fotoInput = node.querySelector('[data-foto-input]');
+    const fotoQuitar = node.querySelector('[data-foto-quitar]');
+    const refrescarFoto = () => {
+      const url = (card._nuevaFoto && card._nuevaFoto.dataUrl) || card.photo;
+      fotoPreview.src = url || '';
+      fotoPreview.hidden = !url;
+      preview.hidden = !!url;
+      fotoQuitar.hidden = !url;
+    };
+    refrescarFoto();
+    fotoInput.addEventListener('change', (ev) => {
+      const file = ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        card._nuevaFoto = { file, dataUrl: reader.result };
+        refrescarFoto();
+        adminRenderPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+    fotoQuitar.addEventListener('click', () => {
+      delete card._nuevaFoto;
+      delete card.photo;
+      fotoInput.value = '';
+      refrescarFoto();
+      adminRenderPreview();
+    });
+
     node.querySelector('[data-field=title]').value = card.title || '';
     node.querySelector('[data-field=title]').addEventListener('input', e => { card.title = e.target.value; adminRenderPreview(); });
     node.querySelector('[data-field=desc]').value = card.desc || '';
@@ -528,13 +597,17 @@ function adminRenderCards() {
 function adminRenderPreview() {
   const wrap = document.getElementById('admin-cards-preview');
   if (!wrap) return;
-  wrap.innerHTML = ADMIN_STATE.index.cards.map(c => `
+  wrap.innerHTML = ADMIN_STATE.index.cards.map(c => {
+    const fotoUrl = (c._nuevaFoto && c._nuevaFoto.dataUrl) || c.photo;
+    const icono = fotoUrl ? `<img src="${fotoUrl}" class="feature-icon-img">` : dismelecIconSvg(c.icon);
+    return `
     <div class="feature-card">
-      <div class="feature-icon">${dismelecIconSvg(c.icon)}</div>
+      <div class="feature-icon">${icono}</div>
       <h3>${c.title || '(sin título)'}</h3>
       <p>${c.desc || ''}</p>
       <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function adminLeerFormularioHero() {
@@ -578,6 +651,24 @@ function _utf8ABase64(texto) {
   return btoa(unescape(encodeURIComponent(texto)));
 }
 
+// Sube la foto pendiente (item._nuevaFoto) de cada elemento de un
+// arreglo que la tenga -- usado para tarjetas/proyectos/servicios, no
+// solo para la foto de portada (que va aparte, es un campo único). Deja
+// el item.photo apuntando al archivo subido y borra el _nuevaFoto
+// temporal para que no quede colgado en el JSON publicado.
+async function adminSubirFotosPendientes(arr, prefijo, status, token) {
+  if (!Array.isArray(arr)) return;
+  for (const item of arr) {
+    if (!item._nuevaFoto) continue;
+    status.textContent = `Subiendo foto de ${prefijo}...`;
+    const ext = (item._nuevaFoto.file.name.split('.').pop() || 'jpg').toLowerCase();
+    const nombreArchivo = `assets/img/${prefijo}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+    await _ghSubirArchivo(nombreArchivo, _dataUrlABase64(item._nuevaFoto.dataUrl), `Sube foto de ${prefijo} (panel privado)`, token);
+    item.photo = nombreArchivo;
+    delete item._nuevaFoto;
+  }
+}
+
 async function adminPublicar() {
   const status = document.getElementById('admin-status');
   const token = localStorage.getItem('dismelec_gh_token');
@@ -603,6 +694,11 @@ async function adminPublicar() {
       ADMIN_STATE.index.hero.photo = nombreArchivo;
       ADMIN_NUEVA_FOTO = null;
     }
+
+    await adminSubirFotosPendientes(ADMIN_STATE.index.cards, 'tarjeta', status, token);
+    await adminSubirFotosPendientes(ADMIN_STATE.index.proyectosDestacados, 'proyecto-destacado', status, token);
+    await adminSubirFotosPendientes(ADMIN_STATE.proyectos.items, 'proyecto', status, token);
+    await adminSubirFotosPendientes(ADMIN_STATE.servicios.items, 'servicio', status, token);
 
     status.textContent = 'Guardando cambios de contenido...';
     const contenido = JSON.stringify(ADMIN_STATE, null, 2);
