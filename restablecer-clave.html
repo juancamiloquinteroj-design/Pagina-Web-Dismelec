@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restablecer contraseña · DISMELEC</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/logo-dismelec.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body>
+
+<div id="admin-gate">
+  <div class="auth-topbar">
+    <div class="container row">
+      <span class="brand-mini">
+        <img src="assets/img/logo-dismelec.png" alt="DISMELEC">
+        <span class="brand-mini-text"><strong>DISMELEC</strong><small>INGENIEROS SAS</small></span>
+      </span>
+    </div>
+  </div>
+  <div class="auth-shell">
+    <div class="auth-card">
+      <img class="auth-logo" src="assets/img/logo-dismelec.png" alt="DISMELEC">
+      <h1>Restablecer contraseña</h1>
+      <p class="auth-sub" id="reset-sub">Verificando el enlace...</p>
+      <div class="auth-error" id="reset-error"></div>
+      <div class="auth-ok" id="reset-ok"></div>
+
+      <form id="reset-form" hidden>
+        <div class="auth-field auth-field-pass">
+          <label>Nueva contraseña</label>
+          <input type="password" id="reset-password" autocomplete="new-password" minlength="6" required>
+          <button type="button" class="auth-eye" id="reset-eye" aria-label="Mostrar contraseña">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block auth-submit" id="reset-guardar">Guardar nueva contraseña</button>
+      </form>
+
+      <div id="reset-links" hidden>
+        <a href="admin.html" class="btn btn-primary btn-block" style="margin-top:6px">Ir al Portal Privado</a>
+        <a href="portal-clientes.html" class="auth-forgot">Ir al Portal de Clientes</a>
+      </div>
+
+      <hr class="auth-divider">
+      <p class="auth-footer-note">Sistema interno de DISMELEC Ingenieros SAS -- acceso restringido a usuarios autorizados.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-init.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+(function () {
+  const sub = document.getElementById('reset-sub');
+  const err = document.getElementById('reset-error');
+  const ok = document.getElementById('reset-ok');
+  const form = document.getElementById('reset-form');
+  const links = document.getElementById('reset-links');
+  const passEl = document.getElementById('reset-password');
+  const eyeBtn = document.getElementById('reset-eye');
+  const guardarBtn = document.getElementById('reset-guardar');
+
+  eyeBtn.addEventListener('click', () => authTogglePass(passEl, eyeBtn));
+
+  const params = new URLSearchParams(window.location.search);
+  const oobCode = params.get('oobCode');
+
+  function mostrarError(msg) {
+    sub.textContent = 'No pudimos verificar este enlace.';
+    err.textContent = msg;
+    err.classList.add('show');
+    links.hidden = false;
+  }
+
+  if (!oobCode) {
+    mostrarError('El enlace no es válido. Pedí uno nuevo desde la pantalla de ingreso.');
+  } else {
+    dismelecAuth.verifyPasswordResetCode(oobCode).then((correo) => {
+      sub.textContent = `Creá una nueva contraseña para ${correo}.`;
+      form.hidden = false;
+    }).catch((e) => {
+      mostrarError(authMensajeError(e) || 'Este enlace venció o ya se usó -- pedí uno nuevo desde la pantalla de ingreso.');
+    });
+  }
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    err.classList.remove('show');
+    guardarBtn.disabled = true;
+    guardarBtn.textContent = 'Guardando...';
+    try {
+      await dismelecAuth.confirmPasswordReset(oobCode, passEl.value);
+      form.hidden = true;
+      sub.textContent = 'Listo, tu contraseña quedó actualizada.';
+      ok.textContent = 'Ya podés iniciar sesión con tu nueva clave.';
+      ok.classList.add('show');
+      links.hidden = false;
+    } catch (e) {
+      err.textContent = authMensajeError(e);
+      err.classList.add('show');
+      guardarBtn.disabled = false;
+      guardarBtn.textContent = 'Guardar nueva contraseña';
+    }
+  });
+})();
+</script>
+</body>
+</html>
