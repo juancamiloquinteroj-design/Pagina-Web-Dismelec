@@ -329,13 +329,15 @@ button{font:inherit}
 @media (max-width:860px){
   .service-block{grid-template-columns:1fr}
 }
-/* Alto FIJO -- pedido explícito ("estilo cascada" con las imágenes del
-   mismo tamaño en todos los bloques). Con height:100% (probado antes)
-   cada imagen tomaba el alto de SU PROPIO texto, y como cada servicio
-   tiene distinta cantidad de texto/checks, las imágenes quedaban de
-   tamaños distintos entre sí -- justo lo que se pidió evitar. */
+/* Alto Y ancho fijos -- pedido explícito ("estilo cascada" con las
+   imágenes del mismo tamaño en todos los bloques). Con solo el alto fijo
+   (probado antes) la imagen igual se veía distinta entre bloques: cuando
+   cae del lado izquierdo (columna ancha, 1.3fr) se estira a lo ancho y
+   se ve una franja achatada; del lado derecho (columna angosta, .7fr) se
+   ve más cuadrada. Con max-width fijo también, queda el mismo rectángulo
+   sin importar de qué lado caiga -- centrado en su columna. */
 .service-visual{
-  height:300px;border-radius:var(--radius);
+  height:300px;width:100%;max-width:420px;margin-inline:auto;border-radius:var(--radius);
   background:linear-gradient(150deg,var(--navy-900),var(--navy-700));
   display:flex;align-items:center;justify-content:center;color:#bcd6f7;position:relative;overflow:hidden;
 }
