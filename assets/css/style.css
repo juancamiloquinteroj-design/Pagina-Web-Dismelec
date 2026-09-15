@@ -227,7 +227,7 @@ button{font:inherit}
 
 /* ---------- Tarjetas de valor (features) ---------- */
 .feature-strip{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:start;
   position:relative;z-index:3;margin-top:28px;
 }
 @media (max-width:960px){.feature-strip{grid-template-columns:1fr 1fr}}
@@ -261,7 +261,7 @@ button{font:inherit}
 
 /* ---------- Barra de estadisticas ---------- */
 .stats-bar{background:var(--bg-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;padding:40px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;padding:26px 0}
 @media (max-width:860px){.stats-grid{grid-template-columns:1fr 1fr}}
 .stat-item{display:flex;align-items:center;gap:14px}
 .stat-icon{
