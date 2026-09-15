@@ -128,10 +128,19 @@
       {
         "icon": "retie",
         "numero": "04",
-        "title": "RETIE y legalización",
+        "title": "Legalización en Operadores de red y RETIE",
         "anchor": "retie",
         "desc": "Asesoría, diseños, pruebas y acompañamiento integral para que tus instalaciones eléctricas cumplan el Reglamento Técnico de Instalaciones Eléctricas.",
         "checks": "Diseños eléctricos conforme a RETIE/RETILAP\nAcompañamiento con organismos de certificación\nPruebas de puesta a tierra y protecciones\nTrámite de legalización ante el operador de red",
+        "ctaText": "Cotizar este servicio"
+      },
+      {
+        "icon": "check",
+        "numero": "05",
+        "title": "Interventoría",
+        "anchor": "interventoria",
+        "desc": "Supervisión técnica independiente de proyectos eléctricos, verificando el cumplimiento de diseños, normativa y cronograma en cada etapa de la obra.",
+        "checks": "Seguimiento técnico y administrativo de obra\nVerificación de cumplimiento normativo y de diseño\nControl de cronograma, calidad y presupuesto\nInformes periódicos de avance para el cliente",
         "ctaText": "Cotizar este servicio"
       }
     ],
