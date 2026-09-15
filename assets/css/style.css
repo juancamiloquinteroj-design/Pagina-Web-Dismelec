@@ -315,9 +315,10 @@ button{font:inherit}
 
 /* ---------- Listas de servicios ---------- */
 .service-block{
-  display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:stretch;
+  display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:center;
   padding:36px 0;border-bottom:1px solid var(--border);
 }
+.service-block h2{font-size:21px;margin-bottom:8px}
 .service-block:last-child{border-bottom:0}
 /* El zigzag (imagen a la izquierda o derecha, alternado) ya lo resuelve
    el orden real de los elementos en el HTML/JS -- acá NO hace falta
@@ -328,13 +329,13 @@ button{font:inherit}
 @media (max-width:860px){
   .service-block{grid-template-columns:1fr}
 }
-/* Llena el alto real del bloque (el de la columna de texto) en vez de
-   quedar chica y centrada con hueco arriba/abajo -- pedido explícito
-   ("el espacio que desperdicias arriba y debajo de 'cotizar', coloca la
-   imagen más grande"). min-height de respaldo para bloques con poco
-   texto, donde igual se ve bien una imagen razonable. */
+/* Alto FIJO -- pedido explícito ("estilo cascada" con las imágenes del
+   mismo tamaño en todos los bloques). Con height:100% (probado antes)
+   cada imagen tomaba el alto de SU PROPIO texto, y como cada servicio
+   tiene distinta cantidad de texto/checks, las imágenes quedaban de
+   tamaños distintos entre sí -- justo lo que se pidió evitar. */
 .service-visual{
-  min-height:220px;height:100%;border-radius:var(--radius);
+  height:300px;border-radius:var(--radius);
   background:linear-gradient(150deg,var(--navy-900),var(--navy-700));
   display:flex;align-items:center;justify-content:center;color:#bcd6f7;position:relative;overflow:hidden;
 }
