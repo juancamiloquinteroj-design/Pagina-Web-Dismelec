@@ -44,6 +44,22 @@ function authCerrarSesion() {
   return dismelecAuth.signOut();
 }
 
-function authRecuperarClave(correo) {
-  return dismelecAuth.sendPasswordResetEmail(correo.trim());
+// El correo de recuperación NO lo manda Firebase directo (ese es de texto
+// plano, sin diseño) -- lo manda este backend propio (Flask en Render,
+// mismo patrón que las otras apps CINCO), que genera el enlace con el SDK
+// de administrador de Firebase y lo envía con una plantilla con la marca
+// de DISMELEC.
+const DISMELEC_BACKEND_URL = 'https://dismelec-backend-correos.onrender.com';
+
+async function authRecuperarClave(correo) {
+  const resp = await fetch(`${DISMELEC_BACKEND_URL}/api/recuperar-clave`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: correo.trim() }),
+  });
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok || !data.ok) {
+    throw new Error(data.error || 'No pudimos enviar el correo. Intentá de nuevo en un momento.');
+  }
+  return data;
 }
