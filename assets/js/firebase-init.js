@@ -3,18 +3,18 @@
 // "compat" por CDN (namespace firebase.*) -- no hay build/bundler en este
 // sitio, así que evita el SDK modular moderno (pensado para npm/Vite).
 //
-// *** REEMPLAZAR con la config real que te da Firebase Console ***
-// (Project settings -> Your apps -> ícono </> Web). Estos valores NO son
-// secretos (van igual en el HTML de cualquier sitio con Firebase, las
-// reglas de seguridad de Firestore son la protección real), así que no
-// pasa nada por tenerlos visibles acá.
+// Config del proyecto real "DISMELEC" (dismelec-2c98c) en Firebase
+// Console. Estos valores NO son secretos (van igual en el HTML de
+// cualquier sitio con Firebase, las reglas de seguridad de Firestore son
+// la protección real), así que no pasa nada por tenerlos visibles acá.
+// measurementId (Analytics) se dejó afuera a propósito -- no lo usamos.
 const FIREBASE_CONFIG = {
-  apiKey: 'TU_API_KEY',
-  authDomain: 'TU_PROYECTO.firebaseapp.com',
-  projectId: 'TU_PROYECTO',
-  storageBucket: 'TU_PROYECTO.appspot.com',
-  messagingSenderId: 'TU_SENDER_ID',
-  appId: 'TU_APP_ID',
+  apiKey: 'AIzaSyA8wN2EM15PmeEyThE4zDQNiPHooSmiNew',
+  authDomain: 'dismelec-2c98c.firebaseapp.com',
+  projectId: 'dismelec-2c98c',
+  storageBucket: 'dismelec-2c98c.firebasestorage.app',
+  messagingSenderId: '603989150578',
+  appId: '1:603989150578:web:3c846875f82a26e9a8ebeb',
 };
 
 firebase.initializeApp(FIREBASE_CONFIG);
