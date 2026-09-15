@@ -4,11 +4,12 @@
    componentes propios del editor.
    ============================================================ */
 
-/* [hidden] por sí solo NO alcanza acá -- .admin-gate/.admin-topbar
+/* [hidden] por sí solo NO alcanza acá -- .auth-shell/.admin-topbar
    definen su propio "display" (flex), que como regla de autor le gana al
    estilo por defecto del navegador para [hidden]. Bug real encontrado
    probando: después de un login correcto, la pantalla de clave seguía
-   viéndose apilada arriba del panel. */
+   viéndose apilada arriba del panel. (Mismo rule también en auth.css,
+   redundante a propósito -- cada hoja se tiene que bastar sola.) */
 [hidden]{display:none !important}
 
 .admin-shell{min-height:100vh;background:var(--bg-soft);padding-bottom:120px}
@@ -26,22 +27,8 @@
   .admin-topbar .brand-mini span{display:none}
 }
 
-.admin-gate{
-  min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px;
-}
-.admin-gate-card{
-  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
-  box-shadow:var(--shadow-md);padding:36px;max-width:380px;width:100%;text-align:center;
-}
-.admin-gate-card .feature-icon{margin:0 auto 18px;width:56px;height:56px;border-radius:14px}
-.admin-gate-card h1{font-size:20px;margin-bottom:8px}
-.admin-gate-card p{color:var(--muted);font-size:13.5px;margin-bottom:22px}
-.admin-gate-card input{
-  width:100%;border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;
-  font:inherit;margin-bottom:14px;text-align:center;letter-spacing:.05em;
-}
-.admin-error{color:#c0392b;font-size:13px;font-weight:600;margin-top:10px;display:none}
-.admin-error.show{display:block}
+/* La pantalla de login (login/clave) vive en assets/css/auth.css --
+   .auth-shell/.auth-card, compartida con portal-clientes.html -- no acá. */
 
 /* ---------- Layout: menú lateral de módulos + contenido ---------- */
 .admin-layout{display:flex;align-items:flex-start;max-width:1400px;margin:0 auto;padding:28px 24px;gap:28px}
@@ -114,6 +101,7 @@
 .admin-field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
 .admin-field input[type=text],
 .admin-field input[type=url],
+.admin-field input[type=email],
 .admin-field input[type=password],
 .admin-field textarea,
 .admin-field select{

@@ -1,0 +1,68 @@
+/* ============================================================
+   DISMELEC -- pantalla de login compartida (portal privado y portal de
+   clientes). Mismo lenguaje visual que el resto del sitio (style.css),
+   inspirado en el patrón de login de las otras apps de la suite CINCO
+   (logo arriba, tarjeta blanca centrada, campos en gris claro).
+   ============================================================ */
+[hidden]{display:none !important}
+
+.auth-shell{min-height:100vh;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-card{
+  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow-md);padding:40px 36px;max-width:410px;width:100%;text-align:center;
+}
+.auth-card img.auth-logo{height:64px;margin:0 auto 18px}
+.auth-card h1{
+  font-size:19px;letter-spacing:.02em;color:var(--blue-600);text-transform:uppercase;
+  margin-bottom:10px;line-height:1.3;
+}
+.auth-card p.auth-sub{color:var(--muted);font-size:13.5px;margin-bottom:26px}
+
+.auth-field{text-align:left;margin-bottom:16px}
+.auth-field label{
+  display:block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:7px;
+}
+.auth-field input{
+  width:100%;border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;
+  font:inherit;color:var(--ink);background:var(--bg-soft);
+}
+.auth-field input:focus{outline:none;border-color:var(--blue-500);background:#fff}
+.auth-field-pass{position:relative}
+.auth-field-pass input{padding-right:42px}
+.auth-eye{
+  position:absolute;right:6px;top:50%;transform:translateY(-3px);width:32px;height:32px;
+  border:0;background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.auth-eye:hover{color:var(--ink)}
+.auth-eye svg{width:18px;height:18px}
+
+.auth-submit{margin-top:6px}
+.auth-forgot{display:block;margin-top:16px;font-size:13px;color:var(--blue-600);font-weight:600}
+.auth-forgot:hover{text-decoration:underline}
+
+.auth-error{
+  background:#fdecea;color:#c0392b;border:1px solid #f3c6c0;border-radius:9px;
+  padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:16px;text-align:left;display:none;
+}
+.auth-error.show{display:block}
+.auth-ok{
+  background:var(--blue-100);color:#0d4c92;border:1px solid #bcdcfa;border-radius:9px;
+  padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:16px;text-align:left;display:none;
+}
+.auth-ok.show{display:block}
+
+.auth-divider{border:0;border-top:1px solid var(--border);margin:24px 0 16px}
+.auth-footer-note{font-size:11.5px;color:var(--muted);line-height:1.5}
+.auth-footer-note a{color:var(--blue-600);font-weight:600;text-decoration:underline}
+
+.auth-card .btn[disabled]{opacity:.6;cursor:default}
+
+/* ---------- Encabezado logueado (topbar simple, sin todo el header del
+   sitio) -- usado en portal-clientes.html una vez adentro. ---------- */
+.auth-topbar{
+  background:#fff;border-bottom:1px solid var(--border);padding:14px 0;
+}
+.auth-topbar .row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.auth-topbar .brand-mini{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+.auth-topbar .brand-mini img{height:30px}
