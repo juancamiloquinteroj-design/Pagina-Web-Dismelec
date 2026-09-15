@@ -273,9 +273,11 @@ button{font:inherit}
 .stat-item span{display:block;font-size:13px;color:var(--muted)}
 
 /* ---------- Proyectos destacados ---------- */
-.projects-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.projects-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:18px}
 .projects-head .section-head{margin:0}
-.project-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.projects-head .section-head h2{font-size:clamp(20px,2.4vw,26px)}
+.projects-head .section-head p{font-size:13.5px}
+.project-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 @media (max-width:960px){.project-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.project-grid{grid-template-columns:1fr}}
 .project-card{
@@ -284,7 +286,7 @@ button{font:inherit}
 }
 .project-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px)}
 .project-thumb{
-  aspect-ratio:4/3;position:relative;display:flex;align-items:center;justify-content:center;
+  aspect-ratio:16/10;position:relative;display:flex;align-items:center;justify-content:center;
   background:linear-gradient(145deg,var(--navy-900),var(--navy-700));color:#fff;
 }
 .project-thumb svg{width:44px;height:44px;opacity:.9}
@@ -296,9 +298,9 @@ button{font:inherit}
 /* Foto en vez de ícono -- llena el mismo recuadro 4:3, sin agrandar la
    tarjeta. */
 .project-thumb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
-.project-body{padding:16px 18px 20px}
-.project-body h4{font-size:15px;margin-bottom:4px}
-.project-body span{font-size:12.5px;color:var(--muted)}
+.project-body{padding:12px 14px 14px}
+.project-body h4{font-size:13.5px;margin-bottom:3px}
+.project-body span{font-size:11.5px;color:var(--muted)}
 
 /* ---------- Franjas de color / CTA ---------- */
 .cta-band{
