@@ -50,9 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   pass.addEventListener('keydown', e => { if (e.key === 'Enter') intentar(); });
   pass.focus();
 
-  // ---- token ----
-  const tokenBtn = document.getElementById('admin-token-btn');
-  const tokenCard = document.getElementById('admin-token-card');
+  // ---- token (vive en el módulo Configuración) ----
   const tokenStatus = document.getElementById('admin-token-status');
   const tokenInput = document.getElementById('admin-token-input');
   const tokenGuardar = document.getElementById('admin-token-guardar');
@@ -62,21 +60,46 @@ document.addEventListener('DOMContentLoaded', () => {
     tokenStatus.textContent = t ? 'Token de GitHub configurado ✓' : 'Sin token de GitHub configurado';
   };
   refrescarTokenStatus();
-  tokenBtn.addEventListener('click', () => tokenCard.style.display = tokenCard.style.display === 'none' ? 'block' : 'none');
   tokenGuardar.addEventListener('click', () => {
     const v = tokenInput.value.trim();
     if (!v) return;
     localStorage.setItem('dismelec_gh_token', v);
     tokenInput.value = '';
     refrescarTokenStatus();
-    tokenCard.style.display = 'none';
   });
+
+  adminSetupNav();
 });
+
+// ------------------------------------------------- módulos + pestañas
+// Menú lateral ("módulos") y las pestañas de adentro de cada uno -- pedido
+// explícito ("quiero que sean módulos laterales... y que tenga pestañas
+// cada módulo"). Funciona por simple mostrar/ocultar, sin routing -- no
+// hace falta más para 2 módulos.
+function adminSetupNav() {
+  document.querySelectorAll('.admin-sidebar-link').forEach(link => {
+    link.addEventListener('click', () => adminIrAModulo(link.dataset.module));
+  });
+  document.querySelectorAll('.admin-tab-btn').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const modulo = tab.closest('.admin-module');
+      modulo.querySelectorAll('.admin-tab-btn').forEach(t => t.classList.toggle('active', t === tab));
+      modulo.querySelectorAll('.admin-tab-panel').forEach(p => p.hidden = p.id !== tab.dataset.tab);
+    });
+  });
+}
+
+function adminIrAModulo(nombre) {
+  document.querySelectorAll('.admin-sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.module === nombre));
+  document.querySelectorAll('.admin-module').forEach(m => m.hidden = m.id !== `modulo-${nombre}`);
+}
 
 // ---------------------------------------------------------------- panel
 async function adminIniciarPanel() {
-  const tokenCard = document.getElementById('admin-token-card');
-  if (!localStorage.getItem('dismelec_gh_token')) tokenCard.style.display = 'block';
+  // Sin token todavía -- arranca directo en Configuración en vez de
+  // Parametrización, para no dejar a alguien editando 10 minutos y
+  // recién ahí enterarse de que no puede publicar nada.
+  if (!localStorage.getItem('dismelec_gh_token')) adminIrAModulo('configuracion');
 
   try {
     const res = await fetch('assets/data/content.json', { cache: 'no-store' });
@@ -128,12 +151,13 @@ function adminRenderCards() {
     select.addEventListener('change', () => {
       card.icon = select.value;
       preview.innerHTML = dismelecIconSvg(card.icon);
+      adminRenderPreview();
     });
 
     node.querySelector('[data-field=title]').value = card.title || '';
-    node.querySelector('[data-field=title]').addEventListener('input', e => card.title = e.target.value);
+    node.querySelector('[data-field=title]').addEventListener('input', e => { card.title = e.target.value; adminRenderPreview(); });
     node.querySelector('[data-field=desc]').value = card.desc || '';
-    node.querySelector('[data-field=desc]').addEventListener('input', e => card.desc = e.target.value);
+    node.querySelector('[data-field=desc]').addEventListener('input', e => { card.desc = e.target.value; adminRenderPreview(); });
     node.querySelector('[data-field=link]').value = card.link || '';
     node.querySelector('[data-field=link]').addEventListener('input', e => card.link = e.target.value);
 
@@ -155,6 +179,22 @@ function adminRenderCards() {
 
     wrap.appendChild(node);
   });
+  adminRenderPreview();
+}
+
+// Vista previa -- usa las MISMAS clases (.feature-card, etc.) que el
+// sitio real (style.css ya está cargado en admin.html), así que se ve
+// igual a como va a quedar publicado, sin tener que adivinar.
+function adminRenderPreview() {
+  const wrap = document.getElementById('admin-cards-preview');
+  if (!wrap) return;
+  wrap.innerHTML = ADMIN_STATE.cards.map(c => `
+    <div class="feature-card">
+      <div class="feature-icon">${dismelecIconSvg(c.icon)}</div>
+      <h3>${c.title || '(sin título)'}</h3>
+      <p>${c.desc || ''}</p>
+      <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
+    </div>`).join('');
 }
 
 function adminLeerFormularioHero() {
@@ -202,7 +242,7 @@ async function adminPublicar() {
   const status = document.getElementById('admin-status');
   const token = localStorage.getItem('dismelec_gh_token');
   if (!token) {
-    status.textContent = 'Primero configurá el token de GitHub (botón arriba).';
+    status.textContent = 'Primero configurá el token de GitHub -- módulo "Configuración" del menú.';
     status.className = 'admin-status err';
     return;
   }

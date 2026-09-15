@@ -41,77 +41,127 @@
         </a>
         <div class="admin-topbar-actions">
           <span class="muted" id="admin-token-status">Sin token de GitHub configurado</span>
-          <button type="button" class="btn btn-outline btn-sm" id="admin-token-btn">Configurar token</button>
           <a href="index.html" class="btn btn-outline btn-sm" style="border-color:rgba(255,255,255,.4)">Ver sitio</a>
         </div>
       </div>
     </div>
 
-    <div class="container admin-main">
+    <div class="admin-layout">
 
-      <!-- Paso del token, colapsado por default -->
-      <div class="admin-card" id="admin-token-card" style="display:none">
-        <h2>Token de GitHub</h2>
-        <p class="sub">Necesario para publicar cambios -- se guarda SOLO en este navegador, nunca se manda a ningún lado más que a GitHub.</p>
-        <div class="admin-token-note">
-          Generalo en <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a>
-          -- tipo "classic", marcá el permiso <strong>repo</strong> completo, sin fecha de vencimiento corta si querés no repetir esto seguido.
-          Pegalo acá abajo una sola vez.
-        </div>
-        <div class="admin-field">
-          <label>Personal Access Token</label>
-          <input type="password" id="admin-token-input" placeholder="ghp_...">
-        </div>
-        <button type="button" class="btn btn-primary" id="admin-token-guardar">Guardar token</button>
-      </div>
+      <!-- ==================== MÓDULOS (menú lateral) ==================== -->
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-title">Módulos</div>
+        <button type="button" class="admin-sidebar-link active" data-module="parametrizacion">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.55V21a2 2 0 01-4 0v-.09A1.7 1.7 0 008.5 19a1.7 1.7 0 00-1.87.34l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.14 15 1.7 1.7 0 002.6 14H2.5a2 2 0 010-4h.09A1.7 1.7 0 004 8.6a1.7 1.7 0 00-.34-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 008.5 4.14 1.7 1.7 0 009.5 2.6V2.5a2 2 0 014 0v.09A1.7 1.7 0 0014.5 4a1.7 1.7 0 001.87-.34l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.86 8.5a1.7 1.7 0 001.55 1H21.5a2 2 0 010 4h-.09a1.7 1.7 0 00-1.55 1z"/></svg>
+          Parametrización
+        </button>
+        <button type="button" class="admin-sidebar-link" data-module="configuracion">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Configuración
+        </button>
+        <div class="admin-sidebar-nota">Más módulos próximamente</div>
+      </aside>
 
-      <!-- ---- Portada / Hero ---- -->
-      <div class="admin-card">
-        <h2>Portada (Inicio)</h2>
-        <p class="sub">Foto de fondo, título y texto del hero.</p>
+      <div class="admin-content">
 
-        <div class="admin-field">
-          <label>Foto de portada</label>
-          <div class="admin-photo-row">
-            <img id="admin-photo-preview" class="admin-photo-preview" src="assets/img/foto-portada.jpg" alt="Vista previa">
-            <div>
-              <input type="file" id="admin-photo-input" accept="image/*">
-              <div class="hint">JPG o PNG. Se sube como archivo nuevo al repo -- la foto vieja queda en el historial de GitHub por si hay que volver atrás.</div>
+        <!-- ==================== MÓDULO: PARAMETRIZACIÓN ==================== -->
+        <section class="admin-module" id="modulo-parametrizacion">
+          <div class="admin-module-head">
+            <h1>Parametrización</h1>
+            <p>Elegí qué parte de la página querés cambiar -- cada pestaña edita un bloque distinto del Inicio.</p>
+          </div>
+
+          <!-- Pestañas del módulo -->
+          <div class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="tab-portada">Portada (foto y texto)</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-tarjetas">Tarjetas de servicio (íconos)</button>
+          </div>
+
+          <!-- ---- Pestaña: Portada / Hero ---- -->
+          <div class="admin-tab-panel" id="tab-portada">
+            <div class="admin-card">
+              <h2>Foto de portada</h2>
+              <p class="sub">La foto grande de fondo del Inicio.</p>
+              <div class="admin-field">
+                <div class="admin-photo-row">
+                  <img id="admin-photo-preview" class="admin-photo-preview" src="assets/img/foto-portada.jpg" alt="Vista previa">
+                  <div>
+                    <input type="file" id="admin-photo-input" accept="image/*">
+                    <div class="hint">JPG o PNG. Se sube como archivo nuevo al repo -- la foto vieja queda en el historial de GitHub por si hay que volver atrás.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="admin-card">
+              <h2>Textos de la portada</h2>
+              <p class="sub">Rótulo de la esquina, título grande y texto de abajo.</p>
+              <div class="admin-field">
+                <label>Texto de la esquina (rótulo sobre la foto)</label>
+                <input type="text" id="admin-hero-tag" placeholder="Energía para un mejor mañana">
+              </div>
+              <div class="admin-field">
+                <label>Título principal</label>
+                <input type="text" id="admin-hero-title">
+              </div>
+              <div class="admin-field" style="margin-bottom:0">
+                <label>Texto debajo del título</label>
+                <textarea id="admin-hero-lead"></textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="admin-field">
-          <label>Texto de la esquina (rótulo sobre la foto)</label>
-          <input type="text" id="admin-hero-tag" placeholder="Energía para un mejor mañana">
-        </div>
-        <div class="admin-field">
-          <label>Título principal</label>
-          <input type="text" id="admin-hero-title">
-        </div>
-        <div class="admin-field">
-          <label>Texto debajo del título</label>
-          <textarea id="admin-hero-lead"></textarea>
-        </div>
-      </div>
 
-      <!-- ---- Tarjetas ---- -->
-      <div class="admin-card">
-        <h2>Tarjetas de servicio</h2>
-        <p class="sub">Las 4 tarjetas debajo del hero en el Inicio -- podés editar, agregar, quitar y reordenar.</p>
-        <div id="admin-cards-list"></div>
-        <button type="button" class="btn btn-outline-dark btn-sm" id="admin-card-agregar">+ Agregar tarjeta</button>
-      </div>
-
-      <div class="admin-card">
-        <div class="admin-toolbar">
-          <div>
-            <button type="button" class="btn btn-primary" id="admin-publicar">Publicar cambios</button>
-            <span class="admin-status" id="admin-status"></span>
+          <!-- ---- Pestaña: Tarjetas de servicio ---- -->
+          <div class="admin-tab-panel" id="tab-tarjetas" hidden>
+            <div class="admin-card">
+              <h2>Tarjetas de servicio</h2>
+              <p class="sub">Las tarjetas debajo del hero en el Inicio -- editá el ícono, título, descripción y enlace de cada una. Agregá, quitá o reordená con las flechas.</p>
+              <div id="admin-cards-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-card-agregar">+ Agregar tarjeta</button>
+            </div>
+            <div class="admin-card">
+              <h2>Vista previa</h2>
+              <p class="sub">Así se ven las tarjetas ahora mismo en el sitio, con los cambios sin publicar todavía.</p>
+              <div class="feature-strip admin-preview-strip" id="admin-cards-preview"></div>
+            </div>
           </div>
-          <span class="hint">Publicar sube los cambios directo al repositorio -- el sitio se actualiza solo en 30-60 segundos.</span>
-        </div>
-      </div>
 
+        </section>
+
+        <!-- Publicar -- barra fija al pie de la pantalla, fuera de las
+             pestañas, sube TODO lo pendiente sin importar en cuál estés. -->
+        <div class="admin-publish-bar">
+          <div class="admin-publish-bar-inner">
+            <div>
+              <button type="button" class="btn btn-primary" id="admin-publicar">Publicar cambios</button>
+              <span class="admin-status" id="admin-status"></span>
+            </div>
+            <span class="hint">Publicar sube los cambios directo al repositorio -- el sitio se actualiza solo en 30-60 segundos.</span>
+          </div>
+        </div>
+
+        <!-- ==================== MÓDULO: CONFIGURACIÓN ==================== -->
+        <section class="admin-module" id="modulo-configuracion" hidden>
+          <div class="admin-module-head">
+            <h1>Configuración</h1>
+            <p>Token de GitHub necesario para publicar cambios desde Parametrización.</p>
+          </div>
+          <div class="admin-card">
+            <h2>Token de GitHub</h2>
+            <p class="sub">Se guarda SOLO en este navegador -- nunca se manda a ningún lado más que a GitHub.</p>
+            <div class="admin-token-note">
+              Generalo en <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a>
+              -- tipo "classic", marcá el permiso <strong>repo</strong> completo, sin fecha de vencimiento corta si querés no repetir esto seguido.
+              Pegalo acá abajo una sola vez.
+            </div>
+            <div class="admin-field">
+              <label>Personal Access Token</label>
+              <input type="password" id="admin-token-input" placeholder="ghp_...">
+            </div>
+            <button type="button" class="btn btn-primary" id="admin-token-guardar">Guardar token</button>
+          </div>
+        </section>
+
+      </div>
     </div>
   </div>
 
