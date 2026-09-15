@@ -71,7 +71,6 @@
           <input type="text" id="admin-buscar-modulo" placeholder="Buscar módulo...">
         </div>
         <div class="admin-topbar-actions">
-          <span class="admin-token-pill" id="admin-token-status">Sin token de GitHub configurado</span>
           <div class="admin-notif">
             <button type="button" class="admin-icon-btn" id="admin-notif-btn" aria-label="Notificaciones">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
@@ -384,11 +383,8 @@
              pestañas, sube TODO lo pendiente sin importar en cuál estés. -->
         <div class="admin-publish-bar">
           <div class="admin-publish-bar-inner">
-            <div>
-              <button type="button" class="btn btn-primary" id="admin-publicar">Publicar cambios</button>
-              <span class="admin-status" id="admin-status"></span>
-            </div>
-            <span class="hint">Publicar sube los cambios directo al repositorio -- el sitio se actualiza solo en 30-60 segundos.</span>
+            <button type="button" class="btn btn-primary btn-sm" id="admin-publicar">Publicar cambios</button>
+            <span class="admin-status" id="admin-status"></span>
           </div>
         </div>
 
@@ -452,7 +448,10 @@
               <label>Personal Access Token</label>
               <input type="password" id="admin-token-input" placeholder="ghp_...">
             </div>
-            <button type="button" class="btn btn-primary" id="admin-token-guardar">Guardar token</button>
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <button type="button" class="btn btn-primary" id="admin-token-guardar">Guardar token</button>
+              <span class="admin-status" id="admin-token-status">Sin token de GitHub configurado</span>
+            </div>
           </div>
         </section>
 

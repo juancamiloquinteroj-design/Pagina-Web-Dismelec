@@ -17,7 +17,7 @@
    una vez que el panel está desbloqueado -- si va en .admin-shell a
    secas, también empuja la pantalla de login (que vive en el mismo
    contenedor) y le mete scroll de sobra sin necesidad. */
-.admin-shell:has(#admin-panel:not([hidden])){padding-bottom:120px}
+.admin-shell:has(#admin-panel:not([hidden])){padding-bottom:70px}
 /* Franja superior clara (antes navy oscuro) -- se pidió que se pareciera
    más a la app BAE de referencia, que tiene el topbar blanco con
    buscador, campanita de notificaciones y usuario a la derecha, no una
@@ -70,12 +70,16 @@
 /* ---------- Layout: menú lateral de módulos + contenido ---------- */
 /* Sin max-width fijo -- en pantallas anchas dejaba franjas vacías grandes
    a los costados (esto es un panel interno, no una página de marketing;
-   conviene aprovechar el ancho real de la ventana). */
-.admin-layout{display:flex;align-items:flex-start;padding:28px clamp(20px,3vw,48px);gap:28px}
+   conviene aprovechar el ancho real de la ventana). Sin padding-left --
+   la barra lateral va pegada al borde real del viewport, pedido
+   explícito ("la barra lateral izquierda que sea completamente pegada al
+   borde"). */
+.admin-layout{display:flex;align-items:flex-start;padding:0 clamp(20px,3vw,48px) 28px 0;gap:0}
 .admin-sidebar{
-  width:240px;flex:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:16px 12px;position:sticky;top:20px;
+  width:240px;flex:none;background:var(--surface);border-right:1px solid var(--border);
+  padding:20px 12px;position:sticky;top:0;align-self:stretch;
 }
+.admin-content{padding-left:clamp(20px,3vw,32px);padding-top:24px}
 .admin-sidebar-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:2px 10px 10px}
 .admin-sidebar-soon{font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);opacity:.75}
 .admin-sidebar-link{
@@ -113,16 +117,18 @@
    lo que publique, sin importar en qué pestaña/módulo estés) -- con
    padding-bottom en .admin-shell para que la última tarjeta no quede
    permanentemente tapada detrás. */
+/* Pastilla chica flotante, no una franja que cruce toda la pantalla --
+   pedido explícito ("muy grande muy ancha, debe ser pequeña, que casi no
+   se vea, con el botón de publicar"). */
 .admin-publish-bar{
-  position:fixed;left:0;right:0;bottom:0;z-index:20;
-  background:var(--surface);border-top:1px solid var(--border);
-  box-shadow:0 -8px 24px rgba(11,33,56,.10);
+  position:fixed;left:clamp(20px,3vw,48px);bottom:16px;z-index:20;
+  background:var(--surface);border:1px solid var(--border);border-radius:99px;
+  box-shadow:var(--shadow-md);
 }
 .admin-publish-bar-inner{
-  padding:14px clamp(20px,3vw,48px);
-  display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:6px 8px 6px 16px;
+  display:flex;align-items:center;gap:10px;
 }
-.admin-publish-bar-inner .hint{font-size:12px;color:var(--muted)}
 
 @media (max-width:860px){
   .admin-layout{flex-direction:column;padding:18px 16px}
