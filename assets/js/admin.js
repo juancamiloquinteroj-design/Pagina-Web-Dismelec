@@ -276,6 +276,10 @@ function adminSetupNav() {
 function adminIrAModulo(nombre) {
   document.querySelectorAll('.admin-sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.module === nombre));
   document.querySelectorAll('.admin-module').forEach(m => m.hidden = m.id !== `modulo-${nombre}`);
+  // "Publicar cambios" solo tiene sentido en Parametrización -- en el
+  // resto de los módulos no hay nada de content.json para publicar.
+  const barraPublicar = document.querySelector('.admin-publish-bar');
+  if (barraPublicar) barraPublicar.hidden = nombre !== 'parametrizacion';
 }
 
 // ---------------------------------------------------------------- panel

@@ -93,9 +93,9 @@
 .admin-sidebar-nota{padding:14px 10px 0;font-size:11.5px;color:var(--muted);border-top:1px solid var(--border);margin-top:10px}
 
 .admin-content{flex:1;min-width:0}
-.admin-module-head{margin-bottom:22px}
-.admin-module-head h1{font-size:21px;margin-bottom:4px}
-.admin-module-head p{color:var(--muted);font-size:13.5px;margin:0}
+.admin-module-head{margin-bottom:18px}
+.admin-module-head h1{font-size:18px;margin-bottom:0}
+.admin-module-head p{color:var(--muted);font-size:13px;margin:2px 0 0}
 
 /* ---------- Pestañas dentro de un módulo ---------- */
 .admin-tabs{display:flex;gap:4px;border-bottom:1.5px solid var(--border);margin-bottom:22px;flex-wrap:wrap}
@@ -151,36 +151,36 @@
 
 .admin-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:26px 28px;margin-bottom:24px;box-shadow:var(--shadow-sm);
+  padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm);
 }
-.admin-card h2{font-size:16px;margin-bottom:4px}
-.admin-card .sub{color:var(--muted);font-size:13px;margin-bottom:20px}
-.admin-field{margin-bottom:16px}
-.admin-field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.admin-card h2{font-size:13.5px;margin-bottom:2px}
+.admin-card .sub{color:var(--muted);font-size:12px;margin-bottom:12px}
+.admin-field{margin-bottom:12px}
+.admin-field label{display:block;font-size:11.5px;font-weight:700;color:var(--ink);margin-bottom:4px}
 .admin-field input[type=text],
 .admin-field input[type=url],
 .admin-field input[type=email],
 .admin-field input[type=password],
 .admin-field textarea,
 .admin-field select{
-  width:100%;border:1.5px solid var(--border);border-radius:9px;padding:11px 13px;
-  font:inherit;color:var(--ink);background:var(--bg-soft);
+  width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;
+  font:inherit;font-size:13px;color:var(--ink);background:var(--bg-soft);
 }
-.admin-field textarea{min-height:80px;resize:vertical}
+.admin-field textarea{min-height:64px;resize:vertical}
 .admin-field .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
 
-.admin-photo-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.admin-photo-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .admin-photo-preview{
-  width:220px;height:130px;border-radius:10px;object-fit:cover;background:var(--bg-soft-2);
+  width:160px;height:96px;border-radius:9px;object-fit:cover;background:var(--bg-soft-2);
   border:1px solid var(--border);flex:none;
 }
 
 .admin-card-item{
-  border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px;
+  border:1.5px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:12px;
   position:relative;
 }
-.admin-card-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.admin-card-item-top strong{font-size:13px;color:var(--muted)}
+.admin-card-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.admin-card-item-top strong{font-size:12px;color:var(--muted)}
 .admin-card-actions{display:flex;gap:6px}
 .admin-icon-btn{
   width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--surface);
