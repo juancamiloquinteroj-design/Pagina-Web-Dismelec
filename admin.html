@@ -102,13 +102,18 @@
         <section class="admin-module" id="modulo-parametrizacion">
           <div class="admin-module-head">
             <h1>Parametrización</h1>
-            <p>Elegí qué parte de la página querés cambiar -- cada pestaña edita un bloque distinto del Inicio.</p>
+            <p>Elegí qué página y qué bloque querés cambiar -- palabras, fotos, tarjetas, todo desde acá.</p>
           </div>
 
           <!-- Pestañas del módulo -->
           <div class="admin-tabs">
             <button type="button" class="admin-tab-btn active" data-tab="tab-portada">Portada (foto y texto)</button>
             <button type="button" class="admin-tab-btn" data-tab="tab-tarjetas">Tarjetas de servicio (íconos)</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-inicio-mas">Inicio (estadísticas y CTA)</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-servicios">Página Servicios</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-proyectos">Página Proyectos</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-nosotros">Página Nosotros</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-contacto">Página Contacto</button>
           </div>
 
           <!-- ---- Pestaña: Portada / Hero ---- -->
@@ -156,6 +161,135 @@
               <h2>Vista previa</h2>
               <p class="sub">Así se ven las tarjetas ahora mismo en el sitio, con los cambios sin publicar todavía.</p>
               <div class="feature-strip admin-preview-strip" id="admin-cards-preview"></div>
+            </div>
+          </div>
+
+          <!-- ---- Pestaña: Inicio -- estadísticas, proyectos destacados y CTA ---- -->
+          <div class="admin-tab-panel" id="tab-inicio-mas" hidden>
+            <div class="admin-card">
+              <h2>Barra de estadísticas</h2>
+              <p class="sub">Los 4 números destacados debajo de las tarjetas.</p>
+              <div id="admin-index-stats-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-index-stats-agregar">+ Agregar estadística</button>
+            </div>
+            <div class="admin-card">
+              <h2>Encabezado "Proyectos destacados"</h2>
+              <div class="admin-field"><label>Rótulo</label><input type="text" id="admin-index-proyseccion-eyebrow"></div>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-index-proyseccion-title"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto</label><input type="text" id="admin-index-proyseccion-desc"></div>
+            </div>
+            <div class="admin-card">
+              <h2>Proyectos destacados</h2>
+              <p class="sub">Las 4 tarjetas de proyecto que se ven en el Inicio.</p>
+              <div id="admin-index-destacados-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-index-destacados-agregar">+ Agregar proyecto</button>
+            </div>
+            <div class="admin-card">
+              <h2>Banda final (CTA)</h2>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-index-cta-title"></div>
+              <div class="admin-field"><label>Texto</label><textarea id="admin-index-cta-desc"></textarea></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto del botón</label><input type="text" id="admin-index-cta-ctatext"></div>
+            </div>
+          </div>
+
+          <!-- ---- Pestaña: Servicios ---- -->
+          <div class="admin-tab-panel" id="tab-servicios" hidden>
+            <div class="admin-card">
+              <h2>Portada de la página</h2>
+              <div class="admin-field"><label>Rótulo</label><input type="text" id="admin-servicios-hero-eyebrow"></div>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-servicios-hero-title"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto</label><textarea id="admin-servicios-hero-lead"></textarea></div>
+            </div>
+            <div class="admin-card">
+              <h2>Servicios</h2>
+              <p class="sub">Cada bloque de la página -- ícono, número, título, descripción, la lista de checks (una por línea) y el texto del botón.</p>
+              <div id="admin-servicios-items-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-servicios-items-agregar">+ Agregar servicio</button>
+            </div>
+            <div class="admin-card">
+              <h2>Banda final (CTA)</h2>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-servicios-cta-title"></div>
+              <div class="admin-field"><label>Texto</label><textarea id="admin-servicios-cta-desc"></textarea></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto del botón</label><input type="text" id="admin-servicios-cta-ctatext"></div>
+            </div>
+          </div>
+
+          <!-- ---- Pestaña: Proyectos ---- -->
+          <div class="admin-tab-panel" id="tab-proyectos" hidden>
+            <div class="admin-card">
+              <h2>Portada de la página</h2>
+              <div class="admin-field"><label>Rótulo</label><input type="text" id="admin-proyectos-hero-eyebrow"></div>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-proyectos-hero-title"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto</label><textarea id="admin-proyectos-hero-lead"></textarea></div>
+            </div>
+            <div class="admin-card">
+              <h2>Proyectos del portafolio</h2>
+              <p class="sub">"Filtro" define en qué botón de sector aparece (todos / industrial / infraestructura / comercial / institucional).</p>
+              <div id="admin-proyectos-items-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-proyectos-items-agregar">+ Agregar proyecto</button>
+            </div>
+            <div class="admin-card">
+              <h2>Banda final (CTA)</h2>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-proyectos-cta-title"></div>
+              <div class="admin-field"><label>Texto</label><textarea id="admin-proyectos-cta-desc"></textarea></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto del botón</label><input type="text" id="admin-proyectos-cta-ctatext"></div>
+            </div>
+          </div>
+
+          <!-- ---- Pestaña: Nosotros ---- -->
+          <div class="admin-tab-panel" id="tab-nosotros" hidden>
+            <div class="admin-card">
+              <h2>Portada de la página</h2>
+              <div class="admin-field"><label>Rótulo</label><input type="text" id="admin-nosotros-hero-eyebrow"></div>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-nosotros-hero-title"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto</label><textarea id="admin-nosotros-hero-lead"></textarea></div>
+            </div>
+            <div class="admin-card">
+              <h2>Misión y visión</h2>
+              <div class="admin-field"><label>Título misión</label><input type="text" id="admin-nosotros-mision-title"></div>
+              <div class="admin-field"><label>Texto misión</label><textarea id="admin-nosotros-mision-desc"></textarea></div>
+              <div class="admin-field"><label>Título visión</label><input type="text" id="admin-nosotros-vision-title"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto visión</label><textarea id="admin-nosotros-vision-desc"></textarea></div>
+            </div>
+            <div class="admin-card">
+              <h2>Valores</h2>
+              <div id="admin-nosotros-valores-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-nosotros-valores-agregar">+ Agregar valor</button>
+            </div>
+            <div class="admin-card">
+              <h2>Cómo trabajamos (línea de tiempo)</h2>
+              <div id="admin-nosotros-timeline-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-nosotros-timeline-agregar">+ Agregar paso</button>
+            </div>
+            <div class="admin-card">
+              <h2>Barra de estadísticas</h2>
+              <div id="admin-nosotros-stats-list"></div>
+              <button type="button" class="btn btn-outline-dark btn-sm" id="admin-nosotros-stats-agregar">+ Agregar estadística</button>
+            </div>
+            <div class="admin-card">
+              <h2>Banda final (CTA)</h2>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-nosotros-cta-title"></div>
+              <div class="admin-field"><label>Texto</label><textarea id="admin-nosotros-cta-desc"></textarea></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto del botón</label><input type="text" id="admin-nosotros-cta-ctatext"></div>
+            </div>
+          </div>
+
+          <!-- ---- Pestaña: Contacto ---- -->
+          <div class="admin-tab-panel" id="tab-contacto" hidden>
+            <div class="admin-card">
+              <h2>Portada de la página</h2>
+              <div class="admin-field"><label>Rótulo</label><input type="text" id="admin-contacto-hero-eyebrow"></div>
+              <div class="admin-field"><label>Título</label><input type="text" id="admin-contacto-hero-title"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Texto</label><textarea id="admin-contacto-hero-lead"></textarea></div>
+            </div>
+            <div class="admin-card">
+              <h2>Datos de contacto</h2>
+              <p class="sub">Se usan en esta página (teléfono, correo, oficina, horario, botón de WhatsApp).</p>
+              <div class="admin-field"><label>Teléfono (con indicativo, ej: +57 300 000 0000)</label><input type="text" id="admin-contacto-telefono"></div>
+              <div class="admin-field"><label>WhatsApp (solo números, ej: 573000000000)</label><input type="text" id="admin-contacto-whatsapp"></div>
+              <div class="admin-field"><label>Correo</label><input type="email" id="admin-contacto-correo"></div>
+              <div class="admin-field"><label>Oficina</label><input type="text" id="admin-contacto-info-oficina"></div>
+              <div class="admin-field" style="margin-bottom:0"><label>Horario de atención</label><input type="text" id="admin-contacto-info-horario"></div>
             </div>
           </div>
 

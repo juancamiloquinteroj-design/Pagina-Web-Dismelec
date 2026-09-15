@@ -43,15 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ---- Filtro de proyectos (solo en proyectos.html) ----
+  // Las tarjetas se re-consultan en cada click (no se cachean al cargar)
+  // porque site-content.js puede haber reemplazado el .project-grid
+  // completo después de este DOMContentLoaded (llega con datos de
+  // content.json vía fetch, que termina más tarde) -- una lista cacheada
+  // acá apuntaría a nodos viejos ya fuera del DOM.
   const filterBtns = document.querySelectorAll('.filter-btn');
-  const projectCards = document.querySelectorAll('[data-sector]');
-  if (filterBtns.length && projectCards.length) {
+  if (filterBtns.length) {
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const sector = btn.dataset.filter;
-        projectCards.forEach(card => {
+        document.querySelectorAll('[data-sector]').forEach(card => {
           const coincide = sector === 'todos' || card.dataset.sector === sector;
           card.style.display = coincide ? '' : 'none';
         });

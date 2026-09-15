@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-page="nosotros">
 
 <header class="site-header">
   <div class="container nav">
@@ -36,9 +36,9 @@
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="index.html">Inicio</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg><span>Nosotros</span></div>
-    <span class="eyebrow">Quiénes somos</span>
-    <h1>Un equipo de ingeniería comprometido con cada proyecto</h1>
-    <p>Acompañamos a nuestros clientes desde el diagnóstico hasta la puesta en servicio, con soluciones eléctricas seguras, eficientes y ajustadas a la normativa vigente.</p>
+    <span class="eyebrow" data-c="hero.eyebrow">Quiénes somos</span>
+    <h1 data-c="hero.title">Un equipo de ingeniería comprometido con cada proyecto</h1>
+    <p data-c="hero.lead">Acompañamos a nuestros clientes desde el diagnóstico hasta la puesta en servicio, con soluciones eléctricas seguras, eficientes y ajustadas a la normativa vigente.</p>
   </div>
 </section>
 
@@ -51,13 +51,13 @@
     <div class="values-grid" style="grid-template-columns:1fr 1fr">
       <div class="value-card reveal">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s7-6.4 7-12a7 7 0 10-14 0c0 5.6 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg></div>
-        <h3>Misión</h3>
-        <p>Diseñar, construir y mantener soluciones eléctricas seguras y confiables, aportando al crecimiento de la industria, la infraestructura y las comunidades donde trabajamos, con altos estándares técnicos y de cumplimiento normativo.</p>
+        <h3 data-c="mision.title">Misión</h3>
+        <p data-c="mision.desc">Diseñar, construir y mantener soluciones eléctricas seguras y confiables, aportando al crecimiento de la industria, la infraestructura y las comunidades donde trabajamos, con altos estándares técnicos y de cumplimiento normativo.</p>
       </div>
       <div class="value-card reveal">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <h3>Visión</h3>
-        <p>Ser un referente nacional en ingeniería eléctrica, reconocidos por la calidad de nuestros proyectos, el cumplimiento a nuestros clientes y nuestro aporte a un desarrollo energético más seguro y eficiente en Colombia.</p>
+        <h3 data-c="vision.title">Visión</h3>
+        <p data-c="vision.desc">Ser un referente nacional en ingeniería eléctrica, reconocidos por la calidad de nuestros proyectos, el cumplimiento a nuestros clientes y nuestro aporte a un desarrollo energético más seguro y eficiente en Colombia.</p>
       </div>
     </div>
   </div>
@@ -70,7 +70,7 @@
       <h2>Nuestros valores</h2>
       <p>Los principios detrás de cada proyecto que entregamos.</p>
     </div>
-    <div class="values-grid">
+    <div class="values-grid" id="nosotros-valores">
       <div class="value-card reveal">
         <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.4 8.7-8 10-4.6-1.3-8-5-8-10V6z"/></svg></div>
         <h3>Seguridad primero</h3>
@@ -112,7 +112,7 @@
       <h2>Cómo trabajamos</h2>
       <p>Un proceso claro de principio a fin, para que sepas qué esperar en cada etapa de tu proyecto.</p>
     </div>
-    <div class="timeline">
+    <div class="timeline" id="nosotros-timeline">
       <div class="timeline-item reveal">
         <div class="t-year">01</div>
         <div class="t-line"><div class="t-dot"></div><div class="t-bar"></div></div>
@@ -138,7 +138,7 @@
 </section>
 
 <section class="stats-bar section-tight">
-  <div class="container stats-grid">
+  <div class="container stats-grid" id="nosotros-stats">
     <div class="stat-item">
       <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div><strong>+100</strong><span>Proyectos ejecutados</span></div>
@@ -162,11 +162,11 @@
   <div class="container">
     <div class="cta-band reveal">
       <div>
-        <h3>Conversemos sobre tu próximo proyecto</h3>
-        <p>Contanos qué necesitás y te contactamos en menos de 24 horas hábiles.</p>
+        <h3 data-c="cta.title">Conversemos sobre tu próximo proyecto</h3>
+        <p data-c="cta.desc">Contanos qué necesitás y te contactamos en menos de 24 horas hábiles.</p>
       </div>
       <div class="cta-actions">
-        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none">Escribinos</a>
+        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none" data-c="cta.ctaText">Escribinos</a>
       </div>
     </div>
   </div>
@@ -204,6 +204,8 @@
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.7 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5.2.5.7 1.8.8 1.9.1.2.1.4 0 .6-.1.2-.1.3-.3.5l-.4.5c-.1.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.7-.1.3.1 1.7.8 2 .9.3.1.5.2.6.3.1.2.1.9-.1 1.6z"/></svg>
 </a>
 
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/site-content.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

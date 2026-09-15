@@ -42,6 +42,14 @@ window.DISMELEC_ICONS = {
     label: 'Calidad (check)',
     svg: '<path d="M20 6L9 17l-5-5"/>',
   },
+  lineas: {
+    label: 'Líneas de transmisión',
+    svg: '<path d="M4 20L10 4M20 20L14 4"/><path d="M4 10h16M4 15h16"/>',
+  },
+  edificio: {
+    label: 'Edificio / institucional',
+    svg: '<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-8h6v8"/>',
+  },
 };
 
 function dismelecIconSvg(id, strokeWidth) {

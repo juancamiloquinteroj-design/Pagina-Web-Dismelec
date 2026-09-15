@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body data-page="servicios">
 
 <header class="site-header">
   <div class="container nav">
@@ -36,14 +36,14 @@
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb"><a href="index.html">Inicio</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg><span>Servicios</span></div>
-    <span class="eyebrow">Lo que hacemos</span>
-    <h1>Soluciones eléctricas de punta a punta</h1>
-    <p>Desde el diseño hasta la puesta en servicio y la legalización -- un solo equipo técnico acompaña todo el ciclo del proyecto.</p>
+    <span class="eyebrow" data-c="hero.eyebrow">Lo que hacemos</span>
+    <h1 data-c="hero.title">Soluciones eléctricas de punta a punta</h1>
+    <p data-c="hero.lead">Desde el diseño hasta la puesta en servicio y la legalización -- un solo equipo técnico acompaña todo el ciclo del proyecto.</p>
   </div>
 </section>
 
 <section class="section">
-  <div class="container">
+  <div class="container" id="servicios-items">
 
     <div class="service-block reveal" id="redes">
       <div>
@@ -124,11 +124,11 @@
   <div class="container">
     <div class="cta-band reveal">
       <div>
-        <h3>¿No estás seguro qué servicio necesitás?</h3>
-        <p>Contanos tu caso y te ayudamos a definir el alcance técnico más conveniente para tu proyecto.</p>
+        <h3 data-c="cta.title">¿No estás seguro qué servicio necesitás?</h3>
+        <p data-c="cta.desc">Contanos tu caso y te ayudamos a definir el alcance técnico más conveniente para tu proyecto.</p>
       </div>
       <div class="cta-actions">
-        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none">Hablar con un ingeniero</a>
+        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none" data-c="cta.ctaText">Hablar con un ingeniero</a>
       </div>
     </div>
   </div>
@@ -166,6 +166,8 @@
   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm5.7 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-5-4.3-5.1-4.5-.2-.2-1.2-1.6-1.2-3.1s.8-2.2 1-2.5c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5.2.5.7 1.8.8 1.9.1.2.1.4 0 .6-.1.2-.1.3-.3.5l-.4.5c-.1.2-.3.4-.1.7.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.7-.1.3.1 1.7.8 2 .9.3.1.5.2.6.3.1.2.1.9-.1 1.6z"/></svg>
 </a>
 
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/site-content.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

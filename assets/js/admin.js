@@ -13,9 +13,81 @@ const ADMIN_REPO = 'Pagina-Web-Dismelec';
 const ADMIN_BRANCH = 'master';
 const ADMIN_CONTENT_PATH = 'assets/data/content.json';
 
-let ADMIN_STATE = { hero: {}, cards: [] };
+let ADMIN_STATE = { index: { hero: {}, cards: [] } };
 let ADMIN_NUEVA_FOTO = null; // {file, dataUrl} si el usuario eligió una foto nueva
 let ADMIN_USER = null; // {uid, email, nombre, rol} del usuario logueado
+let ADMIN_LISTAS = {}; // wrapId -> {render} de cada lista genérica montada (ver adminMontarLista)
+
+// Campos de texto simples (un input/textarea = un campo del JSON) -- id del
+// elemento en el HTML es "admin-" + la clave de acá. Un solo mapa alcanza
+// para cargar TODOS al abrir el panel y leerlos TODOS antes de publicar,
+// sin repetir el mismo código a mano por cada página. Los 3 campos del
+// hero del Inicio (admin-hero-tag/title/lead) quedan aparte -- ya tenían
+// su propio manejo (el "tag" necesita aplanar el salto de línea al
+// mostrarlo) y no hacía falta tocarlos.
+const ADMIN_CAMPOS = {
+  'index-proyseccion-eyebrow': 'index.proyectosSeccion.eyebrow',
+  'index-proyseccion-title': 'index.proyectosSeccion.title',
+  'index-proyseccion-desc': 'index.proyectosSeccion.desc',
+  'index-cta-title': 'index.cta.title',
+  'index-cta-desc': 'index.cta.desc',
+  'index-cta-ctatext': 'index.cta.ctaText',
+  'servicios-hero-eyebrow': 'servicios.hero.eyebrow',
+  'servicios-hero-title': 'servicios.hero.title',
+  'servicios-hero-lead': 'servicios.hero.lead',
+  'servicios-cta-title': 'servicios.cta.title',
+  'servicios-cta-desc': 'servicios.cta.desc',
+  'servicios-cta-ctatext': 'servicios.cta.ctaText',
+  'proyectos-hero-eyebrow': 'proyectos.hero.eyebrow',
+  'proyectos-hero-title': 'proyectos.hero.title',
+  'proyectos-hero-lead': 'proyectos.hero.lead',
+  'proyectos-cta-title': 'proyectos.cta.title',
+  'proyectos-cta-desc': 'proyectos.cta.desc',
+  'proyectos-cta-ctatext': 'proyectos.cta.ctaText',
+  'nosotros-hero-eyebrow': 'nosotros.hero.eyebrow',
+  'nosotros-hero-title': 'nosotros.hero.title',
+  'nosotros-hero-lead': 'nosotros.hero.lead',
+  'nosotros-mision-title': 'nosotros.mision.title',
+  'nosotros-mision-desc': 'nosotros.mision.desc',
+  'nosotros-vision-title': 'nosotros.vision.title',
+  'nosotros-vision-desc': 'nosotros.vision.desc',
+  'nosotros-cta-title': 'nosotros.cta.title',
+  'nosotros-cta-desc': 'nosotros.cta.desc',
+  'nosotros-cta-ctatext': 'nosotros.cta.ctaText',
+  'contacto-hero-eyebrow': 'contacto.hero.eyebrow',
+  'contacto-hero-title': 'contacto.hero.title',
+  'contacto-hero-lead': 'contacto.hero.lead',
+  'contacto-telefono': 'contacto.telefono',
+  'contacto-whatsapp': 'contacto.whatsapp',
+  'contacto-correo': 'contacto.correo',
+  'contacto-info-oficina': 'contacto.info.oficina',
+  'contacto-info-horario': 'contacto.info.horario',
+};
+
+function _adminRuta(obj, ruta) {
+  return ruta.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
+}
+function _adminSetRuta(obj, ruta, valor) {
+  const partes = ruta.split('.');
+  let o = obj;
+  for (let i = 0; i < partes.length - 1; i++) {
+    if (typeof o[partes[i]] !== 'object' || o[partes[i]] === null) o[partes[i]] = {};
+    o = o[partes[i]];
+  }
+  o[partes[partes.length - 1]] = valor;
+}
+function adminCargarCamposSimples() {
+  Object.entries(ADMIN_CAMPOS).forEach(([id, ruta]) => {
+    const el = document.getElementById('admin-' + id);
+    if (el) el.value = _adminRuta(ADMIN_STATE, ruta) || '';
+  });
+}
+function adminLeerCamposSimples() {
+  Object.entries(ADMIN_CAMPOS).forEach(([id, ruta]) => {
+    const el = document.getElementById('admin-' + id);
+    if (el) _adminSetRuta(ADMIN_STATE, ruta, el.value.trim());
+  });
+}
 
 // ---------------------------------------------------------------- login
 document.addEventListener('DOMContentLoaded', () => {
@@ -151,26 +223,204 @@ async function adminIniciarPanel() {
     const res = await fetch('assets/data/content.json', { cache: 'no-store' });
     ADMIN_STATE = await res.json();
   } catch (e) {
-    ADMIN_STATE = { hero: {}, cards: [] };
+    ADMIN_STATE = {};
   }
+  // Por si algún campo/página todavía no existe en el JSON (sitio viejo o
+  // primera vez) -- evita reventar con "Cannot read properties of
+  // undefined" al leer/escribir cualquiera de los campos de abajo.
+  ['index', 'servicios', 'proyectos', 'nosotros', 'contacto'].forEach((p) => { if (!ADMIN_STATE[p]) ADMIN_STATE[p] = {}; });
+  if (!ADMIN_STATE.index.hero) ADMIN_STATE.index.hero = {};
+  if (!Array.isArray(ADMIN_STATE.index.cards)) ADMIN_STATE.index.cards = [];
+  if (!Array.isArray(ADMIN_STATE.index.stats)) ADMIN_STATE.index.stats = [];
+  if (!Array.isArray(ADMIN_STATE.index.proyectosDestacados)) ADMIN_STATE.index.proyectosDestacados = [];
+  if (!Array.isArray(ADMIN_STATE.servicios.items)) ADMIN_STATE.servicios.items = [];
+  if (!Array.isArray(ADMIN_STATE.proyectos.items)) ADMIN_STATE.proyectos.items = [];
+  if (!Array.isArray(ADMIN_STATE.nosotros.valores)) ADMIN_STATE.nosotros.valores = [];
+  if (!Array.isArray(ADMIN_STATE.nosotros.timeline)) ADMIN_STATE.nosotros.timeline = [];
+  if (!Array.isArray(ADMIN_STATE.nosotros.stats)) ADMIN_STATE.nosotros.stats = [];
 
-  document.getElementById('admin-hero-tag').value = (ADMIN_STATE.hero.tag || '').replace(/\n/g, ' ');
-  document.getElementById('admin-hero-title').value = ADMIN_STATE.hero.title || '';
-  document.getElementById('admin-hero-lead').value = ADMIN_STATE.hero.lead || '';
-  if (ADMIN_STATE.hero.photo) document.getElementById('admin-photo-preview').src = ADMIN_STATE.hero.photo;
+  document.getElementById('admin-hero-tag').value = (ADMIN_STATE.index.hero.tag || '').replace(/\n/g, ' ');
+  document.getElementById('admin-hero-title').value = ADMIN_STATE.index.hero.title || '';
+  document.getElementById('admin-hero-lead').value = ADMIN_STATE.index.hero.lead || '';
+  if (ADMIN_STATE.index.hero.photo) document.getElementById('admin-photo-preview').src = ADMIN_STATE.index.hero.photo;
+  adminCargarCamposSimples();
 
   if (!_adminListenersListos) {
     _adminListenersListos = true;
     document.getElementById('admin-photo-input').addEventListener('change', onAdminFotoElegida);
     document.getElementById('admin-card-agregar').addEventListener('click', () => {
-      ADMIN_STATE.cards.push({ icon: 'rayo', title: 'Nueva tarjeta', desc: '', link: '' });
+      ADMIN_STATE.index.cards.push({ icon: 'rayo', title: 'Nueva tarjeta', desc: '', link: '' });
       adminRenderCards();
     });
     document.getElementById('admin-publicar').addEventListener('click', adminPublicar);
+    adminMontarTodasLasListas();
   }
 
   adminRenderCards();
+  Object.values(ADMIN_LISTAS).forEach((l) => l.render());
   adminCargarUsuarios();
+}
+
+// Une los 7 arreglos nuevos (estadísticas, proyectos, servicios, valores,
+// línea de tiempo...) al mismo componente genérico -- una sola
+// implementación de "agregar/quitar/reordenar/editar campos" en vez de
+// repetirla 7 veces con pequeñas variaciones.
+function adminMontarTodasLasListas() {
+  const campoIcono = { key: 'icon', tipo: 'icon' };
+
+  ADMIN_LISTAS.indexStats = adminMontarLista({
+    wrapId: 'admin-index-stats-list', addBtnId: 'admin-index-stats-agregar',
+    getArr: () => ADMIN_STATE.index.stats,
+    nuevo: () => ({ icon: 'rayo', valor: '', label: '' }),
+    campos: [campoIcono, { key: 'valor', label: 'Número / valor grande', tipo: 'text' }, { key: 'label', label: 'Texto debajo', tipo: 'text' }],
+  });
+  ADMIN_LISTAS.indexDestacados = adminMontarLista({
+    wrapId: 'admin-index-destacados-list', addBtnId: 'admin-index-destacados-agregar',
+    getArr: () => ADMIN_STATE.index.proyectosDestacados,
+    nuevo: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sub: '', link: 'proyectos.html' }),
+    campos: [campoIcono, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sub', label: 'Subtítulo (sector · ubicación)', tipo: 'text' }, { key: 'link', label: 'Enlace', tipo: 'text' }],
+  });
+  ADMIN_LISTAS.serviciosItems = adminMontarLista({
+    wrapId: 'admin-servicios-items-list', addBtnId: 'admin-servicios-items-agregar',
+    getArr: () => ADMIN_STATE.servicios.items,
+    nuevo: () => ({ icon: 'rayo', numero: '0', title: 'Nuevo servicio', desc: '', checks: '', ctaText: 'Cotizar este servicio', anchor: '' }),
+    campos: [
+      campoIcono, { key: 'numero', label: 'Número (01, 02...)', tipo: 'text' }, { key: 'title', label: 'Título', tipo: 'text' },
+      { key: 'desc', label: 'Descripción', tipo: 'textarea' }, { key: 'checks', label: 'Lista de checks', tipo: 'lineas' },
+      { key: 'ctaText', label: 'Texto del botón', tipo: 'text' }, { key: 'anchor', label: 'Ancla (para enlaces #ancla, sin espacios)', tipo: 'text' },
+    ],
+  });
+  ADMIN_LISTAS.proyectosItems = adminMontarLista({
+    wrapId: 'admin-proyectos-items-list', addBtnId: 'admin-proyectos-items-agregar',
+    getArr: () => ADMIN_STATE.proyectos.items,
+    nuevo: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sectorLabel: '', ubicacion: '', filtro: 'todos', anchor: '' }),
+    campos: [
+      campoIcono, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sectorLabel', label: 'Sector (ej: Sector industrial)', tipo: 'text' },
+      { key: 'ubicacion', label: 'Ubicación', tipo: 'text' },
+      { key: 'filtro', label: 'Filtro (todos / industrial / infraestructura / comercial / institucional)', tipo: 'text' },
+      { key: 'anchor', label: 'Ancla (opcional, sin espacios)', tipo: 'text' },
+    ],
+  });
+  ADMIN_LISTAS.nosotrosValores = adminMontarLista({
+    wrapId: 'admin-nosotros-valores-list', addBtnId: 'admin-nosotros-valores-agregar',
+    getArr: () => ADMIN_STATE.nosotros.valores,
+    nuevo: () => ({ icon: 'rayo', title: 'Nuevo valor', desc: '' }),
+    campos: [campoIcono, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'desc', label: 'Descripción', tipo: 'textarea' }],
+  });
+  ADMIN_LISTAS.nosotrosTimeline = adminMontarLista({
+    wrapId: 'admin-nosotros-timeline-list', addBtnId: 'admin-nosotros-timeline-agregar',
+    getArr: () => ADMIN_STATE.nosotros.timeline,
+    nuevo: () => ({ numero: '0', title: 'Nuevo paso', desc: '' }),
+    campos: [{ key: 'numero', label: 'Número (01, 02...)', tipo: 'text' }, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'desc', label: 'Descripción', tipo: 'textarea' }],
+  });
+  ADMIN_LISTAS.nosotrosStats = adminMontarLista({
+    wrapId: 'admin-nosotros-stats-list', addBtnId: 'admin-nosotros-stats-agregar',
+    getArr: () => ADMIN_STATE.nosotros.stats,
+    nuevo: () => ({ icon: 'rayo', valor: '', label: '' }),
+    campos: [campoIcono, { key: 'valor', label: 'Número / valor grande', tipo: 'text' }, { key: 'label', label: 'Texto debajo', tipo: 'text' }],
+  });
+}
+
+// ------------------------------------------------- componente genérico de lista
+// Un solo lugar que sabe pintar filas editables (con selector de ícono
+// opcional), agregar, quitar y reordenar -- parametrizado por qué campos
+// tiene cada fila. Las tarjetas del Inicio (adminRenderCards, arriba) NO
+// pasan por acá a propósito -- ya funcionaban probadas con su propia
+// vista previa en vivo, y tocarlas de nuevo solo agregaba riesgo sin
+// necesidad real.
+function adminMontarLista(cfg) {
+  const wrap = document.getElementById(cfg.wrapId);
+  if (!wrap) return { render() {} };
+
+  function fila(item, idx) {
+    const campos = cfg.campos.map((c) => _adminCampoHTML(c, item[c.key])).join('');
+    return `
+      <div class="admin-card-item" data-idx="${idx}">
+        <div class="admin-card-item-top">
+          <strong>Elemento ${idx + 1}</strong>
+          <div class="admin-card-actions">
+            <button type="button" class="admin-icon-btn" data-accion="up" title="Subir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+            <button type="button" class="admin-icon-btn" data-accion="down" title="Bajar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button>
+            <button type="button" class="admin-icon-btn danger" data-accion="remove" title="Quitar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button>
+          </div>
+        </div>
+        ${campos}
+      </div>`;
+  }
+
+  function render() {
+    wrap.innerHTML = cfg.getArr().map(fila).join('');
+  }
+
+  wrap.addEventListener('input', (ev) => {
+    const key = ev.target.dataset.key;
+    const filaEl = ev.target.closest('[data-idx]');
+    if (!key || !filaEl || ev.target.tagName === 'SELECT') return;
+    cfg.getArr()[Number(filaEl.dataset.idx)][key] = ev.target.value;
+  });
+  wrap.addEventListener('change', (ev) => {
+    if (ev.target.tagName !== 'SELECT') return;
+    const key = ev.target.dataset.key;
+    const filaEl = ev.target.closest('[data-idx]');
+    if (!key || !filaEl) return;
+    cfg.getArr()[Number(filaEl.dataset.idx)][key] = ev.target.value;
+    const preview = filaEl.querySelector('[data-icon-preview]');
+    if (preview) preview.innerHTML = dismelecIconSvg(ev.target.value);
+  });
+  wrap.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('[data-accion]');
+    if (!btn) return;
+    const filaEl = btn.closest('[data-idx]');
+    const idx = Number(filaEl.dataset.idx);
+    const arr = cfg.getArr();
+    if (btn.dataset.accion === 'up') {
+      if (idx === 0) return;
+      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+      render();
+    } else if (btn.dataset.accion === 'down') {
+      if (idx === arr.length - 1) return;
+      [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
+      render();
+    } else if (btn.dataset.accion === 'remove') {
+      if (!confirm('¿Quitar este elemento?')) return;
+      arr.splice(idx, 1);
+      render();
+    }
+  });
+  if (cfg.addBtnId) {
+    const addBtn = document.getElementById(cfg.addBtnId);
+    if (addBtn) addBtn.addEventListener('click', () => { cfg.getArr().push(cfg.nuevo()); render(); });
+  }
+
+  render();
+  return { render };
+}
+
+function _adminCampoHTML(campo, valor) {
+  const val = valor === undefined || valor === null ? '' : valor;
+  if (campo.tipo === 'icon') {
+    const opciones = Object.entries(window.DISMELEC_ICONS).map(([id, info]) =>
+      `<option value="${id}" ${id === val ? 'selected' : ''}>${info.label}</option>`).join('');
+    return `<div class="admin-field">
+      <label>Ícono</label>
+      <div class="admin-icon-picker">
+        <div class="preview" data-icon-preview>${dismelecIconSvg(val)}</div>
+        <select data-key="${campo.key}">${opciones}</select>
+      </div>
+    </div>`;
+  }
+  if (campo.tipo === 'textarea' || campo.tipo === 'lineas') {
+    const hint = campo.tipo === 'lineas' ? '<div class="hint">Una por línea.</div>' : '';
+    return `<div class="admin-field">
+      <label>${campo.label}</label>
+      <textarea data-key="${campo.key}">${_dmEsc(val)}</textarea>
+      ${hint}
+    </div>`;
+  }
+  return `<div class="admin-field">
+    <label>${campo.label}</label>
+    <input type="text" data-key="${campo.key}" value="${_dmEsc(val)}">
+  </div>`;
 }
 
 function onAdminFotoElegida(ev) {
@@ -188,7 +438,7 @@ function adminRenderCards() {
   const wrap = document.getElementById('admin-cards-list');
   const tpl = document.getElementById('admin-card-template');
   wrap.innerHTML = '';
-  ADMIN_STATE.cards.forEach((card, idx) => {
+  ADMIN_STATE.index.cards.forEach((card, idx) => {
     const node = tpl.content.cloneNode(true);
     const item = node.querySelector('[data-card]');
     item.dataset.index = idx;
@@ -213,17 +463,17 @@ function adminRenderCards() {
 
     node.querySelector('[data-mover=up]').addEventListener('click', () => {
       if (idx === 0) return;
-      [ADMIN_STATE.cards[idx - 1], ADMIN_STATE.cards[idx]] = [ADMIN_STATE.cards[idx], ADMIN_STATE.cards[idx - 1]];
+      [ADMIN_STATE.index.cards[idx - 1], ADMIN_STATE.index.cards[idx]] = [ADMIN_STATE.index.cards[idx], ADMIN_STATE.index.cards[idx - 1]];
       adminRenderCards();
     });
     node.querySelector('[data-mover=down]').addEventListener('click', () => {
-      if (idx === ADMIN_STATE.cards.length - 1) return;
-      [ADMIN_STATE.cards[idx + 1], ADMIN_STATE.cards[idx]] = [ADMIN_STATE.cards[idx], ADMIN_STATE.cards[idx + 1]];
+      if (idx === ADMIN_STATE.index.cards.length - 1) return;
+      [ADMIN_STATE.index.cards[idx + 1], ADMIN_STATE.index.cards[idx]] = [ADMIN_STATE.index.cards[idx], ADMIN_STATE.index.cards[idx + 1]];
       adminRenderCards();
     });
     node.querySelector('[data-mover=remove]').addEventListener('click', () => {
       if (!confirm('¿Quitar esta tarjeta?')) return;
-      ADMIN_STATE.cards.splice(idx, 1);
+      ADMIN_STATE.index.cards.splice(idx, 1);
       adminRenderCards();
     });
 
@@ -238,7 +488,7 @@ function adminRenderCards() {
 function adminRenderPreview() {
   const wrap = document.getElementById('admin-cards-preview');
   if (!wrap) return;
-  wrap.innerHTML = ADMIN_STATE.cards.map(c => `
+  wrap.innerHTML = ADMIN_STATE.index.cards.map(c => `
     <div class="feature-card">
       <div class="feature-icon">${dismelecIconSvg(c.icon)}</div>
       <h3>${c.title || '(sin título)'}</h3>
@@ -248,9 +498,9 @@ function adminRenderPreview() {
 }
 
 function adminLeerFormularioHero() {
-  ADMIN_STATE.hero.tag = document.getElementById('admin-hero-tag').value.trim();
-  ADMIN_STATE.hero.title = document.getElementById('admin-hero-title').value.trim();
-  ADMIN_STATE.hero.lead = document.getElementById('admin-hero-lead').value.trim();
+  ADMIN_STATE.index.hero.tag = document.getElementById('admin-hero-tag').value.trim();
+  ADMIN_STATE.index.hero.title = document.getElementById('admin-hero-title').value.trim();
+  ADMIN_STATE.index.hero.lead = document.getElementById('admin-hero-lead').value.trim();
 }
 
 // ---------------------------------------------------------- GitHub API
@@ -303,13 +553,14 @@ async function adminPublicar() {
 
   try {
     adminLeerFormularioHero();
+    adminLeerCamposSimples();
 
     if (ADMIN_NUEVA_FOTO) {
       status.textContent = 'Subiendo foto nueva...';
       const ext = (ADMIN_NUEVA_FOTO.file.name.split('.').pop() || 'jpg').toLowerCase();
       const nombreArchivo = `assets/img/foto-portada-${Date.now()}.${ext}`;
       await _ghSubirArchivo(nombreArchivo, _dataUrlABase64(ADMIN_NUEVA_FOTO.dataUrl), 'Actualiza foto de portada (panel privado)', token);
-      ADMIN_STATE.hero.photo = nombreArchivo;
+      ADMIN_STATE.index.hero.photo = nombreArchivo;
       ADMIN_NUEVA_FOTO = null;
     }
 

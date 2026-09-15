@@ -44,8 +44,8 @@
   <div class="hero-tag-corner">Energía<br>para un mejor mañana</div>
   <div class="container">
     <div class="hero-inner">
-      <h1>Ingeniería eléctrica que conecta grandes proyectos</h1>
-      <p class="lead">Diseñamos, construimos y acompañamos soluciones eléctricas seguras, eficientes y confiables para la industria, la infraestructura y el desarrollo de Colombia.</p>
+      <h1 data-c="hero.title">Ingeniería eléctrica que conecta grandes proyectos</h1>
+      <p class="lead" data-c="hero.lead">Diseñamos, construimos y acompañamos soluciones eléctricas seguras, eficientes y confiables para la industria, la infraestructura y el desarrollo de Colombia.</p>
       <div class="hero-actions">
         <a href="contacto.html#formulario" class="btn btn-primary">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
@@ -100,7 +100,7 @@
 
 <!-- ==================== BARRA DE ESTADISTICAS ==================== -->
 <section class="stats-bar section-tight" style="margin-top:56px">
-  <div class="container stats-grid">
+  <div class="container stats-grid" id="index-stats">
     <div class="stat-item">
       <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div><strong>+100</strong><span>Proyectos ejecutados</span></div>
@@ -125,16 +125,16 @@
   <div class="container">
     <div class="projects-head">
       <div class="section-head reveal">
-        <span class="eyebrow">Portafolio</span>
-        <h2>Proyectos destacados</h2>
-        <p>Soluciones eléctricas que impulsan el desarrollo del país.</p>
+        <span class="eyebrow" data-c="proyectosSeccion.eyebrow">Portafolio</span>
+        <h2 data-c="proyectosSeccion.title">Proyectos destacados</h2>
+        <p data-c="proyectosSeccion.desc">Soluciones eléctricas que impulsan el desarrollo del país.</p>
       </div>
       <a href="proyectos.html" class="btn btn-outline-dark">
         Ver todos los proyectos
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
     </div>
-    <div class="project-grid">
+    <div class="project-grid" id="index-proyectos-destacados">
       <a href="proyectos.html#subestacion-distribucion" class="project-card reveal">
         <div class="project-thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="9" width="4" height="10"/><rect x="10" y="5" width="4" height="14"/><rect x="16" y="9" width="4" height="10"/><path d="M4 5h16"/></svg></div>
         <div class="project-body"><h4>Subestación de distribución</h4><span>Sector industrial · Cundinamarca</span></div>
@@ -160,11 +160,11 @@
   <div class="container">
     <div class="cta-band reveal">
       <div>
-        <h3>¿Tenés un proyecto eléctrico en mente?</h3>
-        <p>Contanos qué necesitás y te devolvemos una propuesta técnica y comercial ajustada a tu operación.</p>
+        <h3 data-c="cta.title">¿Tenés un proyecto eléctrico en mente?</h3>
+        <p data-c="cta.desc">Contanos qué necesitás y te devolvemos una propuesta técnica y comercial ajustada a tu operación.</p>
       </div>
       <div class="cta-actions">
-        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none">Solicitar cotización</a>
+        <a href="contacto.html#formulario" class="btn btn-primary" style="background:#fff;color:var(--blue-600);box-shadow:none" data-c="cta.ctaText">Solicitar cotización</a>
         <a href="tel:+573000000000" class="btn btn-outline">Llamar ahora</a>
       </div>
     </div>
