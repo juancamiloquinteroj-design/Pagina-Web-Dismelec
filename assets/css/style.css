@@ -315,7 +315,7 @@ button{font:inherit}
 
 /* ---------- Listas de servicios ---------- */
 .service-block{
-  display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:center;
+  display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:stretch;
   padding:36px 0;border-bottom:1px solid var(--border);
 }
 .service-block:last-child{border-bottom:0}
@@ -328,11 +328,13 @@ button{font:inherit}
 @media (max-width:860px){
   .service-block{grid-template-columns:1fr}
 }
-/* Mas chica que antes -- pedido explicito ("las imagenes estan muy
-   grandes las quiero mas pequenas"), sigue en zigzag (par/impar cambia
-   de lado, ya existia con .nth-child(even) .service-visual{order:2}). */
+/* Llena el alto real del bloque (el de la columna de texto) en vez de
+   quedar chica y centrada con hueco arriba/abajo -- pedido explícito
+   ("el espacio que desperdicias arriba y debajo de 'cotizar', coloca la
+   imagen más grande"). min-height de respaldo para bloques con poco
+   texto, donde igual se ve bien una imagen razonable. */
 .service-visual{
-  aspect-ratio:4/3;max-width:260px;margin-inline:auto;border-radius:var(--radius);
+  min-height:220px;height:100%;border-radius:var(--radius);
   background:linear-gradient(150deg,var(--navy-900),var(--navy-700));
   display:flex;align-items:center;justify-content:center;color:#bcd6f7;position:relative;overflow:hidden;
 }
