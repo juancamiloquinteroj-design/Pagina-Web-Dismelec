@@ -318,16 +318,23 @@ button{font:inherit}
   display:grid;grid-template-columns:1.3fr .7fr;gap:36px;align-items:center;
   padding:36px 0;border-bottom:1px solid var(--border);
 }
+/* Cuando la imagen va primero en el HTML (bloques pares -- Subestaciones,
+   RETIE...) las columnas tenían que invertirse TAMBIÉN, si no la columna
+   ancha (1.3fr) le tocaba a la imagen y la angosta (.7fr) al texto --
+   al revés de lo que hace falta. Eso dejaba la imagen con hueco de sobra
+   a los costados (topada en max-width dentro de una columna enorme) y el
+   párrafo apretado en muy poco ancho, partiéndose en 3 líneas en vez de
+   1-2 (bug real visto en captura). */
+.service-block:nth-child(even){grid-template-columns:.7fr 1.3fr}
 .service-block h2{font-size:21px;margin-bottom:8px}
 .service-block:last-child{border-bottom:0}
 /* El zigzag (imagen a la izquierda o derecha, alternado) ya lo resuelve
    el orden real de los elementos en el HTML/JS -- acá NO hace falta
    "order" por CSS; había una regla vieja (nth-child(even){order:2}) que
    competía con ese orden real y lo anulaba, dejando la imagen siempre a
-   la derecha (bug real visto en captura, las 4 imágenes del mismo lado).
-   Solo queda la regla mobile: en pantalla angosta todo se apila. */
+   la derecha (bug real visto en captura, las 4 imágenes del mismo lado). */
 @media (max-width:860px){
-  .service-block{grid-template-columns:1fr}
+  .service-block,.service-block:nth-child(even){grid-template-columns:1fr}
 }
 /* Alto Y ancho fijos -- pedido explícito ("estilo cascada" con las
    imágenes del mismo tamaño en todos los bloques). Con solo el alto fijo
