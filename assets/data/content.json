@@ -95,7 +95,8 @@
     "hero": {
       "eyebrow": "Lo que hacemos",
       "title": "Soluciones eléctricas de punta a punta",
-      "lead": "Desde el diseño hasta la puesta en servicio y la legalización -- un solo equipo técnico acompaña todo el ciclo del proyecto."
+      "lead": "Desde el diseño hasta la puesta en servicio y la legalización -- un solo equipo técnico acompaña todo el ciclo del proyecto.",
+      "photo": "assets/img/foto-portada.jpg"
     },
     "items": [
       {

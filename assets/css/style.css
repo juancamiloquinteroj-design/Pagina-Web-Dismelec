@@ -440,6 +440,14 @@ button{font:inherit}
   background:linear-gradient(120deg,var(--navy-950),var(--navy-800));color:#fff;
   padding:64px 0 60px;position:relative;overflow:hidden;
 }
+/* Foto de fondo opcional (editable desde Parametrización) -- si no hay
+   foto cargada, queda el degradado de siempre. Se oscurece con un
+   degradado propio para que el texto blanco siga leyéndose encima. */
+.page-hero-photo{position:absolute;inset:0;background-size:cover;background-position:center}
+.page-hero-photo::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(7,22,39,.92),rgba(11,33,56,.74));
+}
 .page-hero::after{
   content:"";position:absolute;inset:0;
   background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);

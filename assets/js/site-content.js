@@ -126,7 +126,11 @@ function _dmRenderServicios(datos, root) {
   const d = datos.servicios;
   if (!d) return;
 
-  root.querySelectorAll('.page-hero').forEach((h) => _dmAplicarTextos(h, d));
+  root.querySelectorAll('.page-hero').forEach((h) => {
+    _dmAplicarTextos(h, d);
+    const foto = h.querySelector('.page-hero-photo');
+    if (foto && d.hero && d.hero.photo) foto.style.backgroundImage = `url('${d.hero.photo}')`;
+  });
 
   const wrap = root.querySelector('#servicios-items');
   if (wrap && Array.isArray(d.items) && d.items.length) {
