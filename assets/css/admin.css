@@ -169,6 +169,12 @@ body[data-page="admin"]{font-size:13px}
   border:1.5px dashed var(--border);border-radius:10px;
 }
 
+/* Checks de un servicio -- pedido explícito ("en servicios no puedo
+   cambiar los checks"). Mismo lenguaje visual que [data-lista] (clic
+   derecho para agregar/reordenar/eliminar una línea). */
+[data-checks-lista]{outline:1.5px dashed transparent;outline-offset:4px;border-radius:8px;transition:outline-color .15s}
+[data-checks-lista]:hover{outline-color:var(--border)}
+
 /* Arrastrar para reordenar -- pedido explícito ("¿hay forma de que yo
    pueda mover las tarjetas?"). El elemento que se está arrastrando se ve
    semitransparente; una franja azul sólida en el borde correspondiente

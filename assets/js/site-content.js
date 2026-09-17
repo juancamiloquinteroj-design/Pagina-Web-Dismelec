@@ -145,12 +145,16 @@ function _dmPintarStats(wrap, items, rutaLista) {
 // Tarjetas (Inicio) y proyectos aceptan una foto opcional (PNG/JPG) en vez
 // del ícono -- si hay foto, ocupa el mismo lugar/tamaño que el ícono
 // (mismo "cuadradito"), no agranda la tarjeta.
+// object-position (photoPos, mismo formato "X% Y%" que la foto de
+// portada) -- pedido explícito ("las fotos de proyectos no las puedo
+// acomodar"): permite arrastrar en el editor para elegir qué parte de la
+// foto se ve dentro del recorte cuadrado/rectangular de la tarjeta.
 function _dmIconoOFoto(item) {
-  if (item.photo) return `<img src="${_dmEsc(item.photo)}" alt="" class="feature-icon-img">`;
+  if (item.photo) return `<img src="${_dmEsc(item.photo)}" alt="" class="feature-icon-img" style="object-position:${_dmEsc(item.photoPos || '50% 50%')}">`;
   return dismelecIconSvg(item.icon);
 }
 function _dmIconoOFotoThumb(item, strokeWidth) {
-  if (item.photo) return `<img src="${_dmEsc(item.photo)}" alt="" class="project-thumb-img">`;
+  if (item.photo) return `<img src="${_dmEsc(item.photo)}" alt="" class="project-thumb-img" style="object-position:${_dmEsc(item.photoPos || '50% 50%')}">`;
   return dismelecIconSvg(item.icon, strokeWidth);
 }
 
@@ -167,14 +171,14 @@ function _dmRenderServicios(datos, root) {
     wrap.dataset.lista = 'servicios.items';
     wrap.dataset.listaTipo = 'servicios';
     if (Array.isArray(d.items) && d.items.length) wrap.innerHTML = d.items.map((it, idx) => {
-      const checks = (it.checks || '').split('\n').filter(Boolean).map((linea) => `
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>${_dmEsc(linea)}</li>`).join('');
+      const checks = (it.checks || '').split('\n').filter(Boolean).map((linea, ci) => `
+        <li data-check-idx="${ci}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg><span data-check-texto>${_dmEsc(linea)}</span></li>`).join('');
       const textoBloque = `
         <div>
           <span class="service-id" data-c-item="numero">${_dmEsc(it.numero || '')}</span>
           <h2 data-c-item="title">${_dmEsc(it.title || '')}</h2>
           <p data-c-item="desc">${_dmEsc(it.desc || '')}</p>
-          <ul class="service-check-list">${checks}</ul>
+          <ul class="service-check-list" data-checks-lista>${checks}</ul>
           <a href="contacto.html#formulario" class="btn btn-outline-dark btn-sm" data-c-item="ctaText">${_dmEsc(it.ctaText || 'Cotizar este servicio')}</a>
         </div>`;
       const visual = `<div class="service-visual" data-foto-item>${_dmIconoOFotoThumb(it, '1.4')}</div>`;

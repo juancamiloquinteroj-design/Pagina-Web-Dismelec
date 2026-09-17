@@ -498,6 +498,7 @@ function adminActivarEdicionListas(canvas, pagina) {
     adminHabilitarMenuLista(el, pagina);
     adminHabilitarDragReordenar(el);
   });
+  canvas.querySelectorAll('[data-checks-lista]').forEach((el) => adminHabilitarEdicionChecks(el));
 }
 
 // ------------------------------------------- arrastrar para reordenar
@@ -574,7 +575,11 @@ function adminHabilitarDragReordenar(listaEl) {
 // Enter/Escape confirman y sueltan el foco en vez de insertar un salto de
 // línea real (los campos del JSON son de una sola línea -- ver hero.tag
 // más abajo para el único caso que sí admite varias).
-function adminHabilitarTextoEditable(el, rutaFn, alGuardar) {
+// "escritor", si se pasa, reemplaza el guardado por defecto
+// (_adminSetRuta con la ruta de rutaFn()) -- lo usan los checks de
+// servicios, que no son un campo simple sino una línea dentro de un
+// string "a\nb\nc" (ver adminHabilitarEdicionChecks).
+function adminHabilitarTextoEditable(el, rutaFn, alGuardar, escritor) {
   el.classList.add('admin-editable');
   el.addEventListener('click', (ev) => {
     ev.stopPropagation();
@@ -587,7 +592,9 @@ function adminHabilitarTextoEditable(el, rutaFn, alGuardar) {
     const soltar = () => {
       el.contentEditable = 'false';
       el.classList.remove('editando');
-      _adminSetRuta(ADMIN_STATE, rutaFn(), el.textContent.trim());
+      const texto = el.textContent.trim();
+      if (escritor) escritor(texto);
+      else _adminSetRuta(ADMIN_STATE, rutaFn(), texto);
       el.removeEventListener('blur', soltar);
       el.removeEventListener('keydown', teclaAbajo);
       alGuardar();
@@ -721,13 +728,73 @@ function adminAbrirInputArchivo(cb) {
 // Clic sobre el espacio de la foto -- pedido explícito ("clic sobre los
 // espacios de imágenes pueda cambiar la imagen"). Abre un menú chico con
 // "Subir foto" (si el tipo la admite) y la lista de íconos disponibles.
+// Si YA hay una foto subida, además se puede ARRASTRAR para acomodar el
+// encuadre -- pedido explícito ("las fotos de proyectos no las puedo
+// acomodar"), mismo gesto que ya existía para la foto de portada (clic
+// sin mover = cambiarla, arrastrar = reposicionarla).
 function adminHabilitarCambioFotoItem(el, permiteFoto) {
   el.classList.add('admin-foto-editable');
-  el.title = permiteFoto ? 'Clic para cambiar la foto o el ícono' : 'Clic para cambiar el ícono';
-  el.addEventListener('click', (ev) => {
+  const imgEl = permiteFoto ? el.querySelector('img') : null;
+  if (imgEl) {
+    el.title = 'Arrastrá para acomodar la foto -- clic para cambiarla';
+    adminHabilitarArrastreImgItem(el, imgEl);
+  } else {
+    el.title = permiteFoto ? 'Clic para subir una foto o elegir un ícono' : 'Clic para cambiar el ícono';
+    el.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      adminAbrirSelectorFoto(el, permiteFoto);
+    });
+  }
+}
+
+function adminHabilitarArrastreImgItem(el, imgEl) {
+  let activo = false;
+  let movido = false;
+  let posOrigen = { x: 50, y: 50 };
+  let puntoOrigen = { x: 0, y: 0 };
+
+  el.addEventListener('pointerdown', (ev) => {
+    if (ev.button !== 0) return;
+    ev.preventDefault();
     ev.stopPropagation();
-    adminAbrirSelectorFoto(el, permiteFoto);
+    activo = true;
+    movido = false;
+    const ruta = _adminRutaItem(el);
+    const item = ruta ? _adminRuta(ADMIN_STATE, ruta) : null;
+    const [xA, yA] = ((item && item.photoPos) || '50% 50%').replace(/%/g, '').trim().split(/\s+/).map(Number);
+    posOrigen = { x: isNaN(xA) ? 50 : xA, y: isNaN(yA) ? 50 : yA };
+    puntoOrigen = { x: ev.clientX, y: ev.clientY };
+    el.setPointerCapture(ev.pointerId);
+    el.classList.add('arrastrando');
   });
+  el.addEventListener('pointermove', (ev) => {
+    if (!activo) return;
+    const dxPx = ev.clientX - puntoOrigen.x;
+    const dyPx = ev.clientY - puntoOrigen.y;
+    if (!movido && Math.hypot(dxPx, dyPx) > 4) movido = true;
+    if (!movido) return;
+    const rect = el.getBoundingClientRect();
+    const dx = (dxPx / rect.width) * 100;
+    const dy = (dyPx / rect.height) * 100;
+    const x = Math.max(0, Math.min(100, posOrigen.x - dx));
+    const y = Math.max(0, Math.min(100, posOrigen.y - dy));
+    const pos = `${x.toFixed(0)}% ${y.toFixed(0)}%`;
+    const ruta = _adminRutaItem(el);
+    const item = ruta ? _adminRuta(ADMIN_STATE, ruta) : null;
+    if (item) item.photoPos = pos;
+    imgEl.style.objectPosition = pos;
+  });
+  const soltar = (ev) => {
+    const fueClick = activo && !movido;
+    activo = false;
+    el.classList.remove('arrastrando');
+    if (fueClick) {
+      ev.stopPropagation();
+      adminAbrirSelectorFoto(el, true);
+    }
+  };
+  el.addEventListener('pointerup', soltar);
+  el.addEventListener('pointercancel', () => { activo = false; el.classList.remove('arrastrando'); });
 }
 
 function _adminRutaItem(el) {
@@ -750,6 +817,7 @@ function adminAbrirSelectorFoto(el, permiteFoto) {
     <button type="button" class="admin-popover-icono" data-icono="${id}" title="${_dmEsc(info.label)}">${dismelecIconSvg(id)}</button>`).join('');
   pop.innerHTML = `
     ${permiteFoto ? '<label class="btn btn-outline-dark btn-sm admin-popover-subir">Subir foto<input type="file" accept="image/*" hidden></label>' : ''}
+    ${permiteFoto && tieneFoto ? '<button type="button" class="btn btn-outline-dark btn-sm" data-centrar-foto-item>Centrar foto</button>' : ''}
     ${permiteFoto && tieneFoto ? '<button type="button" class="btn btn-outline-dark btn-sm" data-quitar-foto>Quitar foto (usar ícono)</button>' : ''}
     <div class="hint" style="margin:8px 0 4px">O elegí un ícono:</div>
     <div class="admin-popover-iconos">${iconos}</div>`;
@@ -771,6 +839,12 @@ function adminAbrirSelectorFoto(el, permiteFoto) {
     const quitarBtn = pop.querySelector('[data-quitar-foto]');
     if (quitarBtn) quitarBtn.addEventListener('click', () => {
       delete item.photo; delete item._nuevaFoto;
+      adminCerrarFlotantes();
+      adminActualizarListasEnCanvas();
+    });
+    const centrarBtn = pop.querySelector('[data-centrar-foto-item]');
+    if (centrarBtn) centrarBtn.addEventListener('click', () => {
+      item.photoPos = '50% 50%';
       adminCerrarFlotantes();
       adminActualizarListasEnCanvas();
     });
@@ -801,6 +875,75 @@ function _adminPosicionarFlotante(flotante, elAncla) {
 
 function adminCerrarFlotantes() {
   document.querySelectorAll('.admin-popover-foto, .admin-menu-contextual').forEach((n) => n.remove());
+}
+
+// -------------------------------------------------- checks de un servicio
+// Pedido explícito ("en servicios no puedo cambiar los checks que hay
+// debajo del texto"). El campo `checks` del JSON sigue siendo UN string
+// con las líneas separadas por "\n" (no un arreglo -- así no hace falta
+// migrar los servicios ya cargados); acá se lee/escribe ese string
+// partiéndolo y uniéndolo con \n cada vez, tratando cada <li> como si
+// fuera un elemento de lista aparte (clic para editar el texto, clic
+// derecho para agregar/subir/bajar/eliminar una línea).
+function _adminItemDeChecks(ulEl) {
+  const itemEl = ulEl.closest('[data-item-idx]');
+  const listaEl = ulEl.closest('[data-lista]');
+  if (!itemEl || !listaEl) return null;
+  return _adminRuta(ADMIN_STATE, `${listaEl.dataset.lista}.${itemEl.dataset.itemIdx}`);
+}
+function _adminLineasChecks(item) {
+  return (item.checks || '').split('\n').filter(Boolean);
+}
+
+function adminHabilitarEdicionChecks(ulEl) {
+  ulEl.querySelectorAll('[data-check-texto]').forEach((span) => {
+    adminHabilitarTextoEditable(span, () => null, () => {}, (texto) => {
+      const item = _adminItemDeChecks(ulEl);
+      const liEl = span.closest('[data-check-idx]');
+      if (!item || !liEl) return;
+      const lineas = _adminLineasChecks(item);
+      lineas[Number(liEl.dataset.checkIdx)] = texto;
+      item.checks = lineas.join('\n');
+    });
+  });
+
+  ulEl.addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const item = _adminItemDeChecks(ulEl);
+    if (!item) return;
+    const liEl = ev.target.closest('[data-check-idx]');
+    const agregar = { texto: '+ Agregar check', accion: () => {
+      const lineas = _adminLineasChecks(item);
+      lineas.push('Nuevo ítem');
+      item.checks = lineas.join('\n');
+      adminActualizarListasEnCanvas();
+    } };
+    if (!liEl || !ulEl.contains(liEl)) { _adminCrearMenu(ev, [agregar]); return; }
+    const idx = Number(liEl.dataset.checkIdx);
+    const total = _adminLineasChecks(item).length;
+    _adminCrearMenu(ev, [
+      agregar,
+      { texto: '↑ Subir', deshabilitado: idx === 0, accion: () => {
+        const lineas = _adminLineasChecks(item);
+        [lineas[idx - 1], lineas[idx]] = [lineas[idx], lineas[idx - 1]];
+        item.checks = lineas.join('\n');
+        adminActualizarListasEnCanvas();
+      } },
+      { texto: '↓ Bajar', deshabilitado: idx === total - 1, accion: () => {
+        const lineas = _adminLineasChecks(item);
+        [lineas[idx + 1], lineas[idx]] = [lineas[idx], lineas[idx + 1]];
+        item.checks = lineas.join('\n');
+        adminActualizarListasEnCanvas();
+      } },
+      { texto: '🗑 Eliminar', clase: 'danger', accion: () => {
+        const lineas = _adminLineasChecks(item);
+        lineas.splice(idx, 1);
+        item.checks = lineas.join('\n');
+        adminActualizarListasEnCanvas();
+      } },
+    ]);
+  });
 }
 
 // ----------------------------------------------------- listas: clic derecho
