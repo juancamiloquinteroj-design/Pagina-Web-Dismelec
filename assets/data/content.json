@@ -18,19 +18,22 @@
         "icon": "redes",
         "title": "Subestaciones",
         "desc": "Ingeniería, montaje y puesta en servicio de subestaciones de potencia y distribución.",
-        "link": "servicios.html#subestaciones"
+        "link": "servicios.html#subestaciones",
+        "photo": "assets/img/tarjeta-1789645225333-w3pud.jpg"
       },
       {
         "icon": "medida",
         "title": "Sistemas de medida",
         "desc": "Soluciones de medición comercial e industrial con altos estándares de precisión.",
-        "link": "servicios.html#medida"
+        "link": "servicios.html#medida",
+        "photo": "assets/img/tarjeta-1789645251564-2acg7.jpg"
       },
       {
         "icon": "retie",
         "title": "RETIE y legalización",
         "desc": "Asesoría, diseños, pruebas y acompañamiento para cumplimiento normativo.",
-        "link": "servicios.html#retie"
+        "link": "servicios.html#retie",
+        "photo": "assets/img/tarjeta-1789645257595-vmxap.jpg"
       }
     ],
     "stats": [
