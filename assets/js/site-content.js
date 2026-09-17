@@ -99,7 +99,7 @@ function _dmRenderIndex(datos, root) {
     cardsWrap.dataset.lista = 'index.cards';
     cardsWrap.dataset.listaTipo = 'cards';
     if (Array.isArray(d.cards) && d.cards.length) cardsWrap.innerHTML = d.cards.map((c, i) => `
-      <a href="${_dmEsc(c.link || '#')}" class="feature-card reveal in" data-item-idx="${i}">
+      <a href="${_dmEsc(c.link || '#')}" class="feature-card reveal in" data-item-idx="${i}" draggable="true">
         <div class="feature-icon" data-foto-item>${_dmIconoOFoto(c)}</div>
         <div class="feature-body">
           <h3 data-c-item="title">${_dmEsc(c.title || '')}</h3>
@@ -120,7 +120,7 @@ function _dmRenderIndex(datos, root) {
     destWrap.dataset.lista = 'index.proyectosDestacados';
     destWrap.dataset.listaTipo = 'proyectosDestacados';
     if (Array.isArray(d.proyectosDestacados) && d.proyectosDestacados.length) destWrap.innerHTML = d.proyectosDestacados.map((p, i) => `
-      <a href="${_dmEsc(p.link || 'proyectos.html')}" class="project-card reveal in" data-item-idx="${i}">
+      <a href="${_dmEsc(p.link || 'proyectos.html')}" class="project-card reveal in" data-item-idx="${i}" draggable="true">
         <div class="project-thumb" data-foto-item>${_dmIconoOFotoThumb(p, '1.6')}</div>
         <div class="project-body"><h4 data-c-item="title">${_dmEsc(p.title || '')}</h4><span data-c-item="sub">${_dmEsc(p.sub || '')}</span></div>
       </a>`).join('');
@@ -136,7 +136,7 @@ function _dmPintarStats(wrap, items, rutaLista) {
   wrap.dataset.listaTipo = 'stats';
   items = Array.isArray(items) ? items : [];
   wrap.innerHTML = items.map((s, i) => `
-    <div class="stat-item" data-item-idx="${i}">
+    <div class="stat-item" data-item-idx="${i}" draggable="true">
       <div class="stat-icon" data-foto-item-icono>${dismelecIconSvg(s.icon)}</div>
       <div><strong data-c-item="valor">${_dmEsc(s.valor || '')}</strong><span data-c-item="label">${_dmEsc(s.label || '')}</span></div>
     </div>`).join('');
@@ -179,7 +179,7 @@ function _dmRenderServicios(datos, root) {
         </div>`;
       const visual = `<div class="service-visual" data-foto-item>${_dmIconoOFotoThumb(it, '1.4')}</div>`;
       const idAttr = it.anchor ? ` id="${_dmEsc(it.anchor)}"` : '';
-      return `<div class="service-block reveal in"${idAttr} data-item-idx="${idx}">${idx % 2 === 0 ? textoBloque + visual : visual + textoBloque}</div>`;
+      return `<div class="service-block reveal in"${idAttr} data-item-idx="${idx}" draggable="true">${idx % 2 === 0 ? textoBloque + visual : visual + textoBloque}</div>`;
     }).join('');
     else wrap.innerHTML = '';
   }
@@ -203,7 +203,7 @@ function _dmRenderProyectos(datos, root) {
     if (Array.isArray(d.items) && d.items.length) wrap.innerHTML = d.items.map((p, idx) => {
       const idAttr = p.anchor ? ` id="${_dmEsc(p.anchor)}"` : '';
       return `
-      <a href="contacto.html" class="project-card reveal in"${idAttr} data-sector="${_dmEsc(p.filtro || 'todos')}" data-item-idx="${idx}">
+      <a href="contacto.html" class="project-card reveal in"${idAttr} data-sector="${_dmEsc(p.filtro || 'todos')}" data-item-idx="${idx}" draggable="true">
         <div class="project-thumb" data-foto-item>${_dmIconoOFotoThumb(p, '1.6')}</div>
         <div class="project-body"><h4 data-c-item="title">${_dmEsc(p.title || '')}</h4><span data-c-item="sectorLabel">${_dmEsc(p.sectorLabel || '')}</span> · <span data-c-item="ubicacion">${_dmEsc(p.ubicacion || '')}</span></div>
       </a>`;
@@ -235,7 +235,7 @@ function _dmRenderNosotros(datos, root) {
     valoresWrap.dataset.lista = 'nosotros.valores';
     valoresWrap.dataset.listaTipo = 'valores';
     if (Array.isArray(d.valores) && d.valores.length) valoresWrap.innerHTML = d.valores.map((v, i) => `
-      <div class="value-card reveal in" data-item-idx="${i}">
+      <div class="value-card reveal in" data-item-idx="${i}" draggable="true">
         <div class="feature-icon" data-foto-item-icono>${dismelecIconSvg(v.icon)}</div>
         <h3 data-c-item="title">${_dmEsc(v.title || '')}</h3>
         <p data-c-item="desc">${_dmEsc(v.desc || '')}</p>
@@ -249,7 +249,7 @@ function _dmRenderNosotros(datos, root) {
     timelineWrap.dataset.listaTipo = 'timeline';
     const lista = Array.isArray(d.timeline) ? d.timeline : [];
     if (lista.length) timelineWrap.innerHTML = lista.map((t, idx) => `
-      <div class="timeline-item reveal in" data-item-idx="${idx}">
+      <div class="timeline-item reveal in" data-item-idx="${idx}" draggable="true">
         <div class="t-year" data-c-item="numero">${_dmEsc(t.numero || '')}</div>
         <div class="t-line"><div class="t-dot"></div>${idx < lista.length - 1 ? '<div class="t-bar"></div>' : ''}</div>
         <div class="t-body"><h4 data-c-item="title">${_dmEsc(t.title || '')}</h4><p data-c-item="desc">${_dmEsc(t.desc || '')}</p></div>

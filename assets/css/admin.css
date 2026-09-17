@@ -165,6 +165,35 @@ body[data-page="admin"]{font-size:13px}
   border:1.5px dashed var(--border);border-radius:10px;
 }
 
+/* Arrastrar para reordenar -- pedido explícito ("¿hay forma de que yo
+   pueda mover las tarjetas?"). El elemento que se está arrastrando se ve
+   semitransparente; una franja azul sólida en el borde correspondiente
+   del elemento que está debajo del cursor marca dónde va a quedar al
+   soltar. [data-item-idx] necesita position:relative para que ::before
+   (la franja) se pueda ubicar pegada a su borde. */
+[data-item-idx]{position:relative}
+[data-item-idx].admin-arrastrando-item{opacity:.35}
+[data-item-idx].admin-drop-antes::before,
+[data-item-idx].admin-drop-despues::before{
+  content:"";position:absolute;background:var(--blue-600);border-radius:3px;z-index:5;
+}
+/* Listas horizontales (tarjetas en fila/grilla) -- franja vertical a
+   izquierda/derecha del elemento. */
+.feature-strip [data-item-idx].admin-drop-antes::before,
+.project-grid [data-item-idx].admin-drop-antes::before,
+.values-grid [data-item-idx].admin-drop-antes::before,
+.stats-grid [data-item-idx].admin-drop-antes::before{top:6px;bottom:6px;left:-5px;width:4px}
+.feature-strip [data-item-idx].admin-drop-despues::before,
+.project-grid [data-item-idx].admin-drop-despues::before,
+.values-grid [data-item-idx].admin-drop-despues::before,
+.stats-grid [data-item-idx].admin-drop-despues::before{top:6px;bottom:6px;right:-5px;width:4px}
+/* Listas verticales (servicios, línea de tiempo) -- franja horizontal
+   arriba/abajo del elemento. */
+#servicios-items [data-item-idx].admin-drop-antes::before,
+.timeline [data-item-idx].admin-drop-antes::before{left:6px;right:6px;top:-5px;height:4px}
+#servicios-items [data-item-idx].admin-drop-despues::before,
+.timeline [data-item-idx].admin-drop-despues::before{left:6px;right:6px;bottom:-5px;height:4px}
+
 /* Menú contextual (clic derecho) y selector de foto/ícono (clic sobre una
    imagen) -- flotantes chicos, posicionados en JS junto al punto donde se
    hizo clic. */

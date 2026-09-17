@@ -487,7 +487,78 @@ function adminActivarEdicionListas(canvas, pagina) {
   });
   canvas.querySelectorAll('[data-foto-item]').forEach((el) => adminHabilitarCambioFotoItem(el, true));
   canvas.querySelectorAll('[data-foto-item-icono]').forEach((el) => adminHabilitarCambioFotoItem(el, false));
-  canvas.querySelectorAll('[data-lista]').forEach((el) => adminHabilitarMenuLista(el, pagina));
+  canvas.querySelectorAll('[data-lista]').forEach((el) => {
+    adminHabilitarMenuLista(el, pagina);
+    adminHabilitarDragReordenar(el);
+  });
+}
+
+// ------------------------------------------- arrastrar para reordenar
+// Pedido explícito ("¿hay forma de que yo pueda mover las tarjetas... y
+// que se vea el cambio en la página?"). Arrastre nativo del navegador
+// (draggable="true" en la raíz de cada elemento -- ver site-content.js);
+// una franja azul marca ANTES/DESPUÉS de qué elemento va a quedar al
+// soltar. "horizontal" (tarjetas/proyectos/valores/stats, en fila o
+// grilla) parte el elemento por la mitad ancho; "vertical" (servicios,
+// línea de tiempo, apilados) lo parte por la mitad alto.
+const ADMIN_ORIENTACION_LISTA = {
+  cards: 'horizontal', proyectosDestacados: 'horizontal', proyectos: 'horizontal',
+  valores: 'horizontal', stats: 'horizontal',
+  servicios: 'vertical', timeline: 'vertical',
+};
+
+function adminHabilitarDragReordenar(listaEl) {
+  let idxArrastrado = null;
+
+  const limpiarMarcas = () => {
+    listaEl.querySelectorAll('.admin-drop-antes,.admin-drop-despues').forEach((el) => el.classList.remove('admin-drop-antes', 'admin-drop-despues'));
+  };
+
+  listaEl.addEventListener('dragstart', (ev) => {
+    // Si se estaba escribiendo texto (contentEditable activo) el arrastre
+    // es para seleccionar/mover texto, no para reordenar la tarjeta.
+    if (ev.target.closest('.editando')) { ev.preventDefault(); return; }
+    const itemEl = ev.target.closest('[data-item-idx]');
+    if (!itemEl || !listaEl.contains(itemEl)) return;
+    idxArrastrado = Number(itemEl.dataset.itemIdx);
+    ev.dataTransfer.effectAllowed = 'move';
+    ev.dataTransfer.setData('text/plain', String(idxArrastrado)); // Firefox exige algún dato para permitir el drop
+    itemEl.classList.add('admin-arrastrando-item');
+  });
+  listaEl.addEventListener('dragend', () => {
+    listaEl.querySelectorAll('.admin-arrastrando-item').forEach((el) => el.classList.remove('admin-arrastrando-item'));
+    limpiarMarcas();
+    idxArrastrado = null;
+  });
+  listaEl.addEventListener('dragover', (ev) => {
+    if (idxArrastrado === null) return;
+    const itemEl = ev.target.closest('[data-item-idx]');
+    if (!itemEl || !listaEl.contains(itemEl)) return;
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+    const rect = itemEl.getBoundingClientRect();
+    const vertical = ADMIN_ORIENTACION_LISTA[listaEl.dataset.listaTipo] === 'vertical';
+    const antes = vertical ? (ev.clientY - rect.top) < rect.height / 2 : (ev.clientX - rect.left) < rect.width / 2;
+    limpiarMarcas();
+    itemEl.classList.add(antes ? 'admin-drop-antes' : 'admin-drop-despues');
+  });
+  listaEl.addEventListener('drop', (ev) => {
+    if (idxArrastrado === null) return;
+    const itemEl = ev.target.closest('[data-item-idx]');
+    if (!itemEl || !listaEl.contains(itemEl)) return;
+    ev.preventDefault();
+    const destino = Number(itemEl.dataset.itemIdx);
+    const antes = itemEl.classList.contains('admin-drop-antes');
+    limpiarMarcas();
+    if (destino === idxArrastrado) return;
+
+    const arr = _adminRuta(ADMIN_STATE, listaEl.dataset.lista);
+    const [item] = arr.splice(idxArrastrado, 1);
+    let nuevoIdx = destino > idxArrastrado ? destino - 1 : destino; // el splice de arriba corrió los índices posteriores un lugar
+    if (!antes) nuevoIdx += 1;
+    arr.splice(Math.max(0, Math.min(arr.length, nuevoIdx)), 0, item);
+    adminActualizarListasEnCanvas();
+  });
 }
 
 // ---------------------------------------------------- texto editable in-place
@@ -581,6 +652,11 @@ function adminHabilitarFotoHeroInteractiva(fotoEl, pagina) {
   let puntoOrigen = { x: 0, y: 0 };
 
   fotoEl.addEventListener('pointerdown', (ev) => {
+    // Solo el botón izquierdo -- un clic derecho SIN este chequeo también
+    // contaba como "clic sin arrastre" y abría el selector de archivo de
+    // golpe (bug real: "clic derecho en un ícono me saca", el selector
+    // nativo de Windows tapa toda la página).
+    if (ev.button !== 0) return;
     ev.preventDefault();
     activo = true;
     movido = false;
