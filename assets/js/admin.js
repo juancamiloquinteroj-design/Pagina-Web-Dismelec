@@ -447,10 +447,17 @@ function adminMostrarPagina(pagina) {
   // recrean cuando se agrega/quita un elemento de una lista (a diferencia
   // de los nodos de listas, que sí, y por eso se recablean en
   // adminActivarEdicionListas cada vez que hace falta).
+  // Captura (true) -- NO en burbuja. Varios handlers de adentro (clic en
+  // una foto, en un texto editable) hacen stopPropagation() para no
+  // disparar otras cosas; si este bloqueo del link escuchara en burbuja,
+  // ese stopPropagation lo dejaba sin correr nunca y el <a> navegaba
+  // igual (bug real: "doy clic en la imagen... rápidamente me lleva a la
+  // página web"). En captura corre ANTES de llegar al elemento donde se
+  // hizo clic, así que ningún stopPropagation posterior lo puede frenar.
   canvas.addEventListener('click', (ev) => {
     const a = ev.target.closest('a');
     if (a) ev.preventDefault();
-  });
+  }, true);
   canvas.querySelectorAll('[data-c]').forEach((el) => {
     adminHabilitarTextoEditable(el, () => `${pagina}.${el.dataset.c}`, () => adminPostGuardarTexto(el));
   });
