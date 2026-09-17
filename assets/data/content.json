@@ -161,11 +161,12 @@
     "items": [
       {
         "icon": "subestaciones",
-        "title": "Subestación de distribución",
+        "title": "Legalización Medida Indirecta a 34.5 kV",
         "sectorLabel": "Sector industrial",
-        "ubicacion": "Cundinamarca",
+        "ubicacion": "Huila",
         "filtro": "industrial",
-        "anchor": "subestacion-distribucion"
+        "anchor": "Medida Indirecta-Media Tensión",
+        "photo": "assets/img/proyecto-1789643606174-numm5.jfif"
       },
       {
         "icon": "lineas",
