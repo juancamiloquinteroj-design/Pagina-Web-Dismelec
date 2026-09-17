@@ -167,7 +167,7 @@
         "icon": "subestaciones",
         "title": "Legalización Medida Indirecta a 34.5 kV",
         "sectorLabel": "Sector industrial",
-        "ubicacion": "Huila",
+        "ubicacion": "Palermo-Huila",
         "filtro": "industrial",
         "anchor": "Medida Indirecta-Media Tensión",
         "photo": "assets/img/proyecto-1789643606174-numm5.jfif",
@@ -177,7 +177,7 @@
         "icon": "lineas",
         "title": "Redes de media tensión",
         "sectorLabel": "Sector infraestructura",
-        "ubicacion": "Antioquia",
+        "ubicacion": "Valle del Cauca",
         "filtro": "infraestructura",
         "anchor": "redes-media-tension"
       },
@@ -185,17 +185,18 @@
         "icon": "medida",
         "title": "Sistema de medida",
         "sectorLabel": "Sector comercial",
-        "ubicacion": "Bogotá",
+        "ubicacion": "Campoalegre-Huila",
         "filtro": "comercial",
         "anchor": "sistema-medida-comercial"
       },
       {
         "icon": "retie",
-        "title": "Legalización RETIE",
+        "title": "Legalización medida Indirecta 13.8 kV",
         "sectorLabel": "Sector industrial",
-        "ubicacion": "Valle del Cauca",
+        "ubicacion": "Neiva-Huila",
         "filtro": "industrial",
-        "anchor": "legalizacion-retie"
+        "anchor": "legalizacion-retie",
+        "photo": "assets/img/proyecto-1789688657454-sjf5b.jfif"
       },
       {
         "icon": "edificio",
@@ -228,7 +229,7 @@
     ],
     "cta": {
       "title": "Sumá tu proyecto a esta lista",
-      "desc": "Contanos el alcance y te acompañamos desde el diseño hasta la puesta en servicio.",
+      "desc": "Cuentanos el alcance y te acompañamos desde el diseño hasta la puesta en servicio.",
       "ctaText": "Solicitar cotización"
     }
   },
