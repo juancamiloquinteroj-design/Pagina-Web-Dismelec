@@ -40,8 +40,12 @@ body[data-page="admin"]{font-size:13px}
   display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
   max-width:none;margin:0;width:100%;padding-left:16px;padding-right:clamp(20px,3vw,48px);
 }
+/* Solo el ícono (sin el texto "DISMELEC INGENIEROS SAS") en la barra
+   superior del panel -- pedido explícito. El logo original es un lockup
+   horizontal ícono+texto en un solo archivo, así que se usa un recorte
+   aparte (logo-dismelec-icono.png) con solo la parte redonda. */
 .admin-topbar .brand-mini{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
-.admin-topbar .brand-mini img{height:36px}
+.admin-topbar .brand-mini img{height:36px;width:auto}
 .admin-topbar-search{
   flex:1;max-width:320px;display:flex;align-items:center;gap:8px;
   background:var(--bg-soft);border:1px solid var(--border);border-radius:9px;padding:8px 12px;color:var(--muted);
@@ -93,10 +97,10 @@ body[data-page="admin"]{font-size:13px}
 .admin-sidebar-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:2px 10px 10px}
 .admin-sidebar-soon{font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted);opacity:.75}
 .admin-sidebar-link{
-  display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 12px;border-radius:9px;
-  border:0;background:none;font:inherit;font-weight:600;font-size:13.5px;color:var(--body);cursor:pointer;margin-bottom:3px;
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:9px 12px;border-radius:9px;
+  border:0;background:none;font:inherit;font-weight:600;font-size:12px;color:var(--body);cursor:pointer;margin-bottom:2px;
 }
-.admin-sidebar-link svg{width:18px;height:18px;flex:none;color:var(--muted)}
+.admin-sidebar-link svg{width:16px;height:16px;flex:none;color:var(--muted)}
 .admin-sidebar-link:hover{background:var(--bg-soft)}
 .admin-sidebar-link.active{background:var(--blue-100);color:var(--blue-600)}
 .admin-sidebar-link.active svg{color:var(--blue-600)}
