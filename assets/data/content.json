@@ -44,7 +44,7 @@
       },
       {
         "icon": "redes",
-        "valor": "+10 años",
+        "valor": "+5 años",
         "label": "de experiencia"
       },
       {
@@ -170,7 +170,8 @@
         "ubicacion": "Huila",
         "filtro": "industrial",
         "anchor": "Medida Indirecta-Media Tensión",
-        "photo": "assets/img/proyecto-1789643606174-numm5.jfif"
+        "photo": "assets/img/proyecto-1789643606174-numm5.jfif",
+        "photoPos": "58% 17%"
       },
       {
         "icon": "lineas",
