@@ -12,6 +12,16 @@
    redundante a propósito -- cada hoja se tiene que bastar sola.) */
 [hidden]{display:none !important}
 
+/* Letra más chica en todo el panel -- pedido explícito ("el tipo de
+   letra está muy grande que sea más pequeño"). body no traía font-size
+   propio en style.css (hereda el 16px por defecto del navegador); acá se
+   baja la base del panel entero, y algunos títulos puntuales que seguían
+   grandes incluso con tamaño fijo. */
+body[data-page="admin"]{font-size:13px}
+.admin-module-head h1{font-size:16px}
+.admin-proximamente-card h2{font-size:15px}
+.admin-quicklink strong{font-size:13px}
+
 .admin-shell{min-height:100vh;background:var(--bg-soft)}
 /* El padding-bottom para la barra flotante "Publicar cambios" solo aplica
    una vez que el panel está desbloqueado -- si va en .admin-shell a
@@ -106,18 +116,81 @@
 .admin-tab-btn:hover{color:var(--ink)}
 .admin-tab-btn.active{color:var(--blue-600);border-bottom-color:var(--blue-600)}
 
-.admin-preview-strip{margin-top:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
-.admin-preview-strip .feature-card{box-shadow:none}
+/* ==================== Editor visual -- pedido explícito ("que exista la
+   misma página pero cada letra editable, clic sobre letras para cambiar
+   el texto, clic sobre los espacios de imágenes para cambiar la imagen,
+   clic derecho agregar nuevas tarjetas"). Reemplaza al viejo sistema de
+   formularios por pestaña -- acá el HTML que se ve ES el HTML real de la
+   página (mismas clases de style.css, pintado por las mismas funciones
+   _dmRenderX de site-content.js), no una copia de solo-lectura. ==================== */
+.admin-editor-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.admin-editor-tarjeta{padding:0;overflow:hidden}
+.admin-editor-canvas{background:var(--bg);max-height:calc(100vh - 220px);overflow:auto}
+.admin-editor-canvas .reveal{opacity:1;transform:none} /* las animaciones de scroll del sitio real no tienen sentido adentro del editor */
 
-/* Vista previa en vivo -- copia real de la sección de la página (mismas
-   clases de style.css), actualizada mientras se escribe. Se deshabilita
-   el click adentro (es una vista previa, no hay que poder navegar) y
-   queda en una caja con scroll propio para no estirar el panel entero. */
-.admin-live-preview{
-  border:1px solid var(--border);border-radius:12px;overflow:auto;max-height:300px;
-  pointer-events:none;background:var(--bg);
+/* Texto editable -- se marca al pasar el mouse, y con más énfasis mientras
+   se está editando (contentEditable activo). */
+.admin-editable{cursor:text;border-radius:4px;transition:box-shadow .15s,background-color .15s}
+.admin-editable:hover{box-shadow:0 0 0 2px var(--blue-400)}
+.admin-editable.editando{box-shadow:0 0 0 2px var(--blue-600);background:rgba(25,118,216,.08);outline:none}
+
+/* Foto/ícono editable -- mismo lenguaje visual que el texto pero en azul
+   más fuerte, para distinguir "esto abre un selector" de "esto se escribe
+   directo". La foto de portada (.hero-photo/.page-hero-photo) además es
+   arrastrable -- cursor "grab" en vez de "pointer". */
+.admin-foto-editable{cursor:pointer;border-radius:6px;transition:box-shadow .15s}
+.admin-foto-editable:hover{box-shadow:0 0 0 2px var(--blue-400)}
+.admin-foto-arrastrable{cursor:grab;touch-action:none;transition:box-shadow .15s}
+.admin-foto-arrastrable:hover{box-shadow:inset 0 0 0 2px var(--blue-400)}
+.admin-foto-arrastrable.arrastrando{cursor:grabbing}
+
+/* El bloque de texto del hero (.hero-inner) se dibuja ENCIMA de la foto
+   (para que el título se lea sobre la imagen) y su caja rectangular es
+   más grande que el texto visible -- sin esto, la parte vacía de esa caja
+   tapa clics/arrastres destinados a la foto que queda debajo (bug real:
+   el centro de la foto quedaba atrapado detrás de .hero-inner aunque ahí
+   no hubiera ni una letra). Se deja pasar el clic a través del wrapper,
+   reactivándolo solo sobre el texto editable en sí. */
+#admin-editor-canvas .hero-inner{pointer-events:none}
+#admin-editor-canvas .hero-inner [data-c]{pointer-events:auto}
+
+/* Listas (tarjetas/proyectos/servicios/valores/timeline/stats) -- una
+   franja azul punteada marca dónde se puede hacer clic derecho para
+   agregar, aunque esté vacía. */
+[data-lista]{outline:1.5px dashed transparent;outline-offset:4px;border-radius:8px;transition:outline-color .15s}
+[data-lista]:hover{outline-color:var(--border)}
+[data-lista]:empty::after{
+  content:"Clic derecho acá para agregar el primer elemento";
+  display:block;padding:22px;text-align:center;color:var(--muted);font-size:12.5px;
+  border:1.5px dashed var(--border);border-radius:10px;
 }
-.admin-live-preview .site-header,.admin-live-preview .site-footer,.admin-live-preview .wa-float{display:none}
+
+/* Menú contextual (clic derecho) y selector de foto/ícono (clic sobre una
+   imagen) -- flotantes chicos, posicionados en JS junto al punto donde se
+   hizo clic. */
+.admin-menu-contextual,.admin-popover-foto{
+  position:absolute;z-index:60;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;box-shadow:var(--shadow-md);padding:6px;
+}
+.admin-menu-contextual{min-width:170px;display:flex;flex-direction:column;gap:2px}
+.admin-menu-contextual button{
+  border:0;background:none;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink);
+  text-align:left;padding:8px 10px;border-radius:6px;cursor:pointer;
+}
+.admin-menu-contextual button:hover:not(:disabled){background:var(--bg-soft)}
+.admin-menu-contextual button:disabled{color:var(--muted);cursor:default;opacity:.5}
+.admin-menu-contextual button.danger{color:#c0392b}
+
+.admin-popover-foto{width:240px}
+.admin-popover-subir{display:block;width:100%;text-align:center;margin-bottom:6px;cursor:pointer}
+.admin-popover-foto>[data-quitar-foto]{display:block;width:100%;text-align:center;margin-bottom:2px}
+.admin-popover-iconos{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:160px;overflow-y:auto}
+.admin-popover-icono{
+  border:1px solid var(--border);background:var(--bg-soft);border-radius:6px;padding:6px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--ink);
+}
+.admin-popover-icono:hover{border-color:var(--blue-500);color:var(--blue-600)}
+.admin-popover-icono svg{width:16px;height:16px}
 
 /* position:fixed (no sticky) -- sticky DENTRO de la lista de tarjetas
    quedaba flotando a mitad de la lista al hacer scroll, tapando el
@@ -176,20 +249,12 @@
 .admin-field textarea{min-height:64px;resize:vertical}
 .admin-field .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
 
-.admin-photo-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.admin-photo-row>div{flex:1;min-width:200px}
-.admin-photo-preview{
-  width:160px;height:96px;border-radius:9px;object-fit:cover;background:var(--bg-soft-2);
-  border:1px solid var(--border);flex:none;
-}
-
 .admin-card-item{
   border:1.5px solid var(--border);border-radius:11px;padding:14px 16px;margin-bottom:12px;
   position:relative;
 }
 .admin-card-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .admin-card-item-top strong{font-size:12px;color:var(--muted)}
-.admin-card-actions{display:flex;gap:6px}
 .admin-icon-btn{
   width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--surface);
   display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--body);
@@ -197,13 +262,6 @@
 .admin-icon-btn:hover{border-color:var(--blue-400);color:var(--blue-600)}
 .admin-icon-btn svg{width:15px;height:15px}
 .admin-icon-btn.danger:hover{border-color:#e0857a;color:#c0392b}
-
-.admin-icon-picker{display:flex;align-items:center;gap:10px}
-.admin-icon-picker .preview{
-  width:40px;height:40px;border-radius:9px;background:var(--blue-100);color:var(--blue-600);
-  display:flex;align-items:center;justify-content:center;flex:none;
-}
-.admin-icon-picker .preview svg{width:20px;height:20px}
 
 .admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px}
 .admin-status{font-size:13px;font-weight:600;min-height:18px}

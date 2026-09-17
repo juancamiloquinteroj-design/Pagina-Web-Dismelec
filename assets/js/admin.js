@@ -7,6 +7,26 @@
 //      Personal Access Token, sin backend propio (esto ES el backend,
 //      corriendo en el navegador). El login de arriba NO tiene nada que
 //      ver con esto -- son 2 sistemas distintos que conviven.
+//
+// EDITOR VISUAL (reemplaza al viejo sistema de formularios por pestaña --
+// pedido explícito: "que exista la misma página pero cada letra editable,
+// si doy clic sobre letras pueda cambiar el texto y clic sobre los
+// espacios de imágenes pueda cambiar la imagen, clic derecho agregar
+// nuevas tarjetas"). La página real de cada sección (Inicio/Servicios/
+// Proyectos/Nosotros/Contacto) se pinta adentro de #admin-editor-canvas
+// con las MISMAS funciones _dmRenderX(datos, root) de site-content.js que
+// pintan el sitio real -- nunca se desalinea de cómo se ve publicado.
+// Encima de ese HTML se engancha, por atributos data-*:
+//   [data-c]        texto de un campo FIJO (no repetible) -- ruta = "<página>.<data-c>"
+//   [data-c-item]   texto DENTRO de un elemento de una lista repetible
+//                   -- ruta = "<data-lista del contenedor>.<data-item-idx>.<data-c-item>"
+//   [data-foto-item]        ícono/foto de un elemento de lista (admite foto)
+//   [data-foto-item-icono]  ídem pero solo ícono (stats/valores no admiten foto)
+//   [data-lista]+[data-lista-tipo]  contenedor de una lista -- clic derecho: agregar
+//   [data-item-idx] raíz de un elemento de lista -- clic derecho: subir/bajar/eliminar
+// Estos atributos los agrega site-content.js al armar el HTML de cada
+// lista -- un solo lugar sabe la "forma" de los datos, tanto para pintar
+// el sitio real como para hacerlo editable acá.
 
 const ADMIN_OWNER = 'juancamiloquinteroj-design';
 const ADMIN_REPO = 'Pagina-Web-Dismelec';
@@ -14,56 +34,8 @@ const ADMIN_BRANCH = 'master';
 const ADMIN_CONTENT_PATH = 'assets/data/content.json';
 
 let ADMIN_STATE = { index: { hero: {}, cards: [] } };
-let ADMIN_NUEVA_FOTO = null; // {file, dataUrl} si el usuario eligió una foto nueva
 let ADMIN_USER = null; // {uid, email, nombre, rol} del usuario logueado
-let ADMIN_LISTAS = {}; // wrapId -> {render} de cada lista genérica montada (ver adminMontarLista)
-
-// Campos de texto simples (un input/textarea = un campo del JSON) -- id del
-// elemento en el HTML es "admin-" + la clave de acá. Un solo mapa alcanza
-// para cargar TODOS al abrir el panel y leerlos TODOS antes de publicar,
-// sin repetir el mismo código a mano por cada página. Los 3 campos del
-// hero del Inicio (admin-hero-tag/title/lead) quedan aparte -- ya tenían
-// su propio manejo (el "tag" necesita aplanar el salto de línea al
-// mostrarlo) y no hacía falta tocarlos.
-const ADMIN_CAMPOS = {
-  'index-proyseccion-eyebrow': 'index.proyectosSeccion.eyebrow',
-  'index-proyseccion-title': 'index.proyectosSeccion.title',
-  'index-proyseccion-desc': 'index.proyectosSeccion.desc',
-  'index-cta-title': 'index.cta.title',
-  'index-cta-desc': 'index.cta.desc',
-  'index-cta-ctatext': 'index.cta.ctaText',
-  'servicios-hero-eyebrow': 'servicios.hero.eyebrow',
-  'servicios-hero-title': 'servicios.hero.title',
-  'servicios-hero-lead': 'servicios.hero.lead',
-  'servicios-cta-title': 'servicios.cta.title',
-  'servicios-cta-desc': 'servicios.cta.desc',
-  'servicios-cta-ctatext': 'servicios.cta.ctaText',
-  'proyectos-hero-eyebrow': 'proyectos.hero.eyebrow',
-  'proyectos-hero-title': 'proyectos.hero.title',
-  'proyectos-hero-lead': 'proyectos.hero.lead',
-  'proyectos-cta-title': 'proyectos.cta.title',
-  'proyectos-cta-desc': 'proyectos.cta.desc',
-  'proyectos-cta-ctatext': 'proyectos.cta.ctaText',
-  'nosotros-hero-eyebrow': 'nosotros.hero.eyebrow',
-  'nosotros-hero-title': 'nosotros.hero.title',
-  'nosotros-hero-lead': 'nosotros.hero.lead',
-  'nosotros-mision-title': 'nosotros.mision.title',
-  'nosotros-mision-desc': 'nosotros.mision.desc',
-  'nosotros-vision-title': 'nosotros.vision.title',
-  'nosotros-vision-desc': 'nosotros.vision.desc',
-  'nosotros-cta-title': 'nosotros.cta.title',
-  'nosotros-cta-desc': 'nosotros.cta.desc',
-  'nosotros-cta-ctatext': 'nosotros.cta.ctaText',
-  'contacto-hero-eyebrow': 'contacto.hero.eyebrow',
-  'contacto-hero-title': 'contacto.hero.title',
-  'contacto-hero-lead': 'contacto.hero.lead',
-  'contacto-telefono': 'contacto.telefono',
-  'contacto-whatsapp': 'contacto.whatsapp',
-  'contacto-whatsappmensaje': 'contacto.whatsappMensaje',
-  'contacto-correo': 'contacto.correo',
-  'contacto-info-oficina': 'contacto.info.oficina',
-  'contacto-info-horario': 'contacto.info.horario',
-};
+let ADMIN_EDITOR_PAGINA = 'index';
 
 function _adminRuta(obj, ruta) {
   return ruta.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
@@ -76,46 +48,6 @@ function _adminSetRuta(obj, ruta, valor) {
     o = o[partes[i]];
   }
   o[partes[partes.length - 1]] = valor;
-}
-function adminCargarCamposSimples() {
-  Object.entries(ADMIN_CAMPOS).forEach(([id, ruta]) => {
-    const el = document.getElementById('admin-' + id);
-    if (el) el.value = _adminRuta(ADMIN_STATE, ruta) || '';
-  });
-}
-function adminLeerCamposSimples() {
-  Object.entries(ADMIN_CAMPOS).forEach(([id, ruta]) => {
-    const el = document.getElementById('admin-' + id);
-    if (el) _adminSetRuta(ADMIN_STATE, ruta, el.value.trim());
-  });
-}
-
-// Además de leerse recién al publicar (arriba), cada campo simple
-// (incluidos los 3 del hero del Inicio, que van aparte) también
-// actualiza ADMIN_STATE y la vista previa EN VIVO, mientras se escribe --
-// pedido explícito ("como si fuera una copia de la página con edición de
-// campos"). Se cablea una sola vez (guardado por _adminListenersListos en
-// el llamador).
-function adminVincularCamposEnVivo() {
-  const camposHero = { 'hero-title': 'index.hero.title', 'hero-lead': 'index.hero.lead' };
-  Object.entries({ ...ADMIN_CAMPOS, ...camposHero }).forEach(([id, ruta]) => {
-    const el = document.getElementById('admin-' + id);
-    if (!el) return;
-    el.addEventListener('input', () => {
-      _adminSetRuta(ADMIN_STATE, ruta, el.value);
-      adminActualizarVistasPrevias();
-    });
-  });
-  // El "tag" de la esquina es texto con saltos de línea aplanados a
-  // espacios en la caja (ver adminIniciarPanel) -- no pasa por el mapa
-  // genérico de arriba porque necesita ese tratamiento especial.
-  const tagEl = document.getElementById('admin-hero-tag');
-  if (tagEl) {
-    tagEl.addEventListener('input', () => {
-      ADMIN_STATE.index.hero.tag = tagEl.value;
-      adminActualizarVistasPrevias();
-    });
-  }
 }
 
 // ---------------------------------------------------------------- login
@@ -316,129 +248,38 @@ async function adminIniciarPanel() {
   if (!Array.isArray(ADMIN_STATE.nosotros.timeline)) ADMIN_STATE.nosotros.timeline = [];
   if (!Array.isArray(ADMIN_STATE.nosotros.stats)) ADMIN_STATE.nosotros.stats = [];
 
-  document.getElementById('admin-hero-tag').value = (ADMIN_STATE.index.hero.tag || '').replace(/\n/g, ' ');
-  document.getElementById('admin-hero-title').value = ADMIN_STATE.index.hero.title || '';
-  document.getElementById('admin-hero-lead').value = ADMIN_STATE.index.hero.lead || '';
-  if (ADMIN_STATE.index.hero.photo) document.getElementById('admin-photo-preview').src = ADMIN_STATE.index.hero.photo;
-  ['servicios', 'proyectos', 'nosotros', 'contacto'].forEach((pagina) => {
-    const foto = ADMIN_STATE[pagina].hero.photo;
-    const preview = document.getElementById(`admin-${pagina}-photo-preview`);
-    if (foto && preview) preview.src = foto;
-  });
-  adminCargarCamposSimples();
-
   if (!_adminListenersListos) {
     _adminListenersListos = true;
-    document.getElementById('admin-photo-input').addEventListener('change', onAdminFotoElegida);
-    // Foto de portada (.page-hero) de Servicios/Proyectos/Nosotros/Contacto
-    // -- mismo comportamiento en las 4: la vista previa usa el dataURL
-    // directo, ADMIN_STATE.<pagina>.hero.photo recién se actualiza al
-    // publicar (ahí es cuando existe una URL real).
-    ['servicios', 'proyectos', 'nosotros', 'contacto'].forEach((pagina) => {
-      const input = document.getElementById(`admin-${pagina}-photo-input`);
-      if (!input) return;
-      input.addEventListener('change', (ev) => {
-        const file = ev.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          ADMIN_STATE[pagina].hero._nuevaFoto = { file, dataUrl: reader.result };
-          document.getElementById(`admin-${pagina}-photo-preview`).src = reader.result;
-          const prev = document.getElementById(`admin-preview-${pagina}`);
-          const fotoEl = prev && prev.querySelector('.page-hero-photo');
-          if (fotoEl) fotoEl.style.backgroundImage = `url('${reader.result}')`;
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-    document.getElementById('admin-card-agregar').addEventListener('click', () => {
-      ADMIN_STATE.index.cards.push({ icon: 'rayo', title: 'Nueva tarjeta', desc: '', link: '' });
-      adminRenderCards();
-    });
     document.getElementById('admin-publicar').addEventListener('click', adminPublicar);
-    adminMontarTodasLasListas();
-    adminMontarVistasPrevias();
-    adminVincularCamposEnVivo();
+    document.querySelectorAll('[data-editor-pagina]').forEach((btn) => {
+      btn.addEventListener('click', () => adminMostrarPagina(btn.dataset.editorPagina));
+    });
+    document.getElementById('admin-editor-centrar').addEventListener('click', () => {
+      const fotoEl = document.querySelector('#admin-editor-canvas .' + ADMIN_CLASE_FOTO_HERO[ADMIN_EDITOR_PAGINA]);
+      if (!fotoEl) return;
+      const pos = ADMIN_EDITOR_PAGINA === 'index' ? '50% 30%' : '50% 50%';
+      ADMIN_STATE[ADMIN_EDITOR_PAGINA].hero.photoPos = pos;
+      fotoEl.style.backgroundPosition = pos;
+    });
+    document.getElementById('admin-contacto-whatsapp').addEventListener('input', (ev) => { ADMIN_STATE.contacto.whatsapp = ev.target.value.trim(); });
+    document.getElementById('admin-contacto-whatsappmensaje').addEventListener('input', (ev) => { ADMIN_STATE.contacto.whatsappMensaje = ev.target.value; });
   }
 
-  adminRenderCards();
-  Object.values(ADMIN_LISTAS).forEach((l) => l.render());
-  adminActualizarVistasPrevias();
+  document.getElementById('admin-contacto-whatsapp').value = ADMIN_STATE.contacto.whatsapp || '';
+  document.getElementById('admin-contacto-whatsappmensaje').value = ADMIN_STATE.contacto.whatsappMensaje || '';
+
+  adminMostrarPagina(ADMIN_EDITOR_PAGINA);
   adminCargarUsuarios();
 }
 
-// Une los 7 arreglos nuevos (estadísticas, proyectos, servicios, valores,
-// línea de tiempo...) al mismo componente genérico -- una sola
-// implementación de "agregar/quitar/reordenar/editar campos" en vez de
-// repetirla 7 veces con pequeñas variaciones.
-function adminMontarTodasLasListas() {
-  const campoIcono = { key: 'icon', tipo: 'icon' };
-  const campoFoto = { key: 'photo', label: 'Foto (opcional, reemplaza el ícono)', tipo: 'foto' };
+// ============================================================ EDITOR VISUAL
 
-  ADMIN_LISTAS.indexStats = adminMontarLista({
-    wrapId: 'admin-index-stats-list', addBtnId: 'admin-index-stats-agregar',
-    getArr: () => ADMIN_STATE.index.stats,
-    nuevo: () => ({ icon: 'rayo', valor: '', label: '' }),
-    campos: [campoIcono, { key: 'valor', label: 'Número / valor grande', tipo: 'text' }, { key: 'label', label: 'Texto debajo', tipo: 'text' }],
-  });
-  ADMIN_LISTAS.indexDestacados = adminMontarLista({
-    wrapId: 'admin-index-destacados-list', addBtnId: 'admin-index-destacados-agregar',
-    getArr: () => ADMIN_STATE.index.proyectosDestacados,
-    nuevo: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sub: '', link: 'proyectos.html' }),
-    campos: [campoIcono, campoFoto, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sub', label: 'Subtítulo (sector · ubicación)', tipo: 'text' }, { key: 'link', label: 'Enlace', tipo: 'text' }],
-  });
-  ADMIN_LISTAS.serviciosItems = adminMontarLista({
-    wrapId: 'admin-servicios-items-list', addBtnId: 'admin-servicios-items-agregar',
-    getArr: () => ADMIN_STATE.servicios.items,
-    nuevo: () => ({ icon: 'rayo', numero: '0', title: 'Nuevo servicio', desc: '', checks: '', ctaText: 'Cotizar este servicio', anchor: '' }),
-    campos: [
-      campoIcono, campoFoto, { key: 'numero', label: 'Número (01, 02...)', tipo: 'text' }, { key: 'title', label: 'Título', tipo: 'text' },
-      { key: 'desc', label: 'Descripción', tipo: 'textarea' }, { key: 'checks', label: 'Lista de checks', tipo: 'lineas' },
-      { key: 'ctaText', label: 'Texto del botón', tipo: 'text' }, { key: 'anchor', label: 'Ancla (para enlaces #ancla, sin espacios)', tipo: 'text' },
-    ],
-  });
-  ADMIN_LISTAS.proyectosItems = adminMontarLista({
-    wrapId: 'admin-proyectos-items-list', addBtnId: 'admin-proyectos-items-agregar',
-    getArr: () => ADMIN_STATE.proyectos.items,
-    nuevo: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sectorLabel: '', ubicacion: '', filtro: 'todos', anchor: '' }),
-    campos: [
-      campoIcono, campoFoto, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'sectorLabel', label: 'Sector (ej: Sector industrial)', tipo: 'text' },
-      { key: 'ubicacion', label: 'Ubicación', tipo: 'text' },
-      { key: 'filtro', label: 'Filtro (todos / industrial / infraestructura / comercial / institucional)', tipo: 'text' },
-      { key: 'anchor', label: 'Ancla (opcional, sin espacios)', tipo: 'text' },
-    ],
-  });
-  ADMIN_LISTAS.nosotrosValores = adminMontarLista({
-    wrapId: 'admin-nosotros-valores-list', addBtnId: 'admin-nosotros-valores-agregar',
-    getArr: () => ADMIN_STATE.nosotros.valores,
-    nuevo: () => ({ icon: 'rayo', title: 'Nuevo valor', desc: '' }),
-    campos: [campoIcono, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'desc', label: 'Descripción', tipo: 'textarea' }],
-  });
-  ADMIN_LISTAS.nosotrosTimeline = adminMontarLista({
-    wrapId: 'admin-nosotros-timeline-list', addBtnId: 'admin-nosotros-timeline-agregar',
-    getArr: () => ADMIN_STATE.nosotros.timeline,
-    nuevo: () => ({ numero: '0', title: 'Nuevo paso', desc: '' }),
-    campos: [{ key: 'numero', label: 'Número (01, 02...)', tipo: 'text' }, { key: 'title', label: 'Título', tipo: 'text' }, { key: 'desc', label: 'Descripción', tipo: 'textarea' }],
-  });
-  ADMIN_LISTAS.nosotrosStats = adminMontarLista({
-    wrapId: 'admin-nosotros-stats-list', addBtnId: 'admin-nosotros-stats-agregar',
-    getArr: () => ADMIN_STATE.nosotros.stats,
-    nuevo: () => ({ icon: 'rayo', valor: '', label: '' }),
-    campos: [campoIcono, { key: 'valor', label: 'Número / valor grande', tipo: 'text' }, { key: 'label', label: 'Texto debajo', tipo: 'text' }],
-  });
-}
-
-// ------------------------------------------------ vista previa en vivo
-// Pedido explícito: "que en el portal privado sea como la misma página
-// web... como si fuera una copia de la página web pero con edición de
-// campos". Cada tarjeta "Vista previa en vivo" del panel tiene adentro
-// una copia MUY reducida del HTML real de esa sección (mismas clases de
-// style.css) -- vacía al cargar, la llenan las mismas funciones
-// _dmRenderX(datos, root) de site-content.js que pintan el sitio real
-// (con un "root" propio en vez de document), así que nunca se desalinean.
+// Esqueletos con las MISMAS clases de style.css que el sitio real --
+// _dmRenderX(datos, root) de site-content.js los llena, así el editor
+// nunca se desalinea de cómo se ve publicado.
 const ADMIN_ESQUELETOS = {
   index: `
-    <section class="hero" style="min-height:260px">
+    <section class="hero" style="min-height:340px">
       <div class="hero-photo"></div>
       <div class="hero-tag-corner"></div>
       <div class="container"><div class="hero-inner">
@@ -465,7 +306,7 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   servicios: `
-    <section class="page-hero">
+    <section class="page-hero" style="min-height:260px">
       <div class="page-hero-photo"></div>
       <div class="container">
         <span class="eyebrow" data-c="hero.eyebrow"></span>
@@ -481,7 +322,7 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   proyectos: `
-    <section class="page-hero">
+    <section class="page-hero" style="min-height:260px">
       <div class="page-hero-photo"></div>
       <div class="container">
         <span class="eyebrow" data-c="hero.eyebrow"></span>
@@ -499,7 +340,7 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   nosotros: `
-    <section class="page-hero">
+    <section class="page-hero" style="min-height:260px">
       <div class="page-hero-photo"></div>
       <div class="container">
         <span class="eyebrow" data-c="hero.eyebrow"></span>
@@ -531,7 +372,7 @@ const ADMIN_ESQUELETOS = {
       </div>
     </div></section>`,
   contacto: `
-    <section class="page-hero">
+    <section class="page-hero" style="min-height:260px">
       <div class="page-hero-photo"></div>
       <div class="container">
         <span class="eyebrow" data-c="hero.eyebrow"></span>
@@ -543,11 +384,11 @@ const ADMIN_ESQUELETOS = {
       <div class="contact-card" style="max-width:420px">
         <div class="contact-item">
           <div class="feature-icon">${dismelecIconSvg('rayo')}</div>
-          <div><strong>Teléfono / WhatsApp</strong><a href="#" data-c-tel></a></div>
+          <div><strong>Teléfono / WhatsApp</strong><a href="#" data-c-tel data-c="telefono"></a></div>
         </div>
         <div class="contact-item">
           <div class="feature-icon">${dismelecIconSvg('check')}</div>
-          <div><strong>Correo electrónico</strong><a href="#" data-c-correo></a></div>
+          <div><strong>Correo electrónico</strong><a href="#" data-c-correo data-c="correo"></a></div>
         </div>
         <div class="contact-item">
           <div class="feature-icon">${dismelecIconSvg('mapa')}</div>
@@ -561,311 +402,384 @@ const ADMIN_ESQUELETOS = {
     </div></section>`,
 };
 
-// ids de los contenedores de vista previa que hay en admin.html -- "index"
-// tiene 2 copias (pestañas Portada e Inicio-mas), el resto 1 cada uno.
-const ADMIN_PREVIEW_IDS = {
-  index: ['admin-preview-index-a', 'admin-preview-index-b'],
-  servicios: ['admin-preview-servicios'],
-  proyectos: ['admin-preview-proyectos'],
-  nosotros: ['admin-preview-nosotros'],
-  contacto: ['admin-preview-contacto'],
+const ADMIN_CLASE_FOTO_HERO = {
+  index: 'hero-photo',
+  servicios: 'page-hero-photo',
+  proyectos: 'page-hero-photo',
+  nosotros: 'page-hero-photo',
+  contacto: 'page-hero-photo',
 };
 
-function adminMontarVistasPrevias() {
-  Object.entries(ADMIN_PREVIEW_IDS).forEach(([pagina, ids]) => {
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = ADMIN_ESQUELETOS[pagina];
-    });
+const ADMIN_RENDER_POR_PAGINA = {
+  index: _dmRenderIndex, servicios: _dmRenderServicios, proyectos: _dmRenderProyectos,
+  nosotros: _dmRenderNosotros, contacto: _dmRenderContacto,
+};
+
+const ADMIN_NUEVO_ITEM_POR_TIPO = {
+  cards: () => ({ icon: 'rayo', title: 'Nueva tarjeta', desc: '', link: '#' }),
+  proyectosDestacados: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sub: '', link: 'proyectos.html' }),
+  servicios: () => ({ icon: 'rayo', numero: '0', title: 'Nuevo servicio', desc: '', checks: '', ctaText: 'Cotizar este servicio', anchor: '' }),
+  proyectos: () => ({ icon: 'rayo', title: 'Nuevo proyecto', sectorLabel: '', ubicacion: '', filtro: 'todos', anchor: '' }),
+  valores: () => ({ icon: 'rayo', title: 'Nuevo valor', desc: '' }),
+  timeline: () => ({ numero: '0', title: 'Nuevo paso', desc: '' }),
+  stats: () => ({ icon: 'rayo', valor: '', label: '' }),
+};
+const ADMIN_ETIQUETA_POR_TIPO = {
+  cards: 'tarjeta', proyectosDestacados: 'proyecto destacado', servicios: 'servicio',
+  proyectos: 'proyecto', valores: 'valor', timeline: 'paso', stats: 'estadística',
+};
+
+// Cambiar de página en el editor -- reconstruye el canvas desde cero (esqueleto
+// vacío + datos + TODOS los listeners), a diferencia de adminActualizarListasEnCanvas
+// (más abajo) que solo repinta las listas tras agregar/quitar/reordenar.
+function adminMostrarPagina(pagina) {
+  ADMIN_EDITOR_PAGINA = pagina;
+  document.querySelectorAll('[data-editor-pagina]').forEach((b) => b.classList.toggle('active', b.dataset.editorPagina === pagina));
+  document.getElementById('admin-editor-campos-extra').hidden = pagina !== 'contacto';
+
+  const canvas = document.getElementById('admin-editor-canvas');
+  canvas.innerHTML = ADMIN_ESQUELETOS[pagina];
+  adminRenderContenido(pagina);
+  adminActivarEdicionListas(canvas, pagina);
+
+  // Elementos FIJOS (título, lead, CTA, etc.) y la foto de portada -- se
+  // cablean una sola vez por cambio de página, porque estos nodos NO se
+  // recrean cuando se agrega/quita un elemento de una lista (a diferencia
+  // de los nodos de listas, que sí, y por eso se recablean en
+  // adminActivarEdicionListas cada vez que hace falta).
+  canvas.addEventListener('click', (ev) => {
+    const a = ev.target.closest('a');
+    if (a) ev.preventDefault();
   });
+  canvas.querySelectorAll('[data-c]').forEach((el) => {
+    adminHabilitarTextoEditable(el, () => `${pagina}.${el.dataset.c}`, () => adminPostGuardarTexto(el));
+  });
+  const tagEl = canvas.querySelector('.hero-tag-corner');
+  if (tagEl) adminHabilitarEdicionMultilinea(tagEl, pagina);
+
+  const fotoEl = canvas.querySelector('.' + ADMIN_CLASE_FOTO_HERO[pagina]);
+  if (fotoEl) adminHabilitarFotoHeroInteractiva(fotoEl, pagina);
 }
 
-function adminActualizarVistasPrevias() {
-  ADMIN_PREVIEW_IDS.index.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) _dmRenderIndex(ADMIN_STATE, el);
-  });
-  ADMIN_PREVIEW_IDS.servicios.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) _dmRenderServicios(ADMIN_STATE, el);
-  });
-  ADMIN_PREVIEW_IDS.proyectos.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) _dmRenderProyectos(ADMIN_STATE, el);
-  });
-  ADMIN_PREVIEW_IDS.nosotros.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) _dmRenderNosotros(ADMIN_STATE, el);
-  });
-  ADMIN_PREVIEW_IDS.contacto.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) _dmRenderContacto(ADMIN_STATE, el);
-  });
+function adminRenderContenido(pagina) {
+  const canvas = document.getElementById('admin-editor-canvas');
+  ADMIN_RENDER_POR_PAGINA[pagina](ADMIN_STATE, canvas);
 }
 
-// ------------------------------------------------- componente genérico de lista
-// Un solo lugar que sabe pintar filas editables (con selector de ícono
-// opcional), agregar, quitar y reordenar -- parametrizado por qué campos
-// tiene cada fila. Las tarjetas del Inicio (adminRenderCards, arriba) NO
-// pasan por acá a propósito -- ya funcionaban probadas con su propia
-// vista previa en vivo, y tocarlas de nuevo solo agregaba riesgo sin
-// necesidad real.
-function adminMontarLista(cfg) {
-  const wrap = document.getElementById(cfg.wrapId);
-  if (!wrap) return { render() {} };
+// Tras agregar/quitar/reordenar un elemento de lista, o cambiarle la
+// foto/ícono -- vuelve a pintar (recrea los nodos de esa lista) y
+// re-cablea SOLO los nodos de listas (los fijos ya están cableados y no
+// se tocaron).
+function adminActualizarListasEnCanvas() {
+  const pagina = ADMIN_EDITOR_PAGINA;
+  adminRenderContenido(pagina);
+  const canvas = document.getElementById('admin-editor-canvas');
+  adminActivarEdicionListas(canvas, pagina);
+}
 
-  function fila(item, idx) {
-    const campos = cfg.campos.map((c) => _adminCampoHTML(c, item[c.key], item)).join('');
-    return `
-      <div class="admin-card-item" data-idx="${idx}">
-        <div class="admin-card-item-top">
-          <strong>Elemento ${idx + 1}</strong>
-          <div class="admin-card-actions">
-            <button type="button" class="admin-icon-btn" data-accion="up" title="Subir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-            <button type="button" class="admin-icon-btn" data-accion="down" title="Bajar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg></button>
-            <button type="button" class="admin-icon-btn danger" data-accion="remove" title="Quitar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg></button>
-          </div>
-        </div>
-        ${campos}
-      </div>`;
-  }
-
-  function render() {
-    wrap.innerHTML = cfg.getArr().map(fila).join('');
-    adminActualizarVistasPrevias();
-  }
-
-  wrap.addEventListener('input', (ev) => {
-    const key = ev.target.dataset.key;
-    const filaEl = ev.target.closest('[data-idx]');
-    if (!key || !filaEl || ev.target.tagName === 'SELECT') return;
-    cfg.getArr()[Number(filaEl.dataset.idx)][key] = ev.target.value;
+function adminActivarEdicionListas(canvas, pagina) {
+  canvas.querySelectorAll('[data-c-item]').forEach((el) => {
+    const itemEl = el.closest('[data-item-idx]');
+    const listaEl = el.closest('[data-lista]');
+    if (!itemEl || !listaEl) return;
+    const ruta = `${listaEl.dataset.lista}.${itemEl.dataset.itemIdx}.${el.dataset.cItem}`;
+    adminHabilitarTextoEditable(el, () => ruta, () => {});
   });
-  wrap.addEventListener('change', (ev) => {
-    if (ev.target.tagName !== 'SELECT') return;
-    const key = ev.target.dataset.key;
-    const filaEl = ev.target.closest('[data-idx]');
-    if (!key || !filaEl) return;
-    cfg.getArr()[Number(filaEl.dataset.idx)][key] = ev.target.value;
-    const preview = filaEl.querySelector('[data-icon-preview]');
-    if (preview) preview.innerHTML = dismelecIconSvg(ev.target.value);
-  });
-  wrap.addEventListener('change', (ev) => {
-    if (ev.target.tagName !== 'INPUT' || ev.target.type !== 'file') return;
-    const key = ev.target.dataset.key;
-    const filaEl = ev.target.closest('[data-idx]');
-    const file = ev.target.files[0];
-    if (!key || !filaEl || !file) return;
-    const idx = Number(filaEl.dataset.idx);
-    const reader = new FileReader();
-    reader.onload = () => {
-      cfg.getArr()[idx]._nuevaFoto = { file, dataUrl: reader.result };
-      render();
+  canvas.querySelectorAll('[data-foto-item]').forEach((el) => adminHabilitarCambioFotoItem(el, true));
+  canvas.querySelectorAll('[data-foto-item-icono]').forEach((el) => adminHabilitarCambioFotoItem(el, false));
+  canvas.querySelectorAll('[data-lista]').forEach((el) => adminHabilitarMenuLista(el, pagina));
+}
+
+// ---------------------------------------------------- texto editable in-place
+// Clic sobre cualquier letra -- pedido explícito ("si doy clic sobre
+// letras pueda cambiar el texto"). contentEditable nativo del navegador;
+// Enter/Escape confirman y sueltan el foco en vez de insertar un salto de
+// línea real (los campos del JSON son de una sola línea -- ver hero.tag
+// más abajo para el único caso que sí admite varias).
+function adminHabilitarTextoEditable(el, rutaFn, alGuardar) {
+  el.classList.add('admin-editable');
+  el.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    if (el.isContentEditable) return;
+    el.contentEditable = 'true';
+    el.classList.add('editando');
+    el.focus();
+    _adminSeleccionarTodo(el);
+
+    const soltar = () => {
+      el.contentEditable = 'false';
+      el.classList.remove('editando');
+      _adminSetRuta(ADMIN_STATE, rutaFn(), el.textContent.trim());
+      el.removeEventListener('blur', soltar);
+      el.removeEventListener('keydown', teclaAbajo);
+      alGuardar();
     };
+    const teclaAbajo = (kev) => {
+      if (kev.key === 'Enter' || kev.key === 'Escape') { kev.preventDefault(); el.blur(); }
+    };
+    el.addEventListener('blur', soltar);
+    el.addEventListener('keydown', teclaAbajo);
+  });
+}
+
+function _adminSeleccionarTodo(el) {
+  const seleccion = window.getSelection();
+  const rango = document.createRange();
+  rango.selectNodeContents(el);
+  seleccion.removeAllRanges();
+  seleccion.addRange(rango);
+}
+
+// El "tag" de la esquina de la portada (Inicio) es el único campo con
+// varias líneas de verdad (se separan con <br> al pintarlo -- ver
+// _dmRenderIndex en site-content.js), así que necesita su propio manejo
+// en vez del genérico de arriba (que trata todo como una sola línea).
+function adminHabilitarEdicionMultilinea(el, pagina) {
+  el.classList.add('admin-editable');
+  el.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    if (el.isContentEditable) return;
+    el.contentEditable = 'true';
+    el.classList.add('editando');
+    el.focus();
+    _adminSeleccionarTodo(el);
+    const soltar = () => {
+      el.contentEditable = 'false';
+      el.classList.remove('editando');
+      const texto = el.innerText.replace(/\n{3,}/g, '\n\n').trim();
+      ADMIN_STATE[pagina].hero.tag = texto;
+      el.innerHTML = texto.split('\n').map((l) => _dmEsc(l)).join('<br>');
+      el.removeEventListener('blur', soltar);
+    };
+    el.addEventListener('blur', soltar, { once: true });
+  });
+}
+
+// Teléfono/correo de Contacto también arman un href (tel:/mailto:) además
+// del texto visible -- tras guardar el texto hay que recalcular ese href.
+function adminPostGuardarTexto(el) {
+  if (el.hasAttribute('data-c-tel')) {
+    const href = 'tel:' + (ADMIN_STATE.contacto.telefono || '').replace(/[^\d+]/g, '');
+    document.querySelectorAll('#admin-editor-canvas [data-c-tel], #admin-editor-canvas [data-c-tel-href]').forEach((a) => { a.href = href; });
+  }
+  if (el.hasAttribute('data-c-correo')) {
+    document.querySelectorAll('#admin-editor-canvas [data-c-correo]').forEach((a) => { a.href = 'mailto:' + (ADMIN_STATE.contacto.correo || ''); });
+  }
+}
+
+// ------------------------------------------------------- foto de portada
+// Arrastrar reposiciona (pedido explícito: "poder mover las imágenes para
+// acomodarlas bien en su rango de visión"); un clic SIN arrastre (menos de
+// 4px de movimiento) abre el selector de archivo para cambiar la foto --
+// mismo elemento, dos gestos distintos.
+function adminHabilitarFotoHeroInteractiva(fotoEl, pagina) {
+  fotoEl.classList.add('admin-foto-arrastrable');
+  fotoEl.title = 'Arrastrá para reposicionar -- clic para cambiar la foto';
+  let activo = false;
+  let movido = false;
+  let posOrigen = { x: 50, y: 30 };
+  let puntoOrigen = { x: 0, y: 0 };
+
+  fotoEl.addEventListener('pointerdown', (ev) => {
+    ev.preventDefault();
+    activo = true;
+    movido = false;
+    const [xA, yA] = ((ADMIN_STATE[pagina].hero.photoPos) || '50% 30%').replace(/%/g, '').trim().split(/\s+/).map(Number);
+    posOrigen = { x: isNaN(xA) ? 50 : xA, y: isNaN(yA) ? 30 : yA };
+    puntoOrigen = { x: ev.clientX, y: ev.clientY };
+    fotoEl.setPointerCapture(ev.pointerId);
+    fotoEl.classList.add('arrastrando');
+  });
+  fotoEl.addEventListener('pointermove', (ev) => {
+    if (!activo) return;
+    const dxPx = ev.clientX - puntoOrigen.x;
+    const dyPx = ev.clientY - puntoOrigen.y;
+    if (!movido && Math.hypot(dxPx, dyPx) > 4) movido = true;
+    if (!movido) return;
+    const rect = fotoEl.getBoundingClientRect();
+    const dx = (dxPx / rect.width) * 100;
+    const dy = (dyPx / rect.height) * 100;
+    const x = Math.max(0, Math.min(100, posOrigen.x - dx));
+    const y = Math.max(0, Math.min(100, posOrigen.y - dy));
+    const pos = `${x.toFixed(0)}% ${y.toFixed(0)}%`;
+    ADMIN_STATE[pagina].hero.photoPos = pos;
+    fotoEl.style.backgroundPosition = pos;
+  });
+  const soltar = () => {
+    const fueClick = activo && !movido;
+    activo = false;
+    fotoEl.classList.remove('arrastrando');
+    if (fueClick) {
+      adminAbrirInputArchivo((dataUrl, file) => {
+        ADMIN_STATE[pagina].hero._nuevaFoto = { file, dataUrl };
+        fotoEl.style.backgroundImage = `url('${dataUrl}')`;
+      });
+    }
+  };
+  fotoEl.addEventListener('pointerup', soltar);
+  fotoEl.addEventListener('pointercancel', () => { activo = false; fotoEl.classList.remove('arrastrando'); });
+}
+
+function adminAbrirInputArchivo(cb) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => cb(reader.result, file);
     reader.readAsDataURL(file);
   });
-  wrap.addEventListener('click', (ev) => {
-    const quitar = ev.target.closest('[data-accion-foto="quitar"]');
-    if (quitar) {
-      const filaEl = quitar.closest('[data-idx]');
-      const item = cfg.getArr()[Number(filaEl.dataset.idx)];
-      delete item._nuevaFoto;
-      delete item.photo;
-      render();
-      return;
-    }
-    const btn = ev.target.closest('[data-accion]');
-    if (!btn) return;
-    const filaEl = btn.closest('[data-idx]');
-    const idx = Number(filaEl.dataset.idx);
-    const arr = cfg.getArr();
-    if (btn.dataset.accion === 'up') {
-      if (idx === 0) return;
-      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
-      render();
-    } else if (btn.dataset.accion === 'down') {
-      if (idx === arr.length - 1) return;
-      [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]];
-      render();
-    } else if (btn.dataset.accion === 'remove') {
-      if (!confirm('¿Quitar este elemento?')) return;
-      arr.splice(idx, 1);
-      render();
-    }
+  input.click();
+}
+
+// ------------------------------------------------- foto/ícono de un ítem de lista
+// Clic sobre el espacio de la foto -- pedido explícito ("clic sobre los
+// espacios de imágenes pueda cambiar la imagen"). Abre un menú chico con
+// "Subir foto" (si el tipo la admite) y la lista de íconos disponibles.
+function adminHabilitarCambioFotoItem(el, permiteFoto) {
+  el.classList.add('admin-foto-editable');
+  el.title = permiteFoto ? 'Clic para cambiar la foto o el ícono' : 'Clic para cambiar el ícono';
+  el.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    adminAbrirSelectorFoto(el, permiteFoto);
   });
-  if (cfg.addBtnId) {
-    const addBtn = document.getElementById(cfg.addBtnId);
-    if (addBtn) addBtn.addEventListener('click', () => { cfg.getArr().push(cfg.nuevo()); render(); });
-  }
-
-  render();
-  return { render };
 }
 
-function _adminCampoHTML(campo, valor, item) {
-  const val = valor === undefined || valor === null ? '' : valor;
-  if (campo.tipo === 'foto') {
-    const fotoUrl = (item && item._nuevaFoto && item._nuevaFoto.dataUrl) || val;
-    const previewHtml = fotoUrl
-      ? `<img src="${fotoUrl}" style="width:44px;height:44px;object-fit:cover;border-radius:9px;flex:none">`
-      : `<div class="preview" data-icon-preview>${dismelecIconSvg(item && item.icon)}</div>`;
-    return `<div class="admin-field">
-      <label>${campo.label}</label>
-      <div class="admin-icon-picker">
-        ${previewHtml}
-        <input type="file" accept="image/*" data-key="${campo.key}">
-        ${fotoUrl ? `<button type="button" class="admin-icon-btn danger" data-accion-foto="quitar" title="Quitar foto">×</button>` : ''}
-      </div>
-      <div class="hint">PNG o JPG. Si no subís nada, se usa el ícono de arriba.</div>
-    </div>`;
-  }
-  if (campo.tipo === 'icon') {
-    const opciones = Object.entries(window.DISMELEC_ICONS).map(([id, info]) =>
-      `<option value="${id}" ${id === val ? 'selected' : ''}>${info.label}</option>`).join('');
-    return `<div class="admin-field">
-      <label>Ícono</label>
-      <div class="admin-icon-picker">
-        <div class="preview" data-icon-preview>${dismelecIconSvg(val)}</div>
-        <select data-key="${campo.key}">${opciones}</select>
-      </div>
-    </div>`;
-  }
-  if (campo.tipo === 'textarea' || campo.tipo === 'lineas') {
-    const hint = campo.tipo === 'lineas' ? '<div class="hint">Una por línea.</div>' : '';
-    return `<div class="admin-field">
-      <label>${campo.label}</label>
-      <textarea data-key="${campo.key}">${_dmEsc(val)}</textarea>
-      ${hint}
-    </div>`;
-  }
-  return `<div class="admin-field">
-    <label>${campo.label}</label>
-    <input type="text" data-key="${campo.key}" value="${_dmEsc(val)}">
-  </div>`;
+function _adminRutaItem(el) {
+  const itemEl = el.closest('[data-item-idx]');
+  const listaEl = el.closest('[data-lista]');
+  if (!itemEl || !listaEl) return null;
+  return `${listaEl.dataset.lista}.${itemEl.dataset.itemIdx}`;
 }
 
-function onAdminFotoElegida(ev) {
-  const file = ev.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    ADMIN_NUEVA_FOTO = { file, dataUrl: reader.result };
-    document.getElementById('admin-photo-preview').src = reader.result;
-    // La vista previa en vivo usa el dataURL directo -- ADMIN_STATE.index.hero.photo
-    // recién se actualiza al publicar (ahí es cuando existe una URL real).
-    ADMIN_PREVIEW_IDS.index.forEach((id) => {
-      const el = document.getElementById(id);
-      const foto = el && el.querySelector('.hero-photo');
-      if (foto) foto.style.backgroundImage = `url('${reader.result}')`;
-    });
-  };
-  reader.readAsDataURL(file);
-}
+function adminAbrirSelectorFoto(el, permiteFoto) {
+  adminCerrarFlotantes();
+  const ruta = _adminRutaItem(el);
+  const item = ruta ? _adminRuta(ADMIN_STATE, ruta) : null;
+  if (!item) return;
 
-function adminRenderCards() {
-  const wrap = document.getElementById('admin-cards-list');
-  const tpl = document.getElementById('admin-card-template');
-  wrap.innerHTML = '';
-  ADMIN_STATE.index.cards.forEach((card, idx) => {
-    const node = tpl.content.cloneNode(true);
-    const item = node.querySelector('[data-card]');
-    item.dataset.index = idx;
+  const pop = document.createElement('div');
+  pop.className = 'admin-popover-foto';
+  const tieneFoto = !!(item.photo || item._nuevaFoto);
+  const iconos = Object.entries(window.DISMELEC_ICONS).map(([id, info]) => `
+    <button type="button" class="admin-popover-icono" data-icono="${id}" title="${_dmEsc(info.label)}">${dismelecIconSvg(id)}</button>`).join('');
+  pop.innerHTML = `
+    ${permiteFoto ? '<label class="btn btn-outline-dark btn-sm admin-popover-subir">Subir foto<input type="file" accept="image/*" hidden></label>' : ''}
+    ${permiteFoto && tieneFoto ? '<button type="button" class="btn btn-outline-dark btn-sm" data-quitar-foto>Quitar foto (usar ícono)</button>' : ''}
+    <div class="hint" style="margin:8px 0 4px">O elegí un ícono:</div>
+    <div class="admin-popover-iconos">${iconos}</div>`;
+  document.body.appendChild(pop);
+  _adminPosicionarFlotante(pop, el);
 
-    const select = node.querySelector('select[data-field=icon]');
-    select.innerHTML = Object.entries(window.DISMELEC_ICONS).map(([id, info]) =>
-      `<option value="${id}" ${id === card.icon ? 'selected' : ''}>${info.label}</option>`).join('');
-    const preview = node.querySelector('[data-icon-preview]');
-    preview.innerHTML = dismelecIconSvg(card.icon);
-    select.addEventListener('change', () => {
-      card.icon = select.value;
-      preview.innerHTML = dismelecIconSvg(card.icon);
-      adminRenderPreview();
-    });
-
-    const fotoPreview = node.querySelector('[data-foto-preview]');
-    const fotoInput = node.querySelector('[data-foto-input]');
-    const fotoQuitar = node.querySelector('[data-foto-quitar]');
-    const refrescarFoto = () => {
-      const url = (card._nuevaFoto && card._nuevaFoto.dataUrl) || card.photo;
-      fotoPreview.src = url || '';
-      fotoPreview.hidden = !url;
-      preview.hidden = !!url;
-      fotoQuitar.hidden = !url;
-    };
-    refrescarFoto();
-    fotoInput.addEventListener('change', (ev) => {
+  if (permiteFoto) {
+    pop.querySelector('input[type=file]').addEventListener('change', (ev) => {
       const file = ev.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        card._nuevaFoto = { file, dataUrl: reader.result };
-        refrescarFoto();
-        adminRenderPreview();
+        item._nuevaFoto = { file, dataUrl: reader.result };
+        adminCerrarFlotantes();
+        adminActualizarListasEnCanvas();
       };
       reader.readAsDataURL(file);
     });
-    fotoQuitar.addEventListener('click', () => {
-      delete card._nuevaFoto;
-      delete card.photo;
-      fotoInput.value = '';
-      refrescarFoto();
-      adminRenderPreview();
+    const quitarBtn = pop.querySelector('[data-quitar-foto]');
+    if (quitarBtn) quitarBtn.addEventListener('click', () => {
+      delete item.photo; delete item._nuevaFoto;
+      adminCerrarFlotantes();
+      adminActualizarListasEnCanvas();
     });
-
-    node.querySelector('[data-field=title]').value = card.title || '';
-    node.querySelector('[data-field=title]').addEventListener('input', e => { card.title = e.target.value; adminRenderPreview(); });
-    node.querySelector('[data-field=desc]').value = card.desc || '';
-    node.querySelector('[data-field=desc]').addEventListener('input', e => { card.desc = e.target.value; adminRenderPreview(); });
-    node.querySelector('[data-field=link]').value = card.link || '';
-    node.querySelector('[data-field=link]').addEventListener('input', e => card.link = e.target.value);
-
-    node.querySelector('[data-mover=up]').addEventListener('click', () => {
-      if (idx === 0) return;
-      [ADMIN_STATE.index.cards[idx - 1], ADMIN_STATE.index.cards[idx]] = [ADMIN_STATE.index.cards[idx], ADMIN_STATE.index.cards[idx - 1]];
-      adminRenderCards();
+  }
+  pop.querySelectorAll('[data-icono]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      item.icon = btn.dataset.icono;
+      delete item.photo; delete item._nuevaFoto;
+      adminCerrarFlotantes();
+      adminActualizarListasEnCanvas();
     });
-    node.querySelector('[data-mover=down]').addEventListener('click', () => {
-      if (idx === ADMIN_STATE.index.cards.length - 1) return;
-      [ADMIN_STATE.index.cards[idx + 1], ADMIN_STATE.index.cards[idx]] = [ADMIN_STATE.index.cards[idx], ADMIN_STATE.index.cards[idx + 1]];
-      adminRenderCards();
-    });
-    node.querySelector('[data-mover=remove]').addEventListener('click', () => {
-      if (!confirm('¿Quitar esta tarjeta?')) return;
-      ADMIN_STATE.index.cards.splice(idx, 1);
-      adminRenderCards();
-    });
-
-    wrap.appendChild(node);
   });
-  adminRenderPreview();
+  setTimeout(() => document.addEventListener('click', adminCerrarFlotantes, { once: true }), 0);
 }
 
-// Vista previa -- usa las MISMAS clases (.feature-card, etc.) que el
-// sitio real (style.css ya está cargado en admin.html), así que se ve
-// igual a como va a quedar publicado, sin tener que adivinar.
-function adminRenderPreview() {
-  const wrap = document.getElementById('admin-cards-preview');
-  if (!wrap) return;
-  wrap.innerHTML = ADMIN_STATE.index.cards.map(c => {
-    const fotoUrl = (c._nuevaFoto && c._nuevaFoto.dataUrl) || c.photo;
-    const icono = fotoUrl ? `<img src="${fotoUrl}" class="feature-icon-img">` : dismelecIconSvg(c.icon);
-    return `
-    <div class="feature-card">
-      <div class="feature-icon">${icono}</div>
-      <div class="feature-body">
-        <h3>${c.title || '(sin título)'}</h3>
-        <p>${c.desc || ''}</p>
-        <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
-      </div>
-    </div>`;
-  }).join('');
-  adminActualizarVistasPrevias();
+function _adminPosicionarFlotante(flotante, elAncla) {
+  const rect = elAncla.getBoundingClientRect();
+  const top = window.scrollY + rect.bottom + 6;
+  let left = window.scrollX + rect.left;
+  document.body.appendChild(flotante); // asegura medidas correctas antes de leer su ancho
+  const anchoFlotante = flotante.offsetWidth;
+  if (left + anchoFlotante > window.scrollX + document.documentElement.clientWidth - 10) {
+    left = window.scrollX + document.documentElement.clientWidth - anchoFlotante - 10;
+  }
+  flotante.style.top = `${top}px`;
+  flotante.style.left = `${Math.max(10, left)}px`;
 }
 
-function adminLeerFormularioHero() {
-  ADMIN_STATE.index.hero.tag = document.getElementById('admin-hero-tag').value.trim();
-  ADMIN_STATE.index.hero.title = document.getElementById('admin-hero-title').value.trim();
-  ADMIN_STATE.index.hero.lead = document.getElementById('admin-hero-lead').value.trim();
+function adminCerrarFlotantes() {
+  document.querySelectorAll('.admin-popover-foto, .admin-menu-contextual').forEach((n) => n.remove());
+}
+
+// ----------------------------------------------------- listas: clic derecho
+// Clic derecho sobre el contenedor de una lista (tarjetas, proyectos,
+// servicios, valores, línea de tiempo, estadísticas) agrega un elemento
+// nuevo -- pedido explícito ("clic derecho agregar nueva tarjetas"). Clic
+// derecho sobre un elemento puntual, además, deja subirlo/bajarlo/
+// eliminarlo.
+function adminHabilitarMenuLista(listaEl, pagina) {
+  listaEl.addEventListener('contextmenu', (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const itemEl = ev.target.closest('[data-item-idx]');
+    if (itemEl && listaEl.contains(itemEl)) adminMenuContextualItem(ev, listaEl, itemEl, pagina);
+    else adminMenuContextualLista(ev, listaEl, pagina);
+  });
+}
+
+function adminMenuContextualLista(ev, listaEl, pagina) {
+  const tipo = listaEl.dataset.listaTipo;
+  const ruta = listaEl.dataset.lista;
+  const etiqueta = ADMIN_ETIQUETA_POR_TIPO[tipo] || 'elemento';
+  _adminCrearMenu(ev, [
+    { texto: `+ Agregar ${etiqueta}`, accion: () => {
+      _adminRuta(ADMIN_STATE, ruta).push(ADMIN_NUEVO_ITEM_POR_TIPO[tipo]());
+      adminActualizarListasEnCanvas();
+    } },
+  ]);
+}
+
+function adminMenuContextualItem(ev, listaEl, itemEl, pagina) {
+  const tipo = listaEl.dataset.listaTipo;
+  const ruta = listaEl.dataset.lista;
+  const arr = _adminRuta(ADMIN_STATE, ruta);
+  const idx = Number(itemEl.dataset.itemIdx);
+  const etiqueta = ADMIN_ETIQUETA_POR_TIPO[tipo] || 'elemento';
+  _adminCrearMenu(ev, [
+    { texto: `+ Agregar ${etiqueta}`, accion: () => { arr.push(ADMIN_NUEVO_ITEM_POR_TIPO[tipo]()); adminActualizarListasEnCanvas(); } },
+    { texto: '↑ Subir', deshabilitado: idx === 0, accion: () => { [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]]; adminActualizarListasEnCanvas(); } },
+    { texto: '↓ Bajar', deshabilitado: idx === arr.length - 1, accion: () => { [arr[idx + 1], arr[idx]] = [arr[idx], arr[idx + 1]]; adminActualizarListasEnCanvas(); } },
+    { texto: '🗑 Eliminar', clase: 'danger', accion: () => {
+      if (!confirm(`¿Eliminar este ${etiqueta}?`)) return;
+      arr.splice(idx, 1);
+      adminActualizarListasEnCanvas();
+    } },
+  ]);
+}
+
+function _adminCrearMenu(ev, opciones) {
+  adminCerrarFlotantes();
+  const menu = document.createElement('div');
+  menu.className = 'admin-menu-contextual';
+  menu.innerHTML = opciones.map((o, i) => `<button type="button" class="${o.clase || ''}" data-i="${i}" ${o.deshabilitado ? 'disabled' : ''}>${o.texto}</button>`).join('');
+  document.body.appendChild(menu);
+  menu.style.top = `${window.scrollY + ev.clientY}px`;
+  menu.style.left = `${window.scrollX + ev.clientX}px`;
+  menu.querySelectorAll('button').forEach((btn, i) => {
+    if (opciones[i].deshabilitado) return;
+    btn.addEventListener('click', () => { adminCerrarFlotantes(); opciones[i].accion(); });
+  });
+  setTimeout(() => document.addEventListener('click', adminCerrarFlotantes, { once: true }), 0);
+  return menu;
 }
 
 // ---------------------------------------------------------- GitHub API
@@ -904,9 +818,9 @@ function _utf8ABase64(texto) {
 }
 
 // Sube la foto pendiente (item._nuevaFoto) de cada elemento de un
-// arreglo que la tenga -- usado para tarjetas/proyectos/servicios, no
-// solo para la foto de portada (que va aparte, es un campo único). Deja
-// el item.photo apuntando al archivo subido y borra el _nuevaFoto
+// arreglo que la tenga -- usado para tarjetas/proyectos/servicios y
+// también para cada foto de portada (pasada como arreglo de 1 elemento).
+// Deja el item.photo apuntando al archivo subido y borra el _nuevaFoto
 // temporal para que no quede colgado en el JSON publicado.
 async function adminSubirFotosPendientes(arr, prefijo, status, token) {
   if (!Array.isArray(arr)) return;
@@ -935,22 +849,11 @@ async function adminPublicar() {
   status.className = 'admin-status busy';
 
   try {
-    adminLeerFormularioHero();
-    adminLeerCamposSimples();
-
-    if (ADMIN_NUEVA_FOTO) {
-      status.textContent = 'Subiendo foto nueva...';
-      const ext = (ADMIN_NUEVA_FOTO.file.name.split('.').pop() || 'jpg').toLowerCase();
-      const nombreArchivo = `assets/img/foto-portada-${Date.now()}.${ext}`;
-      await _ghSubirArchivo(nombreArchivo, _dataUrlABase64(ADMIN_NUEVA_FOTO.dataUrl), 'Actualiza foto de portada (panel privado)', token);
-      ADMIN_STATE.index.hero.photo = nombreArchivo;
-      ADMIN_NUEVA_FOTO = null;
-    }
-
     await adminSubirFotosPendientes(ADMIN_STATE.index.cards, 'tarjeta', status, token);
     await adminSubirFotosPendientes(ADMIN_STATE.index.proyectosDestacados, 'proyecto-destacado', status, token);
     await adminSubirFotosPendientes(ADMIN_STATE.proyectos.items, 'proyecto', status, token);
     await adminSubirFotosPendientes(ADMIN_STATE.servicios.items, 'servicio', status, token);
+    await adminSubirFotosPendientes([ADMIN_STATE.index.hero], 'portada-inicio', status, token);
     await adminSubirFotosPendientes([ADMIN_STATE.servicios.hero], 'portada-servicios', status, token);
     await adminSubirFotosPendientes([ADMIN_STATE.proyectos.hero], 'portada-proyectos', status, token);
     await adminSubirFotosPendientes([ADMIN_STATE.nosotros.hero], 'portada-nosotros', status, token);

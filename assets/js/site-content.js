@@ -42,6 +42,7 @@ function _dmAplicarPageHero(root, d) {
     const foto = h.querySelector('.page-hero-photo');
     if (foto && d.hero && d.hero.photo) {
       foto.style.backgroundImage = `url('${d.hero.photo}')`;
+      foto.style.backgroundPosition = (d.hero && d.hero.photoPos) || '50% 50%';
       h.classList.add('has-photo');
     }
   });
@@ -82,47 +83,62 @@ function _dmRenderIndex(datos, root) {
   const heroPhoto = root.querySelector('.hero-photo');
   const heroTag = root.querySelector('.hero-tag-corner');
   if (d.hero) {
-    if (heroPhoto && d.hero.photo) heroPhoto.style.backgroundImage = `url('${d.hero.photo}')`;
+    if (heroPhoto && d.hero.photo) {
+      heroPhoto.style.backgroundImage = `url('${d.hero.photo}')`;
+      // Default "50% 30%" -- mismo encuadre que traía la portada antes de
+      // que se pudiera reposicionar (ver .hero-photo en style.css), para
+      // que las fotos que nadie movió todavía no salten de encuadre.
+      heroPhoto.style.backgroundPosition = d.hero.photoPos || '50% 30%';
+    }
     if (heroTag && d.hero.tag) heroTag.innerHTML = d.hero.tag.split('\n').map((l) => _dmEsc(l)).join('<br>');
   }
   root.querySelectorAll('.hero').forEach((h) => _dmAplicarTextos(h, d));
 
   const cardsWrap = root.querySelector('.feature-strip');
-  if (cardsWrap && Array.isArray(d.cards) && d.cards.length) {
-    cardsWrap.innerHTML = d.cards.map((c) => `
-      <a href="${_dmEsc(c.link || '#')}" class="feature-card reveal in">
-        <div class="feature-icon">${_dmIconoOFoto(c)}</div>
+  if (cardsWrap) {
+    cardsWrap.dataset.lista = 'index.cards';
+    cardsWrap.dataset.listaTipo = 'cards';
+    if (Array.isArray(d.cards) && d.cards.length) cardsWrap.innerHTML = d.cards.map((c, i) => `
+      <a href="${_dmEsc(c.link || '#')}" class="feature-card reveal in" data-item-idx="${i}">
+        <div class="feature-icon" data-foto-item>${_dmIconoOFoto(c)}</div>
         <div class="feature-body">
-          <h3>${_dmEsc(c.title || '')}</h3>
-          <p>${_dmEsc(c.desc || '')}</p>
+          <h3 data-c-item="title">${_dmEsc(c.title || '')}</h3>
+          <p data-c-item="desc">${_dmEsc(c.desc || '')}</p>
           <span class="feature-more">Conocer más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span>
         </div>
       </a>`).join('');
+    else cardsWrap.innerHTML = '';
   }
 
   const statsWrap = root.querySelector('#index-stats');
-  if (statsWrap && Array.isArray(d.stats) && d.stats.length) _dmPintarStats(statsWrap, d.stats);
+  if (statsWrap) _dmPintarStats(statsWrap, d.stats, 'index.stats');
 
   root.querySelectorAll('.projects-head').forEach((h) => _dmAplicarTextos(h, d));
 
   const destWrap = root.querySelector('#index-proyectos-destacados');
-  if (destWrap && Array.isArray(d.proyectosDestacados) && d.proyectosDestacados.length) {
-    destWrap.innerHTML = d.proyectosDestacados.map((p) => `
-      <a href="${_dmEsc(p.link || 'proyectos.html')}" class="project-card reveal in">
-        <div class="project-thumb">${_dmIconoOFotoThumb(p, '1.6')}</div>
-        <div class="project-body"><h4>${_dmEsc(p.title || '')}</h4><span>${_dmEsc(p.sub || '')}</span></div>
+  if (destWrap) {
+    destWrap.dataset.lista = 'index.proyectosDestacados';
+    destWrap.dataset.listaTipo = 'proyectosDestacados';
+    if (Array.isArray(d.proyectosDestacados) && d.proyectosDestacados.length) destWrap.innerHTML = d.proyectosDestacados.map((p, i) => `
+      <a href="${_dmEsc(p.link || 'proyectos.html')}" class="project-card reveal in" data-item-idx="${i}">
+        <div class="project-thumb" data-foto-item>${_dmIconoOFotoThumb(p, '1.6')}</div>
+        <div class="project-body"><h4 data-c-item="title">${_dmEsc(p.title || '')}</h4><span data-c-item="sub">${_dmEsc(p.sub || '')}</span></div>
       </a>`).join('');
+    else destWrap.innerHTML = '';
   }
 
   const ctaWrap = root.querySelector('.cta-band');
   if (ctaWrap) _dmAplicarTextos(ctaWrap, d);
 }
 
-function _dmPintarStats(wrap, items) {
-  wrap.innerHTML = items.map((s) => `
-    <div class="stat-item">
-      <div class="stat-icon">${dismelecIconSvg(s.icon)}</div>
-      <div><strong>${_dmEsc(s.valor || '')}</strong><span>${_dmEsc(s.label || '')}</span></div>
+function _dmPintarStats(wrap, items, rutaLista) {
+  wrap.dataset.lista = rutaLista;
+  wrap.dataset.listaTipo = 'stats';
+  items = Array.isArray(items) ? items : [];
+  wrap.innerHTML = items.map((s, i) => `
+    <div class="stat-item" data-item-idx="${i}">
+      <div class="stat-icon" data-foto-item-icono>${dismelecIconSvg(s.icon)}</div>
+      <div><strong data-c-item="valor">${_dmEsc(s.valor || '')}</strong><span data-c-item="label">${_dmEsc(s.label || '')}</span></div>
     </div>`).join('');
 }
 
@@ -147,22 +163,25 @@ function _dmRenderServicios(datos, root) {
   _dmAplicarPageHero(root, d);
 
   const wrap = root.querySelector('#servicios-items');
-  if (wrap && Array.isArray(d.items) && d.items.length) {
-    wrap.innerHTML = d.items.map((it, idx) => {
+  if (wrap) {
+    wrap.dataset.lista = 'servicios.items';
+    wrap.dataset.listaTipo = 'servicios';
+    if (Array.isArray(d.items) && d.items.length) wrap.innerHTML = d.items.map((it, idx) => {
       const checks = (it.checks || '').split('\n').filter(Boolean).map((linea) => `
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>${_dmEsc(linea)}</li>`).join('');
       const textoBloque = `
         <div>
-          <span class="service-id">${_dmEsc(it.numero || '')}</span>
-          <h2>${_dmEsc(it.title || '')}</h2>
-          <p>${_dmEsc(it.desc || '')}</p>
+          <span class="service-id" data-c-item="numero">${_dmEsc(it.numero || '')}</span>
+          <h2 data-c-item="title">${_dmEsc(it.title || '')}</h2>
+          <p data-c-item="desc">${_dmEsc(it.desc || '')}</p>
           <ul class="service-check-list">${checks}</ul>
-          <a href="contacto.html#formulario" class="btn btn-outline-dark btn-sm">${_dmEsc(it.ctaText || 'Cotizar este servicio')}</a>
+          <a href="contacto.html#formulario" class="btn btn-outline-dark btn-sm" data-c-item="ctaText">${_dmEsc(it.ctaText || 'Cotizar este servicio')}</a>
         </div>`;
-      const visual = `<div class="service-visual">${_dmIconoOFotoThumb(it, '1.4')}</div>`;
+      const visual = `<div class="service-visual" data-foto-item>${_dmIconoOFotoThumb(it, '1.4')}</div>`;
       const idAttr = it.anchor ? ` id="${_dmEsc(it.anchor)}"` : '';
-      return `<div class="service-block reveal in"${idAttr}>${idx % 2 === 0 ? textoBloque + visual : visual + textoBloque}</div>`;
+      return `<div class="service-block reveal in"${idAttr} data-item-idx="${idx}">${idx % 2 === 0 ? textoBloque + visual : visual + textoBloque}</div>`;
     }).join('');
+    else wrap.innerHTML = '';
   }
 
   const ctaWrap = root.querySelector('.cta-band');
@@ -178,15 +197,18 @@ function _dmRenderProyectos(datos, root) {
   _dmAplicarPageHero(root, d);
 
   const wrap = root.querySelector('#proyectos-items');
-  if (wrap && Array.isArray(d.items) && d.items.length) {
-    wrap.innerHTML = d.items.map((p) => {
+  if (wrap) {
+    wrap.dataset.lista = 'proyectos.items';
+    wrap.dataset.listaTipo = 'proyectos';
+    if (Array.isArray(d.items) && d.items.length) wrap.innerHTML = d.items.map((p, idx) => {
       const idAttr = p.anchor ? ` id="${_dmEsc(p.anchor)}"` : '';
       return `
-      <a href="contacto.html" class="project-card reveal in"${idAttr} data-sector="${_dmEsc(p.filtro || 'todos')}">
-        <div class="project-thumb">${_dmIconoOFotoThumb(p, '1.6')}</div>
-        <div class="project-body"><h4>${_dmEsc(p.title || '')}</h4><span>${_dmEsc(p.sectorLabel || '')} · ${_dmEsc(p.ubicacion || '')}</span></div>
+      <a href="contacto.html" class="project-card reveal in"${idAttr} data-sector="${_dmEsc(p.filtro || 'todos')}" data-item-idx="${idx}">
+        <div class="project-thumb" data-foto-item>${_dmIconoOFotoThumb(p, '1.6')}</div>
+        <div class="project-body"><h4 data-c-item="title">${_dmEsc(p.title || '')}</h4><span data-c-item="sectorLabel">${_dmEsc(p.sectorLabel || '')}</span> · <span data-c-item="ubicacion">${_dmEsc(p.ubicacion || '')}</span></div>
       </a>`;
     }).join('');
+    else wrap.innerHTML = '';
   }
 
   const ctaWrap = root.querySelector('.cta-band');
@@ -209,27 +231,34 @@ function _dmRenderNosotros(datos, root) {
   if (visionCard) _dmAplicarTextos(visionCard, d);
 
   const valoresWrap = root.querySelector('#nosotros-valores');
-  if (valoresWrap && Array.isArray(d.valores) && d.valores.length) {
-    valoresWrap.innerHTML = d.valores.map((v) => `
-      <div class="value-card reveal in">
-        <div class="feature-icon">${dismelecIconSvg(v.icon)}</div>
-        <h3>${_dmEsc(v.title || '')}</h3>
-        <p>${_dmEsc(v.desc || '')}</p>
+  if (valoresWrap) {
+    valoresWrap.dataset.lista = 'nosotros.valores';
+    valoresWrap.dataset.listaTipo = 'valores';
+    if (Array.isArray(d.valores) && d.valores.length) valoresWrap.innerHTML = d.valores.map((v, i) => `
+      <div class="value-card reveal in" data-item-idx="${i}">
+        <div class="feature-icon" data-foto-item-icono>${dismelecIconSvg(v.icon)}</div>
+        <h3 data-c-item="title">${_dmEsc(v.title || '')}</h3>
+        <p data-c-item="desc">${_dmEsc(v.desc || '')}</p>
       </div>`).join('');
+    else valoresWrap.innerHTML = '';
   }
 
   const timelineWrap = root.querySelector('#nosotros-timeline');
-  if (timelineWrap && Array.isArray(d.timeline) && d.timeline.length) {
-    timelineWrap.innerHTML = d.timeline.map((t, idx) => `
-      <div class="timeline-item reveal in">
-        <div class="t-year">${_dmEsc(t.numero || '')}</div>
-        <div class="t-line"><div class="t-dot"></div>${idx < d.timeline.length - 1 ? '<div class="t-bar"></div>' : ''}</div>
-        <div class="t-body"><h4>${_dmEsc(t.title || '')}</h4><p>${_dmEsc(t.desc || '')}</p></div>
+  if (timelineWrap) {
+    timelineWrap.dataset.lista = 'nosotros.timeline';
+    timelineWrap.dataset.listaTipo = 'timeline';
+    const lista = Array.isArray(d.timeline) ? d.timeline : [];
+    if (lista.length) timelineWrap.innerHTML = lista.map((t, idx) => `
+      <div class="timeline-item reveal in" data-item-idx="${idx}">
+        <div class="t-year" data-c-item="numero">${_dmEsc(t.numero || '')}</div>
+        <div class="t-line"><div class="t-dot"></div>${idx < lista.length - 1 ? '<div class="t-bar"></div>' : ''}</div>
+        <div class="t-body"><h4 data-c-item="title">${_dmEsc(t.title || '')}</h4><p data-c-item="desc">${_dmEsc(t.desc || '')}</p></div>
       </div>`).join('');
+    else timelineWrap.innerHTML = '';
   }
 
   const statsWrap = root.querySelector('#nosotros-stats');
-  if (statsWrap && Array.isArray(d.stats) && d.stats.length) _dmPintarStats(statsWrap, d.stats);
+  if (statsWrap) _dmPintarStats(statsWrap, d.stats, 'nosotros.stats');
 
   const ctaWrap = root.querySelector('.cta-band');
   if (ctaWrap) _dmAplicarTextos(ctaWrap, d);
