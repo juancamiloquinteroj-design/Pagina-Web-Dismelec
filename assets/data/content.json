@@ -11,25 +11,29 @@
         "icon": "redes",
         "title": "Redes eléctricas",
         "desc": "Diseño, construcción y mantenimiento de redes de media y baja tensión.",
-        "link": "servicios.html#redes"
+        "link": "servicios.html#redes",
+        "photo": "assets/img/tarjeta-1789645175696-3n606.jpg"
       },
       {
         "icon": "redes",
         "title": "Subestaciones",
         "desc": "Ingeniería, montaje y puesta en servicio de subestaciones de potencia y distribución.",
-        "link": "servicios.html#subestaciones"
+        "link": "servicios.html#subestaciones",
+        "photo": "assets/img/tarjeta-1789645225333-w3pud.jpg"
       },
       {
         "icon": "medida",
         "title": "Sistemas de medida",
         "desc": "Soluciones de medición comercial e industrial con altos estándares de precisión.",
-        "link": "servicios.html#medida"
+        "link": "servicios.html#medida",
+        "photo": "assets/img/tarjeta-1789645251564-2acg7.jpg"
       },
       {
         "icon": "retie",
         "title": "RETIE y legalización",
         "desc": "Asesoría, diseños, pruebas y acompañamiento para cumplimiento normativo.",
-        "link": "servicios.html#retie"
+        "link": "servicios.html#retie",
+        "photo": "assets/img/tarjeta-1789645257595-vmxap.jpg"
       }
     ],
     "stats": [
@@ -161,11 +165,12 @@
     "items": [
       {
         "icon": "subestaciones",
-        "title": "Subestación de distribución",
+        "title": "Legalización Medida Indirecta a 34.5 kV",
         "sectorLabel": "Sector industrial",
-        "ubicacion": "Cundinamarca",
+        "ubicacion": "Huila",
         "filtro": "industrial",
-        "anchor": "subestacion-distribucion"
+        "anchor": "Medida Indirecta-Media Tensión",
+        "photo": "assets/img/proyecto-1789643606174-numm5.jfif"
       },
       {
         "icon": "lineas",
